@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "logIn": "Connexion",
+    "signIn": "Inscription",
+    "hiringManagersSpace": "Espace recruteurs",
+    "essaiPossible": "Essai Possible"
+  },
+  "logo": "LOGO",
+  "intlTime": "{{val, datetime(timeStyle: short)}}",
+  "intlDate": "{{val, datetime(dateStyle: long)}}",
+  "intlDateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
+  "intlDateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}",
+  "intlRelativeTime": "{{val, relativetime}}",
+  "offer": {
+    "seeOffers": "Voir les offres",
+    "searchAnOffer": "Rechercher une offre…",
+    "sector": "Secteur",
+    "sector_other": "Secteurs",
+    "goal": "Objectif",
+    "goal_other": "Objectifs",
+    "startDate": "Date de début",
+    "theOffers": "Les offres",
+    "howToApply": "Comment candidater ?",
+    "theCompanyProposesBookingAMeetingSlot": "L'entreprise propose de réserver un créneau de rencontre.",
+    "bookAMeetingSlot": "Prendre RDV",
+    "description": "Description",
+    "tasks": "Tâches",
+    "skills": "Compétences",
+    "backToOffers": "Retour aux offres",
+    "meetingSlot": "Rendez-vous",
+    "chooseThisMeetingSlot": "Choisir ce rendez-vous",
+    "youAreAboutToBookAMeetingOnThe": "Vous vous apprêtez à réserver un créneau le <strong>{{dateTime}}</strong>.",
+    "ohOhNoMeetings": "Oh oh oh... Il n'y a plus de rendez-vous disponibles pour l'instant. Revenez plus tard.",
+    "xMeetingSlotsAvailable_zero": "Pas de rendez-vous disponible.",
+    "xMeetingSlotsAvailable": "Un rendez-vous disponible.",
+    "xMeetingSlotsAvailable_other": "{{count}} rendez-vous disponibles.",
+    "validateInformation": "Valider mes informations",
+    "myInformation": "Mes informations"
+  },
+  "goBack": "Retour"
+}
