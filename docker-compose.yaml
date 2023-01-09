@@ -1,0 +1,107 @@
+version: '3.5'
+services:
+  fuseki:
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_opaline
+    volumes:
+      - ./data/fuseki:/fuseki
+      - ./data/staging:/staging
+    ports:
+      - "3030:3030"
+    expose:
+      - "3030"
+    networks:
+      - semapps
+    environment:
+      ADMIN_PASSWORD: "admin"
+    healthcheck:
+      test: curl --fail http://localhost:3030 || exit 1
+      interval: 1s
+      timeout: 1s
+      start_period: 5s
+
+  middleware:
+    image: dataplayers/archipelago-middleware:0.6
+    depends_on:
+      fuseki:
+        condition: service_healthy
+    volumes:
+      - './data/middleware/logs:/archipelago/middleware/logs'
+      - './data/middleware/jwt:/archipelago/middleware/jwt'
+      - './data/middleware/uploads:/archipelago/middleware/uploads'
+      - './middleware/addOn:/archipelago/middleware/addOn'
+    environment:
+      - 'SEMAPPS_SPARQL_ENDPOINT=http://fuseki:3030/'
+      - SEMAPPS_MAIN_DATASET=localData
+      - SEMAPPS_JENA_USER=admin
+      - SEMAPPS_JENA_PASSWORD=admin
+      - 'SEMAPPS_HOME_URL=http://localhost:3000/'
+      - SEMAPPS_OIDC_ISSUER=https://login.lescommuns.org/auth/realms/master/
+      - SEMAPPS_OIDC_CLIENT_ID=semapps
+      - SEMAPPS_REDIS_CACHE_HOST=redis
+      - SEMAPPS_REDIS_CACHE_PASSW=passw
+      - REPLYTO_EMAIL=${REPLYTO_EMAIL}
+      - REPLYTO_LABEL=${REPLYTO_LABEL}
+      - MJ_APIKEY_PUBLIC=${MJ_APIKEY_PUBLIC}
+      - MJ_APIKEY_PRIVATE=${MJ_APIKEY_PRIVATE}
+    command: bash -c "cp -r ./addOn/middleware/* . && yarn install && pm2-runtime 'yarn run dev'"
+    networks:
+      - semapps
+    ports:
+      - '3000:3000'
+
+  backoffice:
+    image: dataplayers/archipelago-frontend:0.6
+    environment:
+      - 'REACT_APP_MIDDLEWARE_URL=http://localhost:3000/'
+      - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
+      - PORT=4000
+    volumes:
+      - ./backoffice/addOn:/archipelago/frontend/addOn
+    command: bash -c "cp -r ./addOn/frontend/* . && yarn install && yarn start"
+    networks:
+      - semapps
+    ports:
+      - '4000:4000'
+
+  frontend:
+    build: frontend
+    container_name: frontend_opaline
+    volumes:
+      - ./frontend:/app
+    environment:
+      # - REACT_APP_MIDDLEWARE_URL=http://localhost:3000/
+      - REACT_APP_MIDDLEWARE_URL=https://data.essaipossible.fr/
+      - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
+      - REACT_APP_CONTACT_EMAIL=${CONTACT_EMAIL}
+      - REACT_APP_CONTACT_LABEL=${CONTACT_LABEL}
+      - PORT=5001
+    depends_on:
+      - middleware
+    ports:
+      - "5001:5001"
+    expose:
+      - "5001"
+    networks:
+      - semapps
+    command: bash -c "node -v && yarn install && yarn start"
+
+  redis:
+    image: redis
+    container_name: redis
+    expose:
+      - "6379"
+    environment:
+      - REDIS_PASSWORD=passw
+    ports:
+      - "6379:6379"
+    networks:
+      - semapps
+    volumes:
+      - ./data/redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+networks:
+  semapps:
+    name: bus_network
+    external: true

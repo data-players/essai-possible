@@ -1,0 +1,85 @@
+{
+    "id": "DP",
+    "realm": "DP",
+    "displayName": "Data Players Example Keycloak",
+    "displayNameHtml": "<span>Data Players Example Keycloak</span>",
+    "enabled": true,
+    "registrationAllowed": true,
+    "registrationEmailAsUsername": true,
+    "rememberMe": true,
+    "verifyEmail": false,
+    "loginWithEmailAllowed": true,
+    "duplicateEmailsAllowed": false,
+    "clients": [{
+        "id": "d36c2d33-2943-4a0d-9ec0-43e8221bab50",
+        "clientId": "semapps",
+        "name": "data players semapps login",
+        "surrogateAuthRequired": false,
+        "enabled": true,
+        "alwaysDisplayInConsole": true,
+        "clientAuthenticatorType": "client-secret",
+        "redirectUris": [
+          "https://data.sandbox3.data-players.com/*",
+          "https://data.sandbox2.data-players.com/*",
+          "https://data.sandbox4.data-players.com/*",
+          "https://data.nantes.transiscope.org/*",
+          "http://localhost:3000/*",
+          "https://www.keycloak.org/app/*",
+          "https://data.sandbox.data-players.com/*"
+        ],
+        "webOrigins": [
+          "*"
+        ],
+        "notBefore": 0,
+        "bearerOnly": false,
+        "consentRequired": false,
+        "standardFlowEnabled": true,
+        "implicitFlowEnabled": false,
+        "directAccessGrantsEnabled": true,
+        "serviceAccountsEnabled": false,
+        "publicClient": true,
+        "frontchannelLogout": false,
+        "protocol": "openid-connect",
+        "attributes": {
+          "id.token.as.detached.signature": "false",
+          "saml.assertion.signature": "false",
+          "saml.force.post.binding": "false",
+          "saml.multivalued.roles": "false",
+          "saml.encrypt": "false",
+          "login_theme": "lescommuns",
+          "oauth2.device.authorization.grant.enabled": "true",
+          "backchannel.logout.revoke.offline.tokens": "false",
+          "saml.server.signature": "false",
+          "saml.server.signature.keyinfo.ext": "false",
+          "use.refresh.tokens": "true",
+          "exclude.session.state.from.auth.response": "false",
+          "oidc.ciba.grant.enabled": "false",
+          "saml.artifact.binding": "false",
+          "backchannel.logout.session.required": "false",
+          "client_credentials.use_refresh_token": "false",
+          "saml_force_name_id_format": "false",
+          "require.pushed.authorization.requests": "false",
+          "saml.client.signature": "false",
+          "tls.client.certificate.bound.access.tokens": "false",
+          "saml.authnstatement": "false",
+          "display.on.consent.screen": "false",
+          "saml.onetimeuse.condition": "false"
+        },
+        "authenticationFlowBindingOverrides": {},
+        "fullScopeAllowed": true,
+        "nodeReRegistrationTimeout": -1,
+        "defaultClientScopes": [
+          "web-origins",
+          "profile",
+          "roles",
+          "email"
+        ],
+        "optionalClientScopes": [
+          "address",
+          "phone",
+          "offline_access",
+          "microprofile-jwt"
+        ]
+      }
+    ]
+  }
