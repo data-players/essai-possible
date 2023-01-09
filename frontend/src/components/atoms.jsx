@@ -14,7 +14,9 @@ export function BasicList({elements, component = "ul"}) {
   return (
     <Box component={component} sx={{mt: 1, ml: -1}}>
       {elements.map((el) => (
-        <Box component={"li"}>{el}</Box>
+        <Box component={"li"} key={el}>
+          {el}
+        </Box>
       ))}
     </Box>
   );
@@ -75,6 +77,7 @@ export function Breadcrumbs({breadcrumbs}) {
           .filter((el) => !!el)
           .map(({label, to, onClick}) => (
             <Typography
+              key={label}
               component={ReactRouterLink}
               to={to}
               onClick={onClick}

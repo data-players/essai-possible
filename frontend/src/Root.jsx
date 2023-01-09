@@ -97,7 +97,7 @@ const Root = ({children}) => {
   const path = useLocation().pathname;
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  console.log(window.location.key);
+
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
       {drawerOpen && (

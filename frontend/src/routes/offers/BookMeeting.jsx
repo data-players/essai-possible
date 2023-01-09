@@ -1,3 +1,4 @@
+import React from "react";
 import {useLoaderData} from "react-router-dom";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
@@ -85,7 +86,7 @@ export default function BookMeeting() {
               <>
                 <List sx={{mt: 2}}>
                   {Object.entries(slotsByDate).map(([date, slots]) => (
-                    <>
+                    <React.Fragment key={date}>
                       <ListSubheader sx={{fontSize: "md", mt: 2}}>{date}</ListSubheader>
                       <ListItem>
                         <RadioChips
@@ -98,7 +99,7 @@ export default function BookMeeting() {
                           setFieldValue={setSelectedMeetingSlot}
                         />
                       </ListItem>
-                    </>
+                    </React.Fragment>
                   ))}
                 </List>
 

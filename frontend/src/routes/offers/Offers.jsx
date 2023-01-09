@@ -186,7 +186,7 @@ export default function Offers() {
           {filteredOffers.length > 0 ? (
             <List>
               {filteredOffers.map((offer) => (
-                <OfferListItem {...offer} />
+                <OfferListItem {...offer} key={offer.id} />
               ))}
             </List>
           ) : (
