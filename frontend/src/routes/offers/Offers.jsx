@@ -182,8 +182,16 @@ export default function Offers() {
         </Container>
       </HeroBanner>
       <Container>
-        <Stack my={4}>
-          <List>{filteredOffers.map(OfferListItem)}</List>
+        <Stack my={4} alignItems={"center"}>
+          {filteredOffers.length > 0 ? (
+            <List>
+              {filteredOffers.map((offer) => (
+                <OfferListItem {...offer} />
+              ))}
+            </List>
+          ) : (
+            t("oopsNoResults")
+          )}
         </Stack>
       </Container>
     </>

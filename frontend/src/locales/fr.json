@@ -37,5 +37,6 @@
     "validateInformation": "Valider mes informations",
     "myInformation": "Mes informations"
   },
-  "goBack": "Retour"
+  "goBack": "Retour",
+  "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères."
 }
