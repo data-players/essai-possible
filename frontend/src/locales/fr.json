@@ -1,9 +1,9 @@
 {
+  "essaiPossible": "Essai Possible",
   "nav": {
     "logIn": "Connexion",
     "signIn": "Inscription",
-    "hiringManagersSpace": "Espace recruteurs",
-    "essaiPossible": "Essai Possible"
+    "hiringManagersSpace": "Espace recruteurs"
   },
   "logo": "LOGO",
   "intlTime": "{{val, datetime(timeStyle: short)}}",
@@ -35,8 +35,26 @@
     "xMeetingSlotsAvailable": "Un rendez-vous disponible.",
     "xMeetingSlotsAvailable_other": "{{count}} rendez-vous disponibles.",
     "validateInformation": "Valider mes informations",
-    "myInformation": "Mes informations"
+    "myInformation": "Mes informations",
+    "proposeAnOffer": "Proposer une offre"
   },
   "goBack": "Retour",
-  "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères."
+  "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères.",
+  "homePage": {
+    "heroSubtitle": "Teste un job, un métier, une entreprise.",
+    "heroExplanationCandidates": "Vous êtes à la <strong>recherche d'un emploi</strong> et voulez avoir l'opportunité de <strong>faire vos preuves</strong> ? Faîtes une immersion dans une entreprise qui vous motive !",
+    "heroExplanationHiringManagers": "Vous souhaitez sourcer différemment et tenter une <strong>nouvelle approche de recrutement</strong> ? Proposez des <strong>immersions</strong>.",
+    "whatIfWeProposeYouAnotherWayOfPassingJobInterviews": "Et si vous passiez vos entretiens d'embauche autrement ? \uD83D\uDCA1",
+    "videoExplanation": "L'explication en vidéo !",
+    "youreACompanyAndYouWantToProposeAnOffer": "Vous êtes une entreprise et vous souhaitez déposer une offre ?",
+    "dontHesitateAndFillTheInformation": "Vous n'arrivez pas à recruter et êtes prêt pour une nouvelle approche ? Sélectionnez sans CV mais après avoir testé la personne sur le poste pendant 1 semaine !",
+    "register": "Inscrivez-vous",
+    "ourImplantations": "Nos implantations",
+    "implantationsExplanation": "Nous lançons officiellement cette plateforme sur le département du Nord et à Nancy !\n\n",
+    "ourPartners": "Nos partenaires"
+  },
+  "footer": {
+    "projectFundedBy": "Un projet fondé par",
+    "contact": "Contact"
+  }
 }

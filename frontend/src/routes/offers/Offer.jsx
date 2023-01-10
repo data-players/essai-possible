@@ -28,19 +28,19 @@ export function SectorsGoalsDatePills({sectors, goals, startDate}) {
   const {t} = useTranslation();
   return (
     <Grid container columnSpacing={3} rowSpacing={3} p={0}>
-      <Grid xs={12} sm={6} md={4} pl={0}>
+      <Grid xs={12} sm={6} md={4}>
         <Chip color={"primary"} startDecorator={<LocalOfferRoundedIcon />}>
           {t("offer.sector", {count: sectors?.length})}
         </Chip>
         <BasicList elements={sectors} />
       </Grid>
-      <Grid xs={12} sm={6} md={4} pl={0}>
+      <Grid xs={12} sm={6} md={4}>
         <Chip color={"primary"} startDecorator={<FlagRoundedIcon />}>
           {t("offer.goal", {count: goals?.length})}
         </Chip>
         <BasicList elements={goals} />
       </Grid>
-      <Grid xs={12} sm={12} md={4} pl={0}>
+      <Grid xs={12} sm={12} md={4}>
         <Chip color={"primary"} startDecorator={<CalendarMonthRoundedIcon />}>
           {t("offer.startDate")}
         </Chip>

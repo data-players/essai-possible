@@ -175,7 +175,7 @@ export default function Offers() {
             <Typography level="h2">{t("offer.theOffers")}</Typography>
             <SearchBar
               sx={{width: "500px", maxWidth: "100%"}}
-              autoFocus
+              autoFocus={{xs: false, md: true}}
               onChange={(event) => setSearchText(event.target.value)}
             />
           </Stack>
