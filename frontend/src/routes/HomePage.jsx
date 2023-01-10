@@ -1,4 +1,3 @@
-import {Card, Grid, Stack, Typography} from "@mui/joy";
 import Button from "@mui/joy/Button";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -11,6 +10,10 @@ import Box from "@mui/joy/Box";
 import Container from "@mui/joy/Container";
 import PartnersImage from "../assets/partners.png";
 import ImplantationsImage from "../assets/implantations.png";
+import Grid from "@mui/joy/Grid";
+import Stack from "@mui/joy/Stack";
+import Typography from "@mui/joy/Typography";
+import Card from "@mui/joy/Card";
 
 export default function HomePage() {
   const {t} = useTranslation();

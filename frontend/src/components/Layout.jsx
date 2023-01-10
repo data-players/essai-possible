@@ -1,7 +1,6 @@
 import * as React from "react";
 import Box from "@mui/joy/Box";
 import Sheet from "@mui/joy/Sheet";
-import {Container, Link} from "@mui/joy";
 import Stack from "@mui/joy/Stack";
 import HeroHomeImage from "../assets/hero-home.jpg";
 import TousTesPossiblesLogoWhite from "../assets/tous-tes-possibles-logo-white.png";
@@ -14,6 +13,8 @@ import TousTesPossiblesLogoBlue from "../assets/tous-tes-possibles-logo-blue.svg
 import {useNavigate} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import {Fade} from "@mui/material";
+import Container from "@mui/joy/Container";
+import Link from "@mui/joy/Link";
 
 function Root(props) {
   return (
@@ -178,7 +179,7 @@ export function HeroBanner(props) {
       color="neutral"
       invertedColors
       {...props}
-      sx={[{overflow: "hidden", py: 8}, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
+      sx={[{py: 8}, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
       {/* Image background */}
       {!props.noBackground && (
         <>

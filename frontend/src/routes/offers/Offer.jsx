@@ -65,7 +65,7 @@ export function OfferBanner({
           </Container>
         )}
         // Make the card go out a little bit on mobile view
-        sx={{boxShadow: "lg", mx: -5, py: 6}}>
+        sx={{overflow: "hidden", boxShadow: "lg", mx: -5, py: 6}}>
         <Grid container spacing={8} position={"relative"}>
           <Grid xs={12} md={8}>
             <Stack gap={4}>

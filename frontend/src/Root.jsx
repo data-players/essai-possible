@@ -12,19 +12,15 @@ import ListSubheader from "@mui/joy/ListSubheader";
 import Typography from "@mui/joy/Typography";
 import AssignmentIndRoundedIcon from "@mui/icons-material/AssignmentIndRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import MenuIcon from "@mui/icons-material/Menu";
 import Layout from "./components/Layout.jsx";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import {t} from "i18next";
 import Stack from "@mui/joy/Stack";
-import TousTesPossiblesLogoBlue from "./assets/tous-tes-possibles-logo-blue.svg";
 import Chip from "@mui/joy/Chip";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import Link from "@mui/joy/Link";
-import Slide from "@mui/material/Slide";
-import Sheet from "@mui/joy/Sheet";
 
 const getNavigation = () => [
   {
@@ -80,6 +76,7 @@ export function SearchBar({sx, ...props}) {
   return (
     <Input
       variant={"soft"}
+      color={"neutral"}
       placeholder={t("offer.searchAnOffer")}
       startDecorator={<SearchRoundedIcon color="primary" />}
       {...props}
