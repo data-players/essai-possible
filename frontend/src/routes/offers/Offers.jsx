@@ -19,7 +19,10 @@ export const offers = [
     id: "titredeloffre",
     title: "Titre de l'offre",
     company: "P&V Group",
-    sectors: ["Industriel"],
+    sectors: [
+      "Activités de services administratifs et de soutien",
+      "Santé humaine et action sociale",
+    ],
     goals: ["Recrutement"],
     startDate: new Date(2023, 3, 25),
     description: loremIpsum({count: 2, units: "paragraph"}),
@@ -117,13 +120,11 @@ function OfferListItem({id, title, company, sectors, goals, startDate, descripti
         <Grid container spacing={4}>
           <Grid xs={12} md={8}>
             <Stack gap={2}>
-              <Typography component="h2" level="h3" fontWeight={"lg"}>
+              <Typography level="h3" component="h2" fontWeight={"lg"}>
                 {title}
               </Typography>
 
-              <Typography component="h3" level="h4">
-                {company}
-              </Typography>
+              <Typography level="h4">{company}</Typography>
 
               <SectorsGoalsDatePills sectors={sectors} goals={goals} startDate={startDate} />
 
@@ -172,7 +173,7 @@ export default function Offers() {
       <HeroBanner>
         <Container mx={2}>
           <Stack alignItems={"center"} gap={4}>
-            <Typography level="h2">{t("offer.theOffers")}</Typography>
+            <Typography level="h1">{t("offer.theOffers")}</Typography>
             <SearchBar
               sx={{width: "500px", maxWidth: "100%"}}
               autoFocus={{xs: false, md: true}}

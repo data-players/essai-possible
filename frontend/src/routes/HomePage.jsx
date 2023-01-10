@@ -22,21 +22,19 @@ export default function HomePage() {
           <Grid>
             <Stack gap={4}>
               <Card variant={"solid"} size={"lg"} sx={{width: "fit-content"}}>
-                <Typography level="h1" component={"h1"} textColor="primary.solidBg">
+                <Typography level="h1" textColor="primary.solidBg">
                   {t("essaiPossible")}
                 </Typography>
               </Card>
-              <Typography level="h2" component={"h2"}>
-                {t("homePage.heroSubtitle")}
-              </Typography>
+              <Typography level="h2">{t("homePage.heroSubtitle")}</Typography>
             </Stack>
           </Grid>
           <Grid xs={12} md={7}>
             <Stack gap={4}>
-              <Typography level="h4" component={"h2"}>
+              <Typography level="h4">
                 <Trans i18nKey="homePage.heroExplanationCandidates" />
               </Typography>
-              <Typography level="h4" component={"h2"}>
+              <Typography level="h4">
                 <Trans i18nKey="homePage.heroExplanationHiringManagers" />
               </Typography>
             </Stack>
@@ -44,7 +42,6 @@ export default function HomePage() {
           <Grid xs={12} md={5}>
             <Card invertedColors color={"primary"} variant={"solid"} size={"lg"}>
               <Stack gap={4} m={1}>
-                {/*<Typography level="h3">Les offres vous attendent. N'hésitez plus.</Typography>*/}
                 <Button
                   component={ReactRouterLink}
                   to={"offers"}

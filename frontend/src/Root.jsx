@@ -183,7 +183,7 @@ const Root = ({children}) => {
           </Stack>
         </Layout.Header>
 
-        <Layout.Main>{children ? children : <Outlet />}</Layout.Main>
+        <Layout.Main sx={{overflow: "hidden"}}>{children ? children : <Outlet />}</Layout.Main>
 
         <Layout.Footer>
           <Chip color={"primary"} variant={"soft"}>

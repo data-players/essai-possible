@@ -36,7 +36,7 @@
     "xMeetingSlotsAvailable_other": "{{count}} rendez-vous disponibles.",
     "validateInformation": "Valider mes informations",
     "myInformation": "Mes informations",
-    "proposeAnOffer": "Proposer une offre"
+    "proposeAnOffer": "Publier une offre"
   },
   "goBack": "Retour",
   "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères.",
@@ -48,7 +48,7 @@
     "videoExplanation": "L'explication en vidéo !",
     "youreACompanyAndYouWantToProposeAnOffer": "Vous êtes une entreprise et vous souhaitez déposer une offre ?",
     "dontHesitateAndFillTheInformation": "Vous n'arrivez pas à recruter et êtes prêt pour une nouvelle approche ? Sélectionnez sans CV mais après avoir testé la personne sur le poste pendant 1 semaine !",
-    "register": "Inscrivez-vous",
+    "register": "Inscrivez votre entreprise",
     "ourImplantations": "Nos implantations",
     "implantationsExplanation": "Nous lançons officiellement cette plateforme sur le département du Nord et à Nancy !\n\n",
     "ourPartners": "Nos partenaires"
