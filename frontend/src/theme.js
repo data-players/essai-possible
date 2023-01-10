@@ -1,4 +1,4 @@
-import {extendTheme} from "@mui/joy/styles";
+import {extendTheme} from "./utils/mui";
 
 export default extendTheme({
   colorSchemes: {

@@ -8,6 +8,12 @@ import TousTesPossiblesLogoWhite from "../assets/tous-tes-possibles-logo-white.p
 import Grid from "@mui/joy/Grid";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
+import IconButton from "@mui/joy/IconButton";
+import MenuIcon from "@mui/icons-material/Menu.js";
+import TousTesPossiblesLogoBlue from "../assets/tous-tes-possibles-logo-blue.svg";
+import {useNavigate} from "react-router-dom";
+import Slide from "@mui/material/Slide";
+import {Fade} from "@mui/material";
 
 function Root(props) {
   return (
@@ -18,10 +24,47 @@ function Root(props) {
   );
 }
 
-function Header(props) {
+function Navigation(props) {
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const navigate = useNavigate();
   return (
-    <Box {...props}>
+    <>
+      {/* Mobile side drawer */}
+      <Slide direction="right" in={drawerOpen} mountOnEnter unmountOnExit>
+        <Box
+          sx={[{position: "fixed", zIndex: 1201, width: "100%", height: "100%"}]}
+          onClick={() => setDrawerOpen(false)}>
+          <Sheet
+            sx={{
+              minWidth: 256,
+              width: "max-content",
+              height: "100%",
+              p: 2,
+            }}>
+            {props.mobileDrawerContent}
+          </Sheet>
+        </Box>
+      </Slide>
+      {/* Mobile side drawer background */}
+      <Fade in={drawerOpen}>
+        <Box
+          role="button"
+          onClick={() => setDrawerOpen(false)}
+          sx={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1200,
+            bgcolor: (theme) => `rgba(${theme.vars.palette.neutral.darkChannel} / 0.8)`,
+          }}
+        />
+      </Fade>
+
+      {/* Mobile side drawer */}
+
       <Container
+        {...props}
+        component={"header"}
         sx={[
           {
             py: 3,
@@ -34,32 +77,34 @@ function Header(props) {
           },
           ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
         ]}>
+        {/* Website logo and menu button */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 1.5,
+            cursor: "pointer",
+          }}>
+          {/* Small screens: show menu button */}
+          <IconButton
+            variant="soft"
+            onClick={() => setDrawerOpen(true)}
+            sx={{display: {sm: "none"}}}>
+            <MenuIcon />
+          </IconButton>
+
+          <Box
+            onClick={() => navigate("/")}
+            component={"img"}
+            src={TousTesPossiblesLogoBlue}
+            height={{xs: 40, md: 50}}
+          />
+        </Box>
+
         {props.children}
       </Container>
-    </Box>
-  );
-}
-
-function SideNav(props) {
-  return (
-    <Box
-      component="nav"
-      className="Navigation"
-      {...props}
-      sx={[
-        {
-          p: 2,
-          bgcolor: "background.surface",
-          borderRight: "1px solid",
-          borderColor: "divider",
-          display: {
-            xs: "none",
-            sm: "initial",
-          },
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
-    />
+    </>
   );
 }
 
@@ -100,7 +145,7 @@ function SideDrawer({onClose, ...props}) {
     <Box
       {...props}
       sx={[
-        {position: "fixed", zIndex: 1200, width: "100%", height: "100%"},
+        {position: "fixed", width: "100%", height: "100%"},
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
       ]}>
       <Box
@@ -183,8 +228,7 @@ export function PageContent(props) {
 
 const Layout = {
   Root,
-  Header,
-  SideNav,
+  Navigation,
   SideDrawer,
   Main,
   Footer,

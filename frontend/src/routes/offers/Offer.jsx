@@ -105,7 +105,7 @@ function BookMeetingButton(props) {
       to={"book"}
       startDecorator={<CalendarMonthRoundedIcon />}
       {...props}>
-      {t("offer.bookAMeetingSlot")}
+      {t("offer.bookAMeetingSlot", {context: "short"})}
     </Button>
   );
 }

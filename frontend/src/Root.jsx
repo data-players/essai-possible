@@ -23,6 +23,8 @@ import Chip from "@mui/joy/Chip";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import Link from "@mui/joy/Link";
+import Slide from "@mui/material/Slide";
+import Sheet from "@mui/joy/Sheet";
 
 const getNavigation = () => [
   {
@@ -37,14 +39,13 @@ const getNavigation = () => [
   },
 ];
 
-function MobileNavigation({setDrawerOpen}) {
+function MobileNavigation() {
   const navigate = useNavigate();
   return (
     <List size="sm" sx={{"--List-item-radius": "8px", "--List-gap": "4px"}}>
       <ListItem nested>
         <ListSubheader>{t("essaiPossible")}</ListSubheader>
         <List
-          onClick={() => setDrawerOpen(false)}
           aria-labelledby="nav-list-browse"
           sx={{
             "& .JoyListItemButton-root": {p: "8px"},
@@ -114,47 +115,11 @@ const Root = ({children}) => {
   const {t} = useTranslation();
   const path = useLocation().pathname;
   const navigate = useNavigate();
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
-      {drawerOpen && (
-        <Layout.SideDrawer onClose={() => setDrawerOpen(false)}>
-          <MobileNavigation setDrawerOpen={setDrawerOpen} />
-        </Layout.SideDrawer>
-      )}
-      <Layout.Root
-        sx={{
-          ...(drawerOpen && {
-            height: "100vh",
-            overflow: "hidden",
-          }),
-        }}>
-        <Layout.Header>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1.5,
-              cursor: "pointer",
-            }}>
-            {/* Small screens: show menu button */}
-            <IconButton
-              variant="soft"
-              onClick={() => setDrawerOpen(true)}
-              sx={{display: {sm: "none"}}}>
-              <MenuIcon />
-            </IconButton>
-            {/* Big screens: show Platform icon */}
-            <Box
-              onClick={() => navigate("/")}
-              component={"img"}
-              src={TousTesPossiblesLogoBlue}
-              height={{xs: 40, md: 50}}
-            />
-          </Box>
-
+      <Layout.Root>
+        <Layout.Navigation mobileDrawerContent={<MobileNavigation />}>
           {/* Big screens: show search bar, except on /offers page */}
           {path !== "/offers" && (
             <SearchBar
@@ -181,7 +146,7 @@ const Root = ({children}) => {
             <NavButton.LogIn />
             <NavButton.SignUp />
           </Stack>
-        </Layout.Header>
+        </Layout.Navigation>
 
         <Layout.Main sx={{overflow: "hidden"}}>{children ? children : <Outlet />}</Layout.Main>
 

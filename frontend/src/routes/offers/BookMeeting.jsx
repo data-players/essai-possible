@@ -20,7 +20,9 @@ import Grid from "@mui/joy/Grid";
 import Textarea from "@mui/joy/Textarea";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
-import Box from "@mui/joy/Box";
+import Collapse from "@mui/material/Collapse";
+import Sheet from "@mui/joy/Sheet";
+import Slide from "@mui/material/Slide";
 
 export default function BookMeeting() {
   const {t} = useTranslation();
@@ -35,17 +37,14 @@ export default function BookMeeting() {
     return t("intlDate", {val: slot.start});
   });
 
-  function ValidateButton(props) {
-    return (
-      <Button
-        size={"lg"}
-        color="success"
-        onClick={() => setFormStep(formStep + 1)}
-        startDecorator={<CheckIcon />}
-        {...props}
-      />
-    );
-  }
+  const nextStep = () => setFormStep(formStep + 1);
+  const lastStep = () => setFormStep(formStep - 1);
+
+  const StepTitle = ({children}) => (
+    <Typography mt={4} mb={1} level={"h2"} color={"primary"}>
+      {children}
+    </Typography>
+  );
 
   function BackValidationButton(props) {
     return (
@@ -53,7 +52,7 @@ export default function BookMeeting() {
         size={"sm"}
         variant={"soft"}
         color="danger"
-        onClick={() => setFormStep(formStep - 1)}
+        onClick={lastStep}
         startDecorator={<ChevronLeftIcon />}
         {...props}
       />
@@ -67,7 +66,7 @@ export default function BookMeeting() {
         breadcrumbs={[
           {label: t("offer.backToOffers"), to: "/offers"},
           {label: offer.title, to: "./.."},
-          {label: t("offer.meetingSlot"), to: ".", onClick: () => setFormStep(0)},
+          {label: t("offer.bookAMeetingSlot"), to: ".", onClick: () => setFormStep(0)},
           formStep >= 1 && {
             label: t("offer.myInformation"),
             to: ".",
@@ -79,16 +78,15 @@ export default function BookMeeting() {
       <PageContent gap={2}>
         {formStep === 0 && (
           <>
-            <Typography mt={4} level={"h1"} color={"primary"}>
-              {t("offer.bookAMeetingSlot")}
-            </Typography>
+            <StepTitle> {t("offer.bookAMeetingSlot")}</StepTitle>
+
             {slotsByDate ? (
               <>
-                <List sx={{mt: 2}}>
+                <List>
                   {Object.entries(slotsByDate).map(([date, slots]) => (
                     <React.Fragment key={date}>
-                      <ListSubheader sx={{fontSize: "md", mt: 2}}>{date}</ListSubheader>
-                      <ListItem>
+                      <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
+                      <ListItem sx={{mb: 3}}>
                         <RadioChips
                           options={slots.map((slot) => ({
                             label: t("intlTime", {val: slot.start}),
@@ -103,24 +101,33 @@ export default function BookMeeting() {
                   ))}
                 </List>
 
-                <Stack gap={2} my={1}>
-                  <Typography sx={{height: 30}} textColor={"text.tertiary"}>
-                    {selectedMeetingSlot && (
-                      <Trans
-                        i18nKey="offer.youAreAboutToBookAMeetingOnThe"
-                        values={{
-                          dateTime: t("intlDateTime", {
-                            val: sortedSlots.find(
-                              (slot) => slot.start.toString() === selectedMeetingSlot
-                            ).start,
-                          }),
-                        }}
-                      />
-                    )}
-                  </Typography>
-                  <ValidateButton disabled={!selectedMeetingSlot}>
+                <Stack gap={2}>
+                  <Button
+                    size={"lg"}
+                    disabled={!selectedMeetingSlot}
+                    color="success"
+                    onClick={nextStep}
+                    startDecorator={<CheckIcon />}>
                     {t("offer.chooseThisMeetingSlot")}
-                  </ValidateButton>
+                  </Button>
+                  <Sheet>
+                    <Collapse in={selectedMeetingSlot}>
+                      {selectedMeetingSlot && (
+                        <Typography sx={{alignSelf: "center"}} textColor={"text.tertiary"}>
+                          <Trans
+                            i18nKey="offer.youAreAboutToBookAMeetingOnThe"
+                            values={{
+                              dateTime: t("intlDateTime", {
+                                val: sortedSlots.find(
+                                  (slot) => slot.start.toString() === selectedMeetingSlot
+                                ).start,
+                              }),
+                            }}
+                          />
+                        </Typography>
+                      )}
+                    </Collapse>
+                  </Sheet>
                 </Stack>
               </>
             ) : (
@@ -133,47 +140,56 @@ export default function BookMeeting() {
 
         {formStep === 1 && (
           <>
-            <Typography mt={4} level={"h1"} color={"primary"}>
-              {t("offer.myInformation")}
-            </Typography>
+            <StepTitle>{t("offer.myInformation")}</StepTitle>
 
-            <Box>
-              <Grid container columnSpacing={4} rowSpacing={3} mx={-1.5} my={2}>
-                <Grid lg={6} xs={12}>
-                  <TextField label="Prénom" placeholder="prénom" name="firstName" />
-                </Grid>
-                <Grid lg={6} xs={12}>
-                  <TextField label="Nom" name="lastName" placeholder="nom" />
-                </Grid>
-                <Grid lg={6} xs={12}>
-                  <TextField label="Email" name="email" placeholder="email@monemail.com" />
-                </Grid>
-                <Grid lg={6} xs={12}>
-                  <TextField
-                    label="Numéro de téléphone"
-                    name="phone"
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                </Grid>
-                <Grid xs={12}>
-                  <FormControl>
-                    <FormLabel htmlFor="comments">Commentaires particuliers</FormLabel>
-                    <Textarea
-                      name="comments"
-                      placeholder="commentaires, remarques pour l'entreprise..."
-                      minRows={3}
-                    />
-                  </FormControl>
-                </Grid>
+            <Grid container columnSpacing={4} rowSpacing={3}>
+              <Grid lg={6} xs={12}>
+                <TextField label="Prénom" placeholder="prénom" name="firstName" />
               </Grid>
-            </Box>
-
-            <Stack direction={{xs: "column-reverse", sm: "row"}} rowGap={2} columnGap={3}>
-              <BackValidationButton onClick={() => setFormStep(0)} sx={{flexGrow: 0}}>
-                {t("goBack")}
-              </BackValidationButton>
-              <ValidateButton sx={{flexGrow: 1}}>{t("offer.validateInformation")}</ValidateButton>
-            </Stack>
+              <Grid lg={6} xs={12}>
+                <TextField label="Nom" name="lastName" placeholder="nom" />
+              </Grid>
+              <Grid lg={6} xs={12}>
+                <TextField label="Email" name="email" placeholder="email@monemail.com" />
+              </Grid>
+              <Grid lg={6} xs={12}>
+                <TextField
+                  label="Numéro de téléphone"
+                  name="phone"
+                  placeholder="+33 6 12 34 56 78"
+                />
+              </Grid>
+              <Grid xs={12}>
+                <FormControl>
+                  <FormLabel htmlFor="comments">Commentaires particuliers</FormLabel>
+                  <Textarea
+                    name="comments"
+                    placeholder="commentaires, remarques pour l'entreprise..."
+                    minRows={3}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid xs={12}>
+                <Stack
+                  direction={{xs: "column-reverse", sm: "row"}}
+                  rowGap={2}
+                  columnGap={3}
+                  mt={2}>
+                  <BackValidationButton onClick={() => setFormStep(0)} sx={{flexGrow: 0}}>
+                    {t("goBack")}
+                  </BackValidationButton>
+                  <Button
+                    size={"lg"}
+                    disabled={!selectedMeetingSlot}
+                    color="success"
+                    onClick={nextStep}
+                    sx={{flexGrow: 1}}
+                    startDecorator={<CheckIcon />}>
+                    {t("offer.chooseThisMeetingSlot")}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Grid>
           </>
         )}
       </PageContent>

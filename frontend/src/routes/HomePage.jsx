@@ -82,7 +82,7 @@ export default function HomePage() {
                 <Box
                   component={"iframe"}
                   width="100%"
-                  sx={{aspectRatio: "16 / 9", borderRadius: "md", borderWidth: 0, boxShadow: "md"}}
+                  sx={{aspectRatio: "16 / 9", borderRadius: 4, borderWidth: 0, boxShadow: "md"}}
                   src="https://www.youtube-nocookie.com/embed/m4uD5NxzYoA"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen></Box>

@@ -174,9 +174,14 @@ export default function Offers() {
         <Container mx={2}>
           <Stack alignItems={"center"} gap={4}>
             <Typography level="h1">{t("offer.theOffers")}</Typography>
+            {/* Autofocus on PC, but not on tablet and mobile (because it will pop up the keyboard and it's annoying) */}
             <SearchBar
-              sx={{width: "500px", maxWidth: "100%"}}
-              autoFocus={{xs: false, md: true}}
+              sx={{width: "500px", maxWidth: "100%", display: {xs: "none", lg: "flex"}}}
+              autoFocus
+              onChange={(event) => setSearchText(event.target.value)}
+            />
+            <SearchBar
+              sx={{width: "500px", maxWidth: "100%", display: {xs: "flex", lg: "none"}}}
               onChange={(event) => setSearchText(event.target.value)}
             />
           </Stack>
