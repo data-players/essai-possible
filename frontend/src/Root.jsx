@@ -133,7 +133,7 @@ const Root = ({children}) => {
         }}
       />
       <Layout.Root>
-        <Layout.Navigation mobileDrawerContent={<MobileNavigation />}>
+        <Layout.Navigation mobileDrawerContent={MobileNavigation}>
           {/* Big screens: show search bar, except on /offers page */}
           {path !== "/offers" && (
             <SearchBar

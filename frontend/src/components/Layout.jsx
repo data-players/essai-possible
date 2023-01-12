@@ -25,7 +25,7 @@ function Root(props) {
   );
 }
 
-function Navigation(props) {
+function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ function Navigation(props) {
               height: "100%",
               p: 2,
             }}>
-            {props.mobileDrawerContent}
+            <MobileDrawerContent />
           </Sheet>
         </Box>
       </Slide>
@@ -171,7 +171,7 @@ function SideDrawer({onClose, ...props}) {
   );
 }
 
-export function HeroBanner(props) {
+export function HeroBanner({noBackground = false, ...props}) {
   const Component = props.component || Sheet;
   return (
     <Component
@@ -181,7 +181,7 @@ export function HeroBanner(props) {
       {...props}
       sx={[{py: 8}, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
       {/* Image background */}
-      {!props.noBackground && (
+      {!noBackground && (
         <>
           <Box
             sx={{
