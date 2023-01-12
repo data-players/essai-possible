@@ -1,6 +1,12 @@
 import React from "react";
 import {useTranslation} from "react-i18next";
-import {Link as ReactRouterLink, Outlet, useLocation, useNavigate} from "react-router-dom";
+import {
+  Link as ReactRouterLink,
+  Outlet,
+  ScrollRestoration,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import IconButton from "@mui/joy/IconButton";
 import Input from "@mui/joy/Input";
 import List from "@mui/joy/List";
@@ -115,6 +121,17 @@ const Root = ({children}) => {
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
+      <ScrollRestoration
+        getKey={(location) => {
+          // https://reactrouter.com/en/main/components/scroll-restoration#getkey
+          const noScrollResetPaths = ["/offers"];
+          return noScrollResetPaths.includes(location.pathname)
+            ? // custom paths: restore by pathname
+              location.pathname
+            : // everything else: restore by location like the browser does natively
+              location.key;
+        }}
+      />
       <Layout.Root>
         <Layout.Navigation mobileDrawerContent={<MobileNavigation />}>
           {/* Big screens: show search bar, except on /offers page */}
