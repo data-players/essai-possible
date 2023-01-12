@@ -22,7 +22,6 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Collapse from "@mui/material/Collapse";
 import Sheet from "@mui/joy/Sheet";
-import Slide from "@mui/material/Slide";
 
 export default function BookMeeting() {
   const {t} = useTranslation();
@@ -62,6 +61,7 @@ export default function BookMeeting() {
   return (
     <>
       <OfferBanner
+        pageTitle={t("offer.bookAMeetingSlot", {context: "short"})}
         offer={offer}
         breadcrumbs={[
           {label: t("offer.backToOffers"), to: "/offers"},
@@ -78,7 +78,7 @@ export default function BookMeeting() {
       <PageContent gap={2}>
         {formStep === 0 && (
           <>
-            <StepTitle> {t("offer.bookAMeetingSlot")}</StepTitle>
+            <StepTitle> {t("offer.chooseYourMeetingSlot")}</StepTitle>
 
             {slotsByDate ? (
               <>

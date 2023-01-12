@@ -1,4 +1,4 @@
-import {useLoaderData, useNavigate} from "react-router-dom";
+import {Link as ReactRouterLink, useLoaderData} from "react-router-dom";
 import {loremIpsum} from "lorem-ipsum";
 import {HeroBanner} from "../../components/Layout.jsx";
 import Card from "@mui/joy/Card";
@@ -70,7 +70,8 @@ export const offers = [
   },
   {
     id: "devcooperatifback",
-    title: "Dev Coopératif back",
+    title:
+      "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
     company: "P&V Group",
     location: "Paris",
     sectors: ["Industriel"],
@@ -123,18 +124,18 @@ function OfferListItem({
   slots,
 }) {
   const {t} = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <ListItem>
       <Card
-        onClick={() => navigate(id)}
+        component={ReactRouterLink}
+        to={id}
         variant={"soft"}
         size={"lg"}
         sx={{
           width: "100%",
+          textDecoration: "none",
           my: 1,
-          cursor: "pointer",
           ":hover": {boxShadow: "md"},
         }}>
         <Grid container columnSpacing={4} rowSpacing={2}>
@@ -229,13 +230,6 @@ export default function Offers() {
                     <FormControl>
                       <Typography sx={{color: "neutral.solidBg"}}>Mots clés</Typography>
                       <SearchBar
-                        sx={{display: {xs: "none", lg: "flex"}}}
-                        autoFocus
-                        size={"lg"}
-                        onChange={(event) => setSearchText(event.target.value)}
-                      />
-                      <SearchBar
-                        sx={{display: {xs: "flex", lg: "none"}}}
                         size={"lg"}
                         onChange={(event) => setSearchText(event.target.value)}
                       />

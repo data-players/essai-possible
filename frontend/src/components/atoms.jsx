@@ -63,25 +63,33 @@ export function Breadcrumbs({breadcrumbs}) {
     <Container>
       <MuiBreadcrumbs
         sx={{my: 1, display: {xs: "none", sm: "flex"}}}
-        separator={<ChevronRightIcon sx={{color: "text.secondary"}} />}
+        separator={<ChevronRightIcon color={"primary"} />}
         aria-label="breadcrumbs">
         <Chip
+          component={ReactRouterLink}
           startDecorator={<ChevronLeftIcon />}
           variant={"soft"}
-          component={ReactRouterLink}
           to={breadcrumbs[0].to}>
           {breadcrumbs[0].label}
         </Chip>
         {breadcrumbs
           .slice(1)
           .filter((el) => !!el)
-          .map(({label, to, onClick}) => (
+          .map(({label, to, onClick}, index) => (
             <Typography
               key={label}
               component={ReactRouterLink}
               to={to}
               onClick={onClick}
-              sx={{textDecoration: "none", cursor: onClick && "pointer"}}>
+              sx={{
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                maxWidth: 300,
+                color: index > 0 && "text.tertiary",
+                cursor: onClick && "pointer",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}>
               {label}
             </Typography>
           ))}

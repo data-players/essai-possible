@@ -36,7 +36,8 @@
     "xMeetingSlotsAvailable_other": "{{count}} rendez-vous disponibles.",
     "validateInformation": "Valider mes informations",
     "myInformation": "Mes informations",
-    "proposeAnOffer": "Publier une offre"
+    "proposeAnOffer": "Publier une offre",
+    "chooseYourMeetingSlot": "Choisir mon créneau"
   },
   "goBack": "Retour",
   "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères.",
