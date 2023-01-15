@@ -1,8 +1,6 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, isAnyOf} from "@reduxjs/toolkit";
 import api from "./api.js";
 import {user, userToken} from "./auth-slice-data.js";
-import {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
 
 /**
  * AUTHENTICATION SLICE
@@ -15,23 +13,41 @@ const slice = createSlice({
     token: localStorage.getItem("token") || null,
   },
   reducers: {
+    setCredentials: (state, {payload: {user, token}}) => {
+      state.user = user;
+      state.token = token;
+      localStorage.setItem("token", token); // Also persist token to local storage
+    },
     setUser: (state, {payload: user}) => {
       state.user = user;
-    },
-    setToken: (state, {payload: token}) => {
-      state.token = token;
-      localStorage.setItem("token", token); // Also persist in local storage
     },
     logOut: () => {
       localStorage.removeItem("token");
       return {user: null, token: null};
     },
   },
+  extraReducers: (builder) => {
+    builder
+      // Set user and token after logIn and signup mutations
+      .addMatcher(
+        isAnyOf(api.endpoints.logIn.matchFulfilled, api.endpoints.signUp.matchFulfilled),
+        slice.caseReducers.setCredentials
+      )
+      // Set user after fetch query
+      .addMatcher(
+        isAnyOf(api.endpoints.fetchUser.matchFulfilled, api.endpoints.updateUser.matchFulfilled),
+        slice.caseReducers.setUser
+      )
+      // If there is any problem when fetching the user, log out the user
+      .addMatcher(api.endpoints.fetchUser.matchRejected, slice.caseReducers.logOut);
+  },
 });
 
 export const authActions = slice.actions;
 export default slice.reducer;
-export const selectCurrentUser = () => (state) => state.auth.user;
+
+export const selectCurrentUser = (state) => state.auth.user;
+export const selectAuthTokenExists = (state) => !!state.auth.token;
 
 /**
  * AUTHENTICATION API ENDPOINTS
@@ -104,32 +120,4 @@ api.injectEndpoints({
   }),
 });
 
-api.enhanceEndpoints({
-  addTagTypes: ["User"],
-});
-
-export const {useSignUpMutation, useLogInMutation, useFetchUserQuery} = api;
-
-/**
- * AUTHENTICATION UTILS
- */
-
-export function useAutoLogin() {
-  const dispatch = useDispatch();
-  const [autoConnectDone, setAutoConnectDone] = useState(false);
-
-  // Fetch the user. If the token is set, a user is given, else there is an error.
-  const {
-    data: fetchedUser,
-    isLoading: userFetchLoading,
-    error: userFetchError,
-  } = useFetchUserQuery();
-
-  // When the user is fetched, save it to the Redux store
-  useEffect(() => {
-    if (!autoConnectDone && !userFetchLoading && !userFetchError && fetchedUser) {
-      dispatch(authActions.setUser(fetchedUser));
-      setAutoConnectDone(true);
-    }
-  }, [autoConnectDone, dispatch, fetchedUser, userFetchError, userFetchLoading]);
-}
+export const {useSignUpMutation, useLogInMutation, useLazyFetchUserQuery} = api;

@@ -11,7 +11,7 @@ import {useTranslation} from "react-i18next";
 
 export function AuthCard() {
   const {t} = useTranslation();
-  const currentUser = useSelector(selectCurrentUser());
+  const currentUser = useSelector(selectCurrentUser);
   const [openedCard, setOpenedCard] = useState();
 
   const Content = ({connectionMode}) => {

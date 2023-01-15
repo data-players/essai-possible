@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import {
   Link as ReactRouterLink,
@@ -25,7 +25,7 @@ import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import {useFetchOffersQuery} from "./app/api.js";
-import {selectCurrentUser, useAutoLogin} from "./app/auth-slice.js";
+import {selectAuthTokenExists, selectCurrentUser, useLazyFetchUserQuery} from "./app/auth-slice.js";
 import {useSelector} from "react-redux";
 
 const getNavigation = () => [
@@ -41,8 +41,10 @@ const getNavigation = () => [
   },
 ];
 
-function MobileNavigation() {
+function MobileDrawerContent() {
   const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
+
   return (
     <List size="sm" sx={{"--List-item-radius": "8px", "--List-gap": "4px"}}>
       <ListItem nested>
@@ -66,11 +68,13 @@ function MobileNavigation() {
             </ListItem>
           ))}
           <ListItem>
-            <AuthButton.LogIn />
+            <AuthButton.LogIn currentUser={currentUser} />
           </ListItem>
-          <ListItem>
-            <AuthButton.SignUp />
-          </ListItem>
+          {!currentUser && (
+            <ListItem>
+              <AuthButton.SignUp />
+            </ListItem>
+          )}
         </List>
       </ListItem>
     </List>
@@ -96,13 +100,17 @@ const Root = ({children}) => {
   const navigate = useNavigate();
 
   // When we land on the website, prepare the data:
-  // - auto connect the user if the user was already logged in
   // - prefetch the offers list directly so it's ready to be displayed.
-  useAutoLogin();
   useFetchOffersQuery();
+  // - prefetch the user if the user was already logged in
+  const authTokenExists = useSelector(selectAuthTokenExists);
+  const [fetchUser] = useLazyFetchUserQuery();
+  useEffect(() => {
+    authTokenExists && fetchUser();
+  }, [authTokenExists, fetchUser]);
 
   const path = useLocation().pathname;
-  const currentUser = useSelector(selectCurrentUser());
+  const currentUser = useSelector(selectCurrentUser);
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
@@ -118,7 +126,7 @@ const Root = ({children}) => {
         }}
       />
       <Layout.Root>
-        <Layout.Navigation mobileDrawerContent={MobileNavigation}>
+        <Layout.Navigation mobileDrawerContent={MobileDrawerContent}>
           {/* Big screens: show search bar, except on /offers page */}
           {path !== "/offers" && (
             <SearchBar
@@ -139,11 +147,14 @@ const Root = ({children}) => {
           </IconButton>
 
           {/* Small screens: only icon button to log in */}
-          <AuthButton.LogInShort sx={{display: {xs: "block", sm: "none"}}} />
+          <AuthButton.LogInShort
+            currentUser={currentUser}
+            sx={{display: {xs: "block", sm: "none"}}}
+          />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
             <AuthButton.LogIn currentUser={currentUser} />
-            {!currentUser && <AuthButton.SignUp />}
+            {!currentUser && !authTokenExists && <AuthButton.SignUp />}
           </Stack>
         </Layout.Navigation>
 

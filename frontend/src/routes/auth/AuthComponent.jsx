@@ -1,27 +1,18 @@
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import * as React from "react";
 import {useFormik} from "formik";
 
-import {
-  authActions,
-  selectCurrentUser,
-  useLogInMutation,
-  useSignUpMutation,
-} from "../../app/auth-slice.js";
+import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
 import Grid from "@mui/joy/Grid";
 import TextField from "@mui/joy/TextField";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 
 export const AuthComponent = ({mode, redirect = false}) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const currentUser = useSelector(selectCurrentUser());
-
-  // Redirect user to home page if it is already connected
-  if (redirect && currentUser) navigate("/");
+  const currentUser = useSelector(selectCurrentUser);
 
   const isLoginPage = mode === "logIn";
 
@@ -43,14 +34,22 @@ export const AuthComponent = ({mode, redirect = false}) => {
     onSubmit: async (values) => {
       try {
         const mutation = isLoginPage ? logIn : signUp;
-        const {token, user} = await mutation(values).unwrap();
-        dispatch(authActions.setUser(user));
-        dispatch(authActions.setToken(token));
+        await mutation(values).unwrap();
+        // Being that the result is handled in extraReducers in authSlice,
+        // we know that we're authenticated after this, so the user
+        // and token will be present in the store
       } catch (err) {
+        // TODO donner du feedback si ça marche pas
         console.error(err);
       }
     },
   });
+
+  // Redirect user to home page if it is already connected
+  if (redirect && currentUser) {
+    navigate("/");
+    return;
+  }
 
   return (
     // <PageContent>
