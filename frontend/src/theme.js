@@ -1,4 +1,4 @@
-import {extendTheme} from "./utils/mui";
+import {extendTheme} from "./app/mui";
 
 export default extendTheme({
   colorSchemes: {

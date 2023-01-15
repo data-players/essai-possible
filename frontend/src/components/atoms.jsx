@@ -9,11 +9,13 @@ import {Link as ReactRouterLink} from "react-router-dom";
 import Typography from "@mui/joy/Typography";
 import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
+import "./spinner.css";
+import React from "react";
 
 export function BasicList({elements, component = "ul"}) {
   return (
     <Box component={component} sx={{mt: 1, ml: -1}}>
-      {elements.map((el) => (
+      {elements?.map((el) => (
         <Box component={"li"} key={el}>
           {el}
         </Box>
@@ -77,7 +79,7 @@ export function Breadcrumbs({breadcrumbs}) {
           .filter((el) => !!el)
           .map(({label, to, onClick}, index) => (
             <Typography
-              key={label}
+              key={index}
               component={ReactRouterLink}
               to={to}
               onClick={onClick}
@@ -95,5 +97,13 @@ export function Breadcrumbs({breadcrumbs}) {
           ))}
       </MuiBreadcrumbs>
     </Container>
+  );
+}
+
+export function LoadingSpinner(props) {
+  return (
+    <Stack justifyContent={"center"} alignItems={"center"} minHeight={300} {...props}>
+      <div className="lds-dual-ring" />
+    </Stack>
   );
 }

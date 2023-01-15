@@ -2,7 +2,7 @@
   "essaiPossible": "Essai Possible",
   "nav": {
     "logIn": "Connexion",
-    "signIn": "Inscription",
+    "signUp": "Inscription",
     "hiringManagersSpace": "Espace recruteurs"
   },
   "logo": "LOGO",
@@ -17,7 +17,6 @@
     "sector": "Secteur",
     "sector_other": "Secteurs",
     "goal": "Objectif",
-    "goal_other": "Objectifs",
     "startDate": "Date de début",
     "theOffers": "Les offres",
     "howToApply": "Comment candidater ?",
@@ -48,7 +47,7 @@
     "whatIfWeProposeYouAnotherWayOfPassingJobInterviews": "Et si vous passiez vos entretiens d'embauche autrement ? \uD83D\uDCA1",
     "videoExplanation": "L'explication en vidéo !",
     "youreACompanyAndYouWantToProposeAnOffer": "Vous êtes une entreprise et vous souhaitez déposer une offre ?",
-    "dontHesitateAndFillTheInformation": "Vous n'arrivez pas à recruter et êtes prêt pour une nouvelle approche ? Sélectionnez sans CV mais après avoir testé la personne sur le poste pendant 1 semaine !",
+    "dontHesitateAndFillTheInformation": "Vous n'arrivez pas à recruter et êtes prêt pour une nouvelle approche ? Sélectionnez sans CV mais après avoir testé la personne sur le offere pendant 1 semaine !",
     "register": "Inscrivez votre entreprise",
     "ourImplantations": "Nos implantations",
     "implantationsExplanation": "Nous lançons officiellement cette plateforme sur le département du Nord et à Nancy !\n\n",
@@ -57,5 +56,9 @@
   "footer": {
     "projectFundedBy": "Un projet fondé par",
     "contact": "Contact"
+  },
+  "error": {
+    "subtitle": "Un problème est survenu.",
+    "title": "Oups !"
   }
 }

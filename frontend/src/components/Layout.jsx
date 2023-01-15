@@ -10,11 +10,15 @@ import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
 import TousTesPossiblesLogoBlue from "../assets/tous-tes-possibles-logo-blue.svg";
-import {useNavigate} from "react-router-dom";
+import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import {Fade} from "@mui/material";
 import Container from "@mui/joy/Container";
 import Link from "@mui/joy/Link";
+import Button from "@mui/joy/Button";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded.js";
+import {t} from "i18next";
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
 
 function Root(props) {
   return (
@@ -219,13 +223,43 @@ export function HeroBanner({noBackground = false, ...props}) {
   );
 }
 
-export function PageContent(props) {
+export function PageContent({maxWidth, ...props}) {
   return (
-    <Container>
+    <Container maxWidth={maxWidth}>
       <Stack my={4} mb={6} mt={2} mx={2} {...props} />
     </Container>
   );
 }
+
+export const AuthButton = {
+  LogIn: ({sx, currentUser}) => (
+    <Button
+      component={ReactRouterLink}
+      sx={sx}
+      to={currentUser ? "/account" : "/login"}
+      startDecorator={<PersonRoundedIcon />}>
+      {currentUser ? currentUser.firstName : t("nav.logIn")}
+    </Button>
+  ),
+  LogInShort: ({sx, currentUser}) => (
+    <ReactRouterLink to={currentUser ? "/account" : "/login"}>
+      <IconButton sx={sx} variant={"solid"}>
+        <PersonRoundedIcon />
+      </IconButton>
+    </ReactRouterLink>
+  ),
+  SignUp: ({sx}) => (
+    <Button
+      component={ReactRouterLink}
+      to={"/signup"}
+      variant="soft"
+      color="neutral"
+      sx={sx}
+      startDecorator={<CreateRoundedIcon />}>
+      {t("nav.signUp")}
+    </Button>
+  ),
+};
 
 const Layout = {
   Root,

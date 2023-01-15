@@ -1,5 +1,4 @@
-import {Link as ReactRouterLink, useLoaderData} from "react-router-dom";
-import {loremIpsum} from "lorem-ipsum";
+import {Link as ReactRouterLink} from "react-router-dom";
 import {HeroBanner} from "../../components/Layout.jsx";
 import Card from "@mui/joy/Card";
 import Container from "@mui/joy/Container";
@@ -9,124 +8,24 @@ import ListItem from "@mui/joy/ListItem";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
-import {SectorsGoalsDatePills} from "./Offer";
 import {SearchBar} from "../../Root";
 import React, {useState} from "react";
-import {normalize} from "../../utils/utils.js";
+import {normalize} from "../../app/utils.js";
 import FormControl from "@mui/joy/FormControl";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import Chip from "@mui/joy/Chip";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
+import {useFetchOffersQuery, usePrefetch} from "../../app/api.js";
+import {LoadingSpinner} from "../../components/atoms.jsx";
+import {OfferInfoPills} from "./OfferInfoPills.jsx";
 
-export const offers = [
-  {
-    id: "titredeloffre",
-    title: "Titre de l'offre",
-    company: "P&V Group",
-    location: "Paris",
-    sectors: [
-      "Activités de services administratifs et de soutien",
-      "Santé humaine et action sociale",
-    ],
-    goals: ["Recrutement"],
-    startDate: new Date(2023, 3, 25),
-    description: loremIpsum({count: 2, units: "paragraph"}),
-    tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {start: new Date(2023, 3, 23, 16, 30), duration: 30},
-      {start: new Date(2023, 3, 23, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 24, 15, 30), duration: 30},
-      {start: new Date(2023, 3, 24, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 25, 16, 30), duration: 30},
-      {start: new Date(2023, 3, 23, 15, 30), duration: 30},
-    ],
-  },
-  {
-    id: "comptable",
-    title: "Comptable",
-    company: "TiBillet",
-    location: "La Réunion",
-    sectors: ["Événementiel", "ESS"],
-    goals: ["Recrutement"],
-    startDate: new Date(2023, 2, 4),
-    description: loremIpsum({count: 2, units: "paragraph"}),
-    tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-  },
-  {
-    id: "devcooperatiffront",
-    title: "Dev Coopératif front",
-    company: "TiBillet",
-    location: "La Réunion",
-    sectors: ["Événementiel", "ESS"],
-    goals: ["Recrutement"],
-    startDate: new Date(2023, 2, 4),
-    description: loremIpsum({count: 2, units: "paragraph"}),
-    tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [{start: new Date(2023, 3, 23, 15, 30), duration: 30}],
-  },
-  {
-    id: "devcooperatifback",
-    title:
-      "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
-    company: "P&V Group",
-    location: "Paris",
-    sectors: ["Industriel"],
-    goals: ["Recrutement"],
-    startDate: new Date(2023, 2, 4),
-    description: loremIpsum({count: 2, units: "paragraph"}),
-    tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {start: new Date(2023, 3, 23, 15, 30), duration: 30},
-      {start: new Date(2023, 3, 23, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 24, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 25, 16, 30), duration: 30},
-    ],
-  },
-  {
-    id: "consultantenergiesrenouvelables",
-    title: "Consultant énergies renouvelables",
-    company: "Enercoop",
-    location: "Tours",
-    sectors: ["Environment", "ESS"],
-    goals: ["Recrutement", "Discussion"],
-    startDate: new Date(2023, 2, 4),
-    description: loremIpsum({count: 2, units: "paragraph"}),
-    tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {start: new Date(2023, 3, 23, 15, 30), duration: 30},
-      {start: new Date(2023, 3, 23, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 24, 15, 30), duration: 30},
-      {start: new Date(2023, 3, 24, 16, 0), duration: 30},
-      {start: new Date(2023, 3, 25, 16, 30), duration: 30},
-    ],
-  },
-];
-
-export async function loader() {
-  return {offers};
-}
-
-function OfferListItem({
-  id,
-  title,
-  company,
-  sectors,
-  goals,
-  startDate,
-  description,
-  location,
-  slots,
-}) {
+function OfferListItem({id, title, company, goal, startDate, description, location, slots}) {
   const {t} = useTranslation();
+  const prefetchOffer = usePrefetch("fetchOffer");
 
   return (
-    <ListItem>
+    <ListItem onMouseEnter={() => prefetchOffer(id)}>
       <Card
         component={ReactRouterLink}
         to={id}
@@ -145,9 +44,9 @@ function OfferListItem({
                 {title}
               </Typography>
 
-              <Typography level="h4">{company}</Typography>
+              <Typography level="h4">{company.name}</Typography>
 
-              <SectorsGoalsDatePills sectors={sectors} goals={goals} startDate={startDate} />
+              <OfferInfoPills sectors={company.sectors} goal={goal} startDate={startDate} />
 
               <Stack
                 gap={2}
@@ -190,26 +89,36 @@ function OfferListItem({
   );
 }
 
-export default function Offers() {
+export default function PageOffersList() {
+  const {t} = useTranslation();
+
+  const {data: offers = [], isLoading} = useFetchOffersQuery();
+
+  // Search query stuff
   const [searchText, setSearchText] = useState("");
   const [locationText, setLocationText] = useState("");
   const [radius, setRadius] = useState("10");
 
-  const {t} = useTranslation();
-  const {offers} = useLoaderData();
-
-  const searchItems = (item, fieldsToSearch, searchText) =>
-    fieldsToSearch.find((field) => normalize(item[field]).includes(normalize(searchText)));
+  const searchFields = (fields, searchText) =>
+    fields.find((field) => normalize(field).includes(normalize(searchText)));
 
   function filterOffers(offers) {
     const hasSearchText = searchText !== "";
     const hasLocalizationText = locationText !== "";
     return hasSearchText || hasLocalizationText
-      ? offers.filter(
-          (item) =>
-            (!hasSearchText || searchItems(item, ["title", "company"], searchText)) &&
-            (!hasLocalizationText || searchItems(item, ["location"], locationText))
-        )
+      ? offers.filter((item) => {
+          const {
+            title,
+            company: {name: companyName},
+            description,
+            location,
+          } = item;
+
+          return (
+            (!hasSearchText || searchFields([title, companyName, description], searchText)) &&
+            (!hasLocalizationText || searchFields([location], locationText))
+          );
+        })
       : offers;
   }
   const filteredOffers = filterOffers(offers);
@@ -271,18 +180,25 @@ export default function Offers() {
           </Grid>
         </Container>
       </HeroBanner>
+
       <Container>
-        <Stack my={4} alignItems={"center"}>
-          {filteredOffers.length > 0 ? (
-            <List>
-              {filteredOffers.map((offer) => (
-                <OfferListItem {...offer} key={offer.id} />
-              ))}
-            </List>
-          ) : (
-            t("oopsNoResults")
-          )}
-        </Stack>
+        {isLoading ? (
+          <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
+            <LoadingSpinner />
+          </Stack>
+        ) : (
+          <Stack my={4} alignItems={"center"}>
+            {filteredOffers.length > 0 ? (
+              <List>
+                {filteredOffers.map((offer) => (
+                  <OfferListItem {...offer} key={offer.id} />
+                ))}
+              </List>
+            ) : (
+              t("oopsNoResults")
+            )}
+          </Stack>
+        )}
       </Container>
     </>
   );

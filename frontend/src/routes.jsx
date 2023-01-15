@@ -1,11 +1,13 @@
 import {createBrowserRouter} from "react-router-dom";
 import React from "react";
-import Offers, {loader as offersLoader} from "./routes/offers/Offers.jsx";
+import PageOffersList from "./routes/offers/PageOffersList.jsx";
 import Root from "./Root.jsx";
-import ErrorPage from "./routes/errorPage";
-import Offer, {loader as offerLoader} from "./routes/offers/Offer.jsx";
+import ErrorPage from "./routes/ErrorPage.jsx";
+import PageOffer from "./routes/offers/PageOffer.jsx";
 import HomePage from "./routes/HomePage.jsx";
-import BookMeeting from "./routes/offers/BookMeeting";
+import PageBookMeeting from "./routes/offers/PageBookMeeting.jsx";
+import UserAccount from "./routes/auth/UserAccount.jsx";
+import {AuthComponent} from "./routes/auth/AuthComponent.jsx";
 
 export default createBrowserRouter([
   {
@@ -23,18 +25,27 @@ export default createBrowserRouter([
       },
       {
         path: "offers",
-        loader: offersLoader,
-        element: <Offers />,
+        element: <PageOffersList />,
       },
       {
         path: "offers/:id",
-        loader: offerLoader,
-        element: <Offer />,
+        element: <PageOffer />,
       },
       {
         path: "offers/:id/book",
-        loader: offerLoader,
-        element: <BookMeeting />,
+        element: <PageBookMeeting />,
+      },
+      {
+        path: "account",
+        element: <UserAccount />,
+      },
+      {
+        path: "login",
+        element: <AuthComponent mode={"logIn"} redirect />,
+      },
+      {
+        path: "signup",
+        element: <AuthComponent mode={"signUp"} redirect />,
       },
     ],
   },

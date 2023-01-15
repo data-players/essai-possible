@@ -18,15 +18,15 @@ import ListSubheader from "@mui/joy/ListSubheader";
 import Typography from "@mui/joy/Typography";
 import AssignmentIndRoundedIcon from "@mui/icons-material/AssignmentIndRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import Layout from "./components/Layout.jsx";
+import Layout, {AuthButton} from "./components/Layout.jsx";
 import Box from "@mui/joy/Box";
-import Button from "@mui/joy/Button";
 import {t} from "i18next";
 import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import Link from "@mui/joy/Link";
+import {useFetchOffersQuery} from "./app/api.js";
+import {selectCurrentUser, useAutoLogin} from "./app/auth-slice.js";
+import {useSelector} from "react-redux";
 
 const getNavigation = () => [
   {
@@ -66,10 +66,10 @@ function MobileNavigation() {
             </ListItem>
           ))}
           <ListItem>
-            <NavButton.LogIn />
+            <AuthButton.LogIn />
           </ListItem>
           <ListItem>
-            <NavButton.SignUp />
+            <AuthButton.SignUp />
           </ListItem>
         </List>
       </ListItem>
@@ -91,33 +91,18 @@ export function SearchBar({sx, ...props}) {
   );
 }
 
-const NavButton = {
-  LogIn: ({sx, onClick}) => (
-    <Button sx={sx} onClick={onClick} startDecorator={<PersonRoundedIcon />}>
-      {t("nav.logIn")}
-    </Button>
-  ),
-  LogInShort: ({sx, onClick}) => (
-    <IconButton sx={sx} variant={"solid"} onClick={onClick}>
-      <PersonRoundedIcon />
-    </IconButton>
-  ),
-  SignUp: ({sx, onClick}) => (
-    <Button
-      variant="soft"
-      color="neutral"
-      sx={sx}
-      onClick={onClick}
-      startDecorator={<CreateRoundedIcon />}>
-      {t("nav.signIn")}
-    </Button>
-  ),
-};
-
 const Root = ({children}) => {
   const {t} = useTranslation();
-  const path = useLocation().pathname;
   const navigate = useNavigate();
+
+  // When we land on the website, prepare the data:
+  // - auto connect the user if the user was already logged in
+  // - prefetch the offers list directly so it's ready to be displayed.
+  useAutoLogin();
+  useFetchOffersQuery();
+
+  const path = useLocation().pathname;
+  const currentUser = useSelector(selectCurrentUser());
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
@@ -154,11 +139,11 @@ const Root = ({children}) => {
           </IconButton>
 
           {/* Small screens: only icon button to log in */}
-          <NavButton.LogInShort sx={{display: {xs: "block", sm: "none"}}} />
+          <AuthButton.LogInShort sx={{display: {xs: "block", sm: "none"}}} />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
-            <NavButton.LogIn />
-            <NavButton.SignUp />
+            <AuthButton.LogIn currentUser={currentUser} />
+            {!currentUser && <AuthButton.SignUp />}
           </Stack>
         </Layout.Navigation>
 
