@@ -122,7 +122,7 @@ const Root = ({children}) => {
                 display: {xs: "none", sm: "flex"},
                 flexBasis: {sm: "200px", md: "300px", lg: "500px"},
               }}
-              onClick={() => navigate("offers")}
+              onClick={() => navigate("/offers")}
             />
           )}
           {/* Small screens: show search icon */}
@@ -130,7 +130,7 @@ const Root = ({children}) => {
             variant="soft"
             color="neutral"
             sx={{display: {sm: "none"}, ml: "auto"}}
-            onClick={() => navigate("offers")}>
+            onClick={() => navigate("/offers")}>
             <SearchRoundedIcon color="primary" />
           </IconButton>
 
