@@ -1,10 +1,5 @@
 import {loremIpsum} from "lorem-ipsum";
-import dayjs from "dayjs";
-
-const dateTimeISOString = (date) => dayjs(date, "YYYY-M-DD HH:m").toISOString();
-const dateISOString = (date) => dayjs(date, "YYYY-M-DD").toISOString();
-const omit = (keys, obj) =>
-  Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)));
+import {dateISOString, dateTimeISOString, omit} from "../../app/mockUtils.js";
 
 const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
 const sectorsOptions = [
@@ -46,12 +41,12 @@ export const fullOffers = [
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
     slots: [
-      {start: dateTimeISOString("2023-3-23 16:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
+      {id: 1, start: dateTimeISOString("2023-3-23 16:30"), duration: 30},
+      {id: 2, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
+      {id: 3, start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
+      {id: 4, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
+      {id: 5, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
+      {id: 6, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
     ],
   },
   {
@@ -104,10 +99,10 @@ export const fullOffers = [
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
     slots: [
-      {start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
+      {id: 7, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
+      {id: 8, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
+      {id: 9, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
+      {id: 10, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
     ],
   },
   {
@@ -126,11 +121,11 @@ export const fullOffers = [
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
     slots: [
-      {start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
-      {start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
+      {id: 11, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
+      {id: 12, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
+      {id: 13, start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
+      {id: 14, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
+      {id: 15, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
     ],
   },
 ];

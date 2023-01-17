@@ -11,6 +11,11 @@ import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
 import "./spinner.css";
 import React from "react";
+import {useFormik} from "formik";
+import {useTranslation} from "react-i18next";
+import Input from "@mui/joy/Input";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded.js";
+import {useSnackbar} from "./snackbar.jsx";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -106,4 +111,51 @@ export function LoadingSpinner(props) {
       <div className="lds-dual-ring" />
     </Stack>
   );
+}
+
+export function SearchBar({sx, ...props}) {
+  const {t} = useTranslation();
+  return (
+    <Input
+      variant={"soft"}
+      color={"neutral"}
+      placeholder={t("offer.searchAnOffer")}
+      startDecorator={<SearchRoundedIcon color="primary" />}
+      {...props}
+      sx={[{display: "flex"}, ...(Array.isArray(sx) ? sx : [sx])]}
+    />
+  );
+}
+
+export function Form({onSubmit, initialValues, children, successText}) {
+  // https://formik.org/docs/examples/with-material-ui
+
+  const [openSnackbar] = useSnackbar();
+  const {
+    handleSubmit,
+    handleChange: onChange,
+    values,
+  } = useFormik({
+    initialValues,
+    onSubmit: async (values) => {
+      try {
+        await onSubmit(values);
+        successText && openSnackbar(successText, {color: "success"});
+      } catch (err) {
+        console.error(err);
+        openSnackbar(`Oh oh... Il y a eu une erreur: ${err.message}`);
+      }
+    },
+  });
+
+  // A function to register easily fields by putting {...register("fieldName") inside field components
+  function register(name) {
+    return {
+      name,
+      value: values[name],
+      onChange,
+    };
+  }
+
+  return <form onSubmit={handleSubmit}>{children(register, values, onChange)}</form>;
 }

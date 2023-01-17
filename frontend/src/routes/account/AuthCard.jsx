@@ -8,6 +8,8 @@ import Button from "@mui/joy/Button";
 import Stack from "@mui/joy/Stack";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
 import {useTranslation} from "react-i18next";
+import Link from "@mui/joy/Link";
+import {Link as ReactRouterLink} from "react-router-dom";
 
 export function AuthCard() {
   const {t} = useTranslation();
@@ -46,18 +48,23 @@ export function AuthCard() {
   };
 
   return currentUser ? (
-    <Card variant={"outlined"} size={"lg"}>
-      <Typography>
-        <strong> Bienvenue {currentUser.firstName} !</strong> Vos informations personnelles seront
-        communiquées dans votre demande.
-      </Typography>
+    <Card variant={"soft"} invertedColors>
+      <Stack gap={2}>
+        <Typography>
+          <strong>Bienvenue {currentUser.firstName} !</strong> Vos informations personnelles seront
+          communiquées dans votre demande.
+        </Typography>
+        <Link component={ReactRouterLink} size={"sm"} to={"/account"}>
+          Modifier mes informations
+        </Link>
+      </Stack>
     </Card>
   ) : (
     <>
-      <Card variant={"outlined"} size={"lg"}>
+      <Card variant={"soft"} invertedColors>
         <Content connectionMode={"signUp"} />
       </Card>
-      <Card variant={"outlined"} size={"lg"}>
+      <Card variant={"soft"} invertedColors>
         <Content connectionMode={"logIn"} />
       </Card>
     </>

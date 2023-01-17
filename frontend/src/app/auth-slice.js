@@ -1,5 +1,5 @@
-import {createSlice, isAnyOf} from "@reduxjs/toolkit";
-import api from "./api.js";
+import {createSlice} from "@reduxjs/toolkit";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
 import {user, userToken} from "./auth-slice-data.js";
 
 /**
@@ -9,6 +9,7 @@ import {user, userToken} from "./auth-slice-data.js";
 const slice = createSlice({
   name: "auth",
   initialState: {
+    status: "idle", // "idle" | "pending" | "ready"
     user: null,
     token: localStorage.getItem("token") || null,
   },
@@ -21,30 +22,40 @@ const slice = createSlice({
     setUser: (state, {payload: user}) => {
       state.user = user;
     },
-    logOut: () => {
+    logOut: (state) => {
+      state.user = null;
+      state.token = null;
       localStorage.removeItem("token");
-      return {user: null, token: null};
     },
   },
   extraReducers: (builder) => {
     builder
-      // Set user and token after logIn and signup mutations
+      // LOG IN - SIGN UP : Set user and token after logIn and signup mutations
       .addMatcher(
-        isAnyOf(api.endpoints.logIn.matchFulfilled, api.endpoints.signUp.matchFulfilled),
+        matchAny("matchFulfilled", ["logIn", "signUp"]),
         slice.caseReducers.setCredentials
       )
-      // Set user after fetch query
+      // FETCH - UPDATE : Set user after fetch and update query
       .addMatcher(
-        isAnyOf(api.endpoints.fetchUser.matchFulfilled, api.endpoints.updateUser.matchFulfilled),
+        matchAny("matchFulfilled", ["fetchUser", "updateUser"]),
         slice.caseReducers.setUser
       )
-      // If there is any problem when fetching the user, log out the user
-      .addMatcher(api.endpoints.fetchUser.matchRejected, slice.caseReducers.logOut);
+      // If there is any problem with those ops the user, log out the user
+      .addMatcher(matchAny("matchRejected", ["fetchUser"]), slice.caseReducers.logOut)
+      .addMatcher(matchAny("matchFulfilled", ["deleteUser"]), slice.caseReducers.logOut);
+
+    addStatusForEndpoints(builder, ["fetchUser"]);
   },
 });
 
 export const authActions = slice.actions;
 export default slice.reducer;
+
+/**
+ * AUTHENTICATION SELECTORS
+ */
+
+export const selectCurrentUserReady = readySelector("auth");
 
 export const selectCurrentUser = (state) => state.auth.user;
 export const selectAuthTokenExists = (state) => !!state.auth.token;
@@ -52,8 +63,8 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 /**
  * AUTHENTICATION API ENDPOINTS
  */
+
 api.injectEndpoints({
-  addTagTypes: ["User"],
   endpoints: (builder) => ({
     logIn: builder.mutation({
       query: () => "breeds?limit=100",
@@ -69,7 +80,6 @@ api.injectEndpoints({
           user: user,
         };
       },
-      invalidatesTags: ["User"],
     }),
 
     signUp: builder.mutation({
@@ -92,7 +102,7 @@ api.injectEndpoints({
     }),
 
     fetchUser: builder.query({
-      query: () => "breeds?limit=10",
+      query: () => "breeds?limit=100",
       // query: () => ({
       //   url: "user",
       //   method: "GET",
@@ -102,22 +112,42 @@ api.injectEndpoints({
         if (!localStorage.getItem("token")) throw Error("No token in local storage");
         return user;
       },
-      providesTags: ["User"],
     }),
 
     updateUser: builder.mutation({
-      query: (userPatch) => ({
-        url: `user`,
-        method: "PATCH",
-        body: userPatch,
-      }),
+      query: () => "breeds?limit=100",
+      // query: (userPatch) => ({
+      //   url: `user`,
+      //   method: "PATCH",
+      //   body: userPatch,
+      // }),
       transformResponse(baseQueryReturnValue, meta, userPatch) {
         // Mock data
+        console.log(baseQueryReturnValue);
+        // user = {...user, ...userPatch};
         return {...user, ...userPatch};
       },
-      invalidatesTags: ["User"],
+    }),
+
+    deleteUser: builder.mutation({
+      query: () => "breeds?limit=100",
+      // query: () => ({
+      //   url: `user`,
+      //   method: "DELETE",
+      // }),
+      transformResponse(baseQueryReturnValue, meta, userPatch) {
+        // Mock data
+        return "OK";
+      },
     }),
   }),
 });
 
-export const {useSignUpMutation, useLogInMutation, useLazyFetchUserQuery} = api;
+export const {
+  useSignUpMutation,
+  useLogInMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useFetchUserQuery,
+  useLazyFetchUserQuery,
+} = api;

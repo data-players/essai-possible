@@ -7,8 +7,9 @@ import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList} from "../../components/atoms.jsx";
-import {useFetchOfferQuery} from "../../app/api.js";
+import {selectOfferById, useFetchOfferQuery} from "./offers-slice.js";
 import {OfferBanner} from "./OfferBanner.jsx";
+import {useSelector} from "react-redux";
 
 function BookMeetingButton(props) {
   const {t} = useTranslation();
@@ -29,9 +30,15 @@ function BookMeetingButton(props) {
 export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
-  const {data, isLoading} = useFetchOfferQuery(id);
+
+  const {isLoading} = useFetchOfferQuery(id);
+  const offer = useSelector((state) => selectOfferById(state, id));
+
   if (isLoading) return <LoadingSpinner />;
-  const {description, tasks, skills, slots, ...offer} = data || {};
+
+  console.log(isLoading, offer);
+
+  const {title, description, tasks, skills, slots} = offer;
 
   return (
     <>
@@ -39,7 +46,7 @@ export default function PageOffer() {
         offer={offer}
         breadcrumbs={[
           {label: t("offer.backToOffers"), to: "/offers"},
-          {label: offer.title, to: "."},
+          {label: title, to: "."},
         ]}
         cardContent={
           <>

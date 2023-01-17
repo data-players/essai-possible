@@ -9,6 +9,7 @@ import {CssVarsProvider} from "@mui/joy/styles";
 import theme from "./theme.js";
 import {Provider} from "react-redux";
 import {store} from "./app/store.js";
+import {SnackbarProvider} from "./components/snackbar.jsx";
 
 initI18n();
 
@@ -17,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <CssVarsProvider theme={theme}>
       <CssBaseline />
       <Provider store={store}>
-        <RouterProvider router={routes} />
+        <SnackbarProvider>
+          <RouterProvider router={routes} />
+        </SnackbarProvider>
       </Provider>
     </CssVarsProvider>
   </React.StrictMode>

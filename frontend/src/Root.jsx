@@ -8,7 +8,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import IconButton from "@mui/joy/IconButton";
-import Input from "@mui/joy/Input";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemButton from "@mui/joy/ListItemButton";
@@ -20,30 +19,31 @@ import AssignmentIndRoundedIcon from "@mui/icons-material/AssignmentIndRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Layout, {AuthButton} from "./components/Layout.jsx";
 import Box from "@mui/joy/Box";
-import {t} from "i18next";
 import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
-import {useFetchOffersQuery} from "./app/api.js";
+import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
 import {selectAuthTokenExists, selectCurrentUser, useLazyFetchUserQuery} from "./app/auth-slice.js";
 import {useSelector} from "react-redux";
-
-const getNavigation = () => [
-  {
-    label: t("offer.seeOffers"),
-    to: "offers",
-    icon: AssignmentIndRoundedIcon,
-  },
-  {
-    label: t("nav.hiringManagersSpace"),
-    to: "hiring-managers",
-    icon: AssignmentIndRoundedIcon,
-  },
-];
+import {SearchBar} from "./components/atoms.jsx";
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
+  const {t} = useTranslation();
+
+  const navigationItems = [
+    {
+      label: t("offer.seeOffers"),
+      to: "offers",
+      icon: AssignmentIndRoundedIcon,
+    },
+    {
+      label: t("nav.hiringManagersSpace"),
+      to: "hiring-managers",
+      icon: AssignmentIndRoundedIcon,
+    },
+  ];
 
   return (
     <List size="sm" sx={{"--List-item-radius": "8px", "--List-gap": "4px"}}>
@@ -57,7 +57,7 @@ function MobileDrawerContent() {
           <ListItem>
             <SearchBar onClick={() => navigate("/offers")} />
           </ListItem>
-          {getNavigation().map(({label, to, icon: Icon}) => (
+          {navigationItems.map(({label, to, icon: Icon}) => (
             <ListItem>
               <ListItemButton component={ReactRouterLink} to={to}>
                 <ListItemDecorator sx={{color: "text.secondary"}}>
@@ -81,33 +81,21 @@ function MobileDrawerContent() {
   );
 }
 
-export function SearchBar({sx, ...props}) {
-  const {t} = useTranslation();
-  return (
-    <Input
-      variant={"soft"}
-      color={"neutral"}
-      placeholder={t("offer.searchAnOffer")}
-      startDecorator={<SearchRoundedIcon color="primary" />}
-      {...props}
-      sx={[{display: "flex"}, ...(Array.isArray(sx) ? sx : [sx])]}
-    />
-  );
-}
-
 const Root = ({children}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
 
   // When we land on the website, prepare the data:
+
   // - prefetch the offers list directly so it's ready to be displayed.
   useFetchOffersQuery();
+
   // - prefetch the user if the user was already logged in
+  const [launchFetchUserQuery] = useLazyFetchUserQuery();
   const authTokenExists = useSelector(selectAuthTokenExists);
-  const [fetchUser] = useLazyFetchUserQuery();
   useEffect(() => {
-    authTokenExists && fetchUser();
-  }, [authTokenExists, fetchUser]);
+    if (authTokenExists) launchFetchUserQuery();
+  }, [authTokenExists, launchFetchUserQuery]);
 
   const path = useLocation().pathname;
   const currentUser = useSelector(selectCurrentUser);

@@ -5,9 +5,9 @@ import Root from "./Root.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
 import PageOffer from "./routes/offers/PageOffer.jsx";
 import HomePage from "./routes/HomePage.jsx";
-import PageBookMeeting from "./routes/offers/PageBookMeeting.jsx";
-import UserAccount from "./routes/auth/UserAccount.jsx";
-import {AuthComponent} from "./routes/auth/AuthComponent.jsx";
+import PageBook from "./routes/offers/book/PageBook.jsx";
+import PageAccount from "./routes/account/PageAccount.jsx";
+import {AuthComponent} from "./routes/account/AuthComponent.jsx";
 
 export default createBrowserRouter([
   {
@@ -33,11 +33,11 @@ export default createBrowserRouter([
       },
       {
         path: "offers/:id/book",
-        element: <PageBookMeeting />,
+        element: <PageBook />,
       },
       {
         path: "account",
-        element: <UserAccount />,
+        element: <PageAccount />,
       },
       {
         path: "login",

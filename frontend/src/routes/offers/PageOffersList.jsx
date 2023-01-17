@@ -8,34 +8,44 @@ import ListItem from "@mui/joy/ListItem";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
-import {SearchBar} from "../../Root";
+import {LoadingSpinner, SearchBar} from "../../components/atoms.jsx";
 import React, {useState} from "react";
-import {normalize} from "../../app/utils.js";
 import FormControl from "@mui/joy/FormControl";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import Chip from "@mui/joy/Chip";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
-import {useFetchOffersQuery, usePrefetch} from "../../app/api.js";
-import {LoadingSpinner} from "../../components/atoms.jsx";
+import {usePrefetch} from "../../app/api.js";
 import {OfferInfoPills} from "./OfferInfoPills.jsx";
+import {useSelector} from "react-redux";
+import {
+  selectFilteredOffersIds,
+  selectOfferById,
+  selectOffersReady,
+  useFetchOffersQuery,
+} from "./offers-slice.js";
 
-function OfferListItem({id, title, company, goal, startDate, description, location, slots}) {
+function OfferListItem({offerId}) {
   const {t} = useTranslation();
-  const prefetchOffer = usePrefetch("fetchOffer");
+
+  const launchOfferPrefetch = usePrefetch("fetchOffer");
+
+  const {title, company, goal, startDate, description, location, slots} = useSelector((state) =>
+    selectOfferById(state, offerId)
+  );
 
   return (
-    <ListItem onMouseEnter={() => prefetchOffer(id)}>
+    <ListItem onMouseEnter={() => launchOfferPrefetch(offerId)}>
       <Card
         component={ReactRouterLink}
-        to={id}
+        to={offerId}
         variant={"soft"}
         size={"lg"}
         sx={{
           width: "100%",
           textDecoration: "none",
           my: 1,
-          ":hover": {boxShadow: "md"},
+          ":hover": {boxShadow: "lg"},
         }}>
         <Grid container columnSpacing={4} rowSpacing={2}>
           <Grid xs={12} md={8}>
@@ -92,36 +102,17 @@ function OfferListItem({id, title, company, goal, startDate, description, locati
 export default function PageOffersList() {
   const {t} = useTranslation();
 
-  const {data: offers = [], isLoading} = useFetchOffersQuery();
+  useFetchOffersQuery();
 
   // Search query stuff
   const [searchText, setSearchText] = useState("");
   const [locationText, setLocationText] = useState("");
   const [radius, setRadius] = useState("10");
 
-  const searchFields = (fields, searchText) =>
-    fields.find((field) => normalize(field).includes(normalize(searchText)));
-
-  function filterOffers(offers) {
-    const hasSearchText = searchText !== "";
-    const hasLocalizationText = locationText !== "";
-    return hasSearchText || hasLocalizationText
-      ? offers.filter((item) => {
-          const {
-            title,
-            company: {name: companyName},
-            description,
-            location,
-          } = item;
-
-          return (
-            (!hasSearchText || searchFields([title, companyName, description], searchText)) &&
-            (!hasLocalizationText || searchFields([location], locationText))
-          );
-        })
-      : offers;
-  }
-  const filteredOffers = filterOffers(offers);
+  const offersReady = useSelector(selectOffersReady);
+  const filteredOffersIds = useSelector((state) =>
+    selectFilteredOffersIds(state, searchText, locationText, radius)
+  );
 
   return (
     <>
@@ -182,21 +173,21 @@ export default function PageOffersList() {
       </HeroBanner>
 
       <Container>
-        {isLoading ? (
-          <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
-            <LoadingSpinner />
-          </Stack>
-        ) : (
+        {offersReady ? (
           <Stack my={4} alignItems={"center"}>
-            {filteredOffers.length > 0 ? (
+            {filteredOffersIds.length > 0 ? (
               <List>
-                {filteredOffers.map((offer) => (
-                  <OfferListItem {...offer} key={offer.id} />
+                {filteredOffersIds.map((offerId) => (
+                  <OfferListItem offerId={offerId} key={offerId} />
                 ))}
               </List>
             ) : (
               t("oopsNoResults")
             )}
+          </Stack>
+        ) : (
+          <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
+            <LoadingSpinner />
           </Stack>
         )}
       </Container>

@@ -2,68 +2,68 @@ import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit
 import {selectCurrentUser} from "../../app/auth-slice.js";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
 import {normalize} from "../../app/utils.js";
-import {fullOffers, lightOffersList} from "./offers-slice-data.js";
+import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 
 /**
- * OFFERS SLICE
+ * COMPANIES SLICE
  */
-const offersAdapter = createEntityAdapter({
-  // selectId: (offer) => `${offer.company.name}/${offer.id}`,
+const companiesAdapter = createEntityAdapter({
+  // selectId: (company) => `${company.company.name}/${company.id}`,
   // sortComparer: (a, b) => {
   //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
   //     return b.createdAt?.localeCompare(a.createdAt)
   // },
 });
 
-const initialState = offersAdapter.getInitialState({
+const initialState = companiesAdapter.getInitialState({
   status: "idle",
 });
 
-const offersSlice = createSlice({
-  name: "offers",
+const companiesSlice = createSlice({
+  name: "companies",
   initialState,
   extraReducers(builder) {
     builder
-      .addMatcher(matchAny("matchFulfilled", ["fetchOffers"]), offersAdapter.upsertMany)
-      .addMatcher(matchAny("matchFulfilled", ["fetchOffer"]), offersAdapter.upsertOne);
+      .addMatcher(matchAny("matchFulfilled", ["fetchCompanies"]), companiesAdapter.upsertMany)
+      .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne);
 
-    addStatusForEndpoints(builder, ["fetchOffers"]);
+    addStatusForEndpoints(builder, ["fetchCompanies"]);
   },
 });
 
-export default offersSlice.reducer;
+export default companiesSlice.reducer;
 
 /**
- * OFFERS SELECTORS
+ * COMPANIES SELECTORS
  */
 
-export const selectOffersReady = readySelector("offers");
+export const selectCompaniesReady = readySelector("companies");
 
 export const {
-  selectAll: selectAllOffers,
-  selectById: selectOfferById,
-  selectIds: selectOfferIds,
-} = offersAdapter.getSelectors((state) => state.offers);
+  selectAll: selectAllCompanies,
+  selectById: selectCompanyById,
+  selectIds: selectCompanyIds,
+} = companiesAdapter.getSelectors((state) => state.companies);
 
-// Apply the user filter selection to the offers list
+// Apply the user filter selection to the companies list
 // More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
-export const selectFilteredOffersIds = createSelector(
+export const selectFilteredCompaniesIds = createSelector(
   [
-    selectAllOffers,
+    selectAllCompanies,
     (state, searchText, locationText, radius) => searchText,
     (state, searchText, locationText, radius) => locationText,
     (state, searchText, locationText, radius) => radius,
   ],
-  (offers, searchText, locationText, radius) => {
+  (companies, searchText, locationText, radius) => {
     const hasSearchText = searchText !== "";
     const hasLocalizationText = locationText !== "";
 
     const searchInFields = (fields, searchText) =>
       fields.find((field) => normalize(field).includes(normalize(searchText)));
 
-    const filteredOffers =
+    const filteredCompanies =
       hasSearchText || hasLocalizationText
-        ? offers.filter((item) => {
+        ? companies.filter((item) => {
             const {
               title,
               company: {name: companyName},
@@ -76,47 +76,47 @@ export const selectFilteredOffersIds = createSelector(
               (!hasLocalizationText || searchInFields([location], locationText))
             );
           })
-        : offers;
+        : companies;
 
-    return filteredOffers.map((offer) => offer.id);
+    return filteredCompanies.map((company) => company.id);
   }
 );
 
-export const selectOffersForUser = createSelector(
-  [selectAllOffers, (state) => selectCurrentUser(state)?.id],
-  (offers, currentUserId) => offers.filter((offer) => offer.user === currentUserId)
+export const selectCompaniesForUser = createSelector(
+  [selectAllCompanies, (state) => selectCurrentUser(state)?.id],
+  (companies, currentUserId) => companies.filter((company) => company.user === currentUserId)
 );
 
 /**
- * OFFERS API ENDPOINTS
+ * COMPANIES API ENDPOINTS
  */
 
 api.injectEndpoints({
   endpoints: (builder) => ({
-    // Fetch the list of all offers
-    fetchOffers: builder.query({
+    // Fetch the list of all companies
+    fetchCompanies: builder.query({
       query() {
         return `/breeds?limit=1`;
       },
       transformResponse() {
-        // Mock data with offers
-        return lightOffersList;
+        // Mock data with companies
+        return lightCompaniesList;
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
-    // Fetch one offer by id
-    fetchOffer: builder.query({
+    // Fetch one company by id
+    fetchCompany: builder.query({
       query(id) {
         return `/breeds?limit=10`;
       },
       transformResponse(baseQueryReturnValue, meta, id) {
-        // Mock data with offers
-        return fullOffers.find((offer) => offer.id === id);
+        // Mock data with companies
+        return fullCompanies.find((company) => company.id === id);
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
   }),
 });
 
-export const {useFetchOffersQuery, useFetchOfferQuery} = api;
+export const {useFetchCompaniesQuery, useFetchCompanyQuery} = api;
