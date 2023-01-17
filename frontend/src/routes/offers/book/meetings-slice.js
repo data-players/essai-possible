@@ -16,7 +16,7 @@ const meetingsAdapter = createEntityAdapter({
 });
 
 const initialState = meetingsAdapter.getInitialState({
-  status: "idle",
+  status: {},
   savedFormData: {}, // Saves ongoing progresses from the user in the way {offerId1: {...savedData1}, offerId2: {...savedData2}}
 });
 
@@ -47,7 +47,7 @@ export const meetingsActions = meetingsSlice.actions;
  * MEETINGS SELECTORS
  */
 
-export const selectMeetingsReady = readySelector("meetings");
+export const selectMeetingsReady = readySelector("meetings", "fetchMeetings");
 export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
 export const {
   selectAll: selectAllMeetings,

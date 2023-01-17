@@ -7,7 +7,7 @@ import Button from "@mui/joy/Button";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {Trans} from "react-i18next";
-import {Form, LoadingSpinner, RadioChips} from "../../../components/atoms.jsx";
+import {Form, RadioChips} from "../../../components/atoms.jsx";
 import ListSubheader from "@mui/joy/ListSubheader";
 import CheckIcon from "@mui/icons-material/Check";
 import {groupBy} from "../../../app/utils.js";
@@ -17,39 +17,38 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Collapse from "@mui/material/Collapse";
 import Sheet from "@mui/joy/Sheet";
-import {useFetchOfferQuery} from "../offers-slice.js";
-import {OfferBanner} from "../OfferBanner.jsx";
+import {selectOfferById} from "../offers-slice.js";
+import OfferBanner from "../OfferBanner.jsx";
 import dayjs from "dayjs";
 import {useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {meetingsActions, selectSavedFormData} from "./meetings-slice.js";
+import {selectCurrentUser} from "../../../app/auth-slice.js";
 
 export default function PageBook() {
   const dispatch = useDispatch();
   const {t, tTime, tDate, tDateTime} = useTranslationWithDates();
   const {id} = useParams();
 
-  const {data: offer, isLoading} = useFetchOfferQuery(id);
+  const offer = useSelector((state) => selectOfferById(state, id)) || {};
 
+  const currentUser = useSelector(selectCurrentUser);
   const {selectedMeetingSlot, comments} =
     useSelector((state) => selectSavedFormData(state, id)) || {};
 
-  const setSelectedMeetingSlot = (value) =>
+  const setFormData = (data) =>
     dispatch(
       meetingsActions.saveFormData({
         offerId: id,
-        data: {selectedMeetingSlot: value},
+        data,
       })
     );
 
-  // TODO debug
   const [formStep, setFormStep] = useState(selectedMeetingSlot ? 1 : 0);
   const nextStep = () => setFormStep(formStep + 1);
   const lastStep = () => setFormStep(formStep - 1);
-
-  if (isLoading) return <LoadingSpinner />;
 
   const sortedSlots = [...offer.slots].sort((a, b) =>
     dayjs(a.start).isAfter(dayjs(b.start)) ? 1 : -1
@@ -76,6 +75,94 @@ export default function PageBook() {
     );
   }
 
+  /**
+   * Steps of the booking form
+   */
+  const steps = [
+    // MEETING SLOT CHOICE
+    <>
+      <StepTitle> {t("offer.chooseYourMeetingSlot")}</StepTitle>
+
+      <List>
+        {Object.entries(slotsByDate).map(([date, slots]) => (
+          <React.Fragment key={date}>
+            <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
+            <ListItem sx={{mb: 3}}>
+              <RadioChips
+                options={slots.map((slot) => ({
+                  label: tTime(slot.start),
+                  icon: CalendarMonthRoundedIcon,
+                  key: slot.start.toString(),
+                }))}
+                value={selectedMeetingSlot}
+                setFieldValue={(slot) => setFormData({selectedMeetingSlot: slot})}
+              />
+            </ListItem>
+          </React.Fragment>
+        ))}
+      </List>
+
+      <Button
+        size={"lg"}
+        disabled={!selectedMeetingSlot}
+        color="success"
+        onClick={nextStep}
+        startDecorator={<CheckIcon />}>
+        {t("offer.chooseThisMeetingSlot")}
+      </Button>
+    </>,
+
+    // USER LOGIN/SIGNUP + COMMENTS
+    <>
+      <StepTitle>{t("offer.myInformation")}</StepTitle>
+
+      <Stack gap={3}>
+        <AuthCard />
+
+        {currentUser && (
+          <Form
+            initialValues={{comments}}
+            successText={"Rendez-vous réservé avec succès"}
+            onSubmit={(values) => dispatch(meetingsActions.saveFormData)}>
+            {(register) => (
+              <Stack gap={3}>
+                <FormControl>
+                  <FormLabel htmlFor="comments">
+                    Avez-vous des commentaires à partager avec l'entreprise ?
+                  </FormLabel>
+                  <Textarea
+                    placeholder="commentaires, remarques..."
+                    minRows={3}
+                    {...register("comments")}
+                  />
+                </FormControl>
+
+                <Stack
+                  direction={{xs: "column-reverse", sm: "row"}}
+                  rowGap={2}
+                  columnGap={3}
+                  mt={2}>
+                  <BackValidationButton onClick={lastStep} sx={{flexGrow: 0}}>
+                    {t("goBack")}
+                  </BackValidationButton>
+                  <Button
+                    type={"submit"}
+                    size={"lg"}
+                    disabled={!selectedMeetingSlot}
+                    color={"success"}
+                    sx={{flexGrow: 1}}
+                    startDecorator={<CheckIcon />}>
+                    {t("offer.validateInformation")}
+                  </Button>
+                </Stack>
+              </Stack>
+            )}
+          </Form>
+        )}
+      </Stack>
+    </>,
+  ];
+
   return (
     <>
       <OfferBanner
@@ -96,86 +183,7 @@ export default function PageBook() {
       <PageContent gap={2}>
         {slotsByDate ? (
           <>
-            {formStep === 0 && (
-              <>
-                <StepTitle> {t("offer.chooseYourMeetingSlot")}</StepTitle>
-
-                <List>
-                  {Object.entries(slotsByDate).map(([date, slots]) => (
-                    <React.Fragment key={date}>
-                      <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
-                      <ListItem sx={{mb: 3}}>
-                        <RadioChips
-                          options={slots.map((slot) => ({
-                            label: tTime(slot.start),
-                            icon: CalendarMonthRoundedIcon,
-                            key: slot.start.toString(),
-                          }))}
-                          value={selectedMeetingSlot}
-                          setFieldValue={setSelectedMeetingSlot}
-                        />
-                      </ListItem>
-                    </React.Fragment>
-                  ))}
-                </List>
-
-                <Button
-                  size={"lg"}
-                  disabled={!selectedMeetingSlot}
-                  color="success"
-                  onClick={nextStep}
-                  startDecorator={<CheckIcon />}>
-                  {t("offer.chooseThisMeetingSlot")}
-                </Button>
-              </>
-            )}
-
-            {formStep === 1 && (
-              <>
-                <StepTitle>{t("offer.myInformation")}</StepTitle>
-
-                <Stack gap={3}>
-                  <AuthCard />
-
-                  <Form
-                    initialValues={{comments}}
-                    successText={"Rendez-vous réservé avec succès"}
-                    onSubmit={(values) => dispatch(meetingsActions.saveFormData)}>
-                    {(register) => (
-                      <Stack gap={3}>
-                        <FormControl>
-                          <FormLabel htmlFor="comments">Commentaires particuliers</FormLabel>
-                          <Textarea
-                            placeholder="commentaires, remarques pour l'entreprise..."
-                            minRows={3}
-                            {...register("comments")}
-                          />
-                        </FormControl>
-
-                        <Stack
-                          direction={{xs: "column-reverse", sm: "row"}}
-                          rowGap={2}
-                          columnGap={3}
-                          mt={2}>
-                          <BackValidationButton onClick={lastStep} sx={{flexGrow: 0}}>
-                            {t("goBack")}
-                          </BackValidationButton>
-                          <Button
-                            type={"submit"}
-                            size={"lg"}
-                            disabled={!selectedMeetingSlot}
-                            color={"success"}
-                            sx={{flexGrow: 1}}
-                            startDecorator={<CheckIcon />}>
-                            {t("offer.validateInformation")}
-                          </Button>
-                        </Stack>
-                      </Stack>
-                    )}
-                  </Form>
-                </Stack>
-              </>
-            )}
+            {steps[formStep]}
 
             <Sheet>
               <Collapse in={selectedMeetingSlot}>

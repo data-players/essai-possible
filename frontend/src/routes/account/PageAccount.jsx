@@ -2,16 +2,14 @@ import Button from "@mui/joy/Button";
 import {
   authActions,
   selectCurrentUser,
-  selectCurrentUserReady,
   useDeleteUserMutation,
-  useFetchUserQuery,
   useUpdateUserMutation,
 } from "../../app/auth-slice.js";
 import * as React from "react";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {Form, LoadingSpinner} from "../../components/atoms";
+import {Form} from "../../components/atoms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
@@ -26,18 +24,14 @@ export default function PageAccount() {
   const [openSnackbar] = useSnackbar();
   const [deleteAreYouSure, setDeleteAreYouSure] = useState(false);
 
-  useFetchUserQuery();
   const [updateUser, {isLoading: isUpdatingUser}] = useUpdateUserMutation();
   const [deleteUser, {isLoading: isDeletingUser}] = useDeleteUserMutation();
 
   const currentUser = useSelector(selectCurrentUser);
-  const currentUserReady = useSelector(selectCurrentUserReady);
 
   async function onSubmit(values) {
     await updateUser(values).unwrap();
   }
-
-  if (!currentUserReady) return <LoadingSpinner />;
 
   return (
     <PageContent gap={3}>

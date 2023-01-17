@@ -16,7 +16,7 @@ import Chip from "@mui/joy/Chip";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import {usePrefetch} from "../../app/api.js";
-import {OfferInfoPills} from "./OfferInfoPills.jsx";
+import OfferInfoPills from "./OfferInfoPills.jsx";
 import {useSelector} from "react-redux";
 import {
   selectFilteredOffersIds,
@@ -24,18 +24,23 @@ import {
   selectOffersReady,
   useFetchOffersQuery,
 } from "./offers-slice.js";
+import {selectCompaniesReady, selectCompanyById} from "./companies-slice.js";
 
 function OfferListItem({offerId}) {
   const {t} = useTranslation();
 
   const launchOfferPrefetch = usePrefetch("fetchOffer");
+  const launchCompanyPrefetch = usePrefetch("fetchCompany");
 
-  const {title, company, goal, startDate, description, location, slots} = useSelector((state) =>
-    selectOfferById(state, offerId)
-  );
+  const offer = useSelector((state) => selectOfferById(state, offerId));
+  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
   return (
-    <ListItem onMouseEnter={() => launchOfferPrefetch(offerId)}>
+    <ListItem
+      onMouseEnter={() => {
+        launchOfferPrefetch(offer.id);
+        launchCompanyPrefetch(offer.company);
+      }}>
       <Card
         component={ReactRouterLink}
         to={offerId}
@@ -51,12 +56,12 @@ function OfferListItem({offerId}) {
           <Grid xs={12} md={8}>
             <Stack gap={2}>
               <Typography level="h3" component="h2" fontWeight={"lg"}>
-                {title}
+                {offer.title}
               </Typography>
 
               <Typography level="h4">{company.name}</Typography>
 
-              <OfferInfoPills sectors={company.sectors} goal={goal} startDate={startDate} />
+              <OfferInfoPills company={company} offer={offer} />
 
               <Stack
                 gap={2}
@@ -65,7 +70,7 @@ function OfferListItem({offerId}) {
                 alignItems={"center"}
                 justifyContent={"space-between"}>
                 <Typography textColor={"text.tertiary"}>
-                  {t("offer.xMeetingSlotsAvailable", {count: slots?.length || 0})}
+                  {t("offer.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
                 </Typography>
 
                 <Chip
@@ -73,7 +78,7 @@ function OfferListItem({offerId}) {
                   variant={"plain"}
                   startDecorator={<PlaceRoundedIcon />}
                   sx={{p: 0, opacity: 0.6}}>
-                  {location}
+                  {offer.location}
                 </Chip>
               </Stack>
             </Stack>
@@ -89,7 +94,7 @@ function OfferListItem({offerId}) {
                   WebkitLineClamp: {xs: 4, md: 8},
                   WebkitBoxOrient: "vertical",
                 }}>
-                {description}
+                {offer.description}
               </Typography>
             </Card>
           </Grid>
@@ -110,6 +115,8 @@ export default function PageOffersList() {
   const [radius, setRadius] = useState("10");
 
   const offersReady = useSelector(selectOffersReady);
+  const companiesReady = useSelector(selectCompaniesReady);
+
   const filteredOffersIds = useSelector((state) =>
     selectFilteredOffersIds(state, searchText, locationText, radius)
   );
@@ -173,7 +180,7 @@ export default function PageOffersList() {
       </HeroBanner>
 
       <Container>
-        {offersReady ? (
+        {offersReady && companiesReady ? (
           <Stack my={4} alignItems={"center"}>
             {filteredOffersIds.length > 0 ? (
               <List>

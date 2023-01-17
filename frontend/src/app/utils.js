@@ -16,3 +16,5 @@ export const normalize = (string, caseSensitive = false) => {
       .replace(/[\u0300-\u036f]/g, "") || "";
   return caseSensitive ? normalized : normalized.toLowerCase();
 };
+
+export const cleanUrl = (url) => url.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");

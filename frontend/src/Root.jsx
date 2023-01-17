@@ -26,6 +26,7 @@ import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
 import {selectAuthTokenExists, selectCurrentUser, useLazyFetchUserQuery} from "./app/auth-slice.js";
 import {useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
+import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
@@ -87,8 +88,9 @@ const Root = ({children}) => {
 
   // When we land on the website, prepare the data:
 
-  // - prefetch the offers list directly so it's ready to be displayed.
+  // - prefetch the offers and companies lists directly so it's ready to be displayed.
   useFetchOffersQuery();
+  useFetchCompaniesQuery();
 
   // - prefetch the user if the user was already logged in
   const [launchFetchUserQuery] = useLazyFetchUserQuery();
@@ -146,7 +148,9 @@ const Root = ({children}) => {
           </Stack>
         </Layout.Navigation>
 
-        <Layout.Main sx={{overflow: "hidden"}}>{children ? children : <Outlet />}</Layout.Main>
+        <Layout.Main sx={{overflow: "hidden"}}>
+          <Outlet />
+        </Layout.Main>
 
         <Layout.Footer>
           <Chip color={"primary"} variant={"soft"}>

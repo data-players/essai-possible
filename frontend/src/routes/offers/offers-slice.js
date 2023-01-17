@@ -3,6 +3,7 @@ import {selectCurrentUser} from "../../app/auth-slice.js";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
 import {normalize} from "../../app/utils.js";
 import {fullOffers, lightOffersList} from "./offers-slice-data.js";
+import {selectAllCompaniesById} from "./companies-slice.js";
 
 /**
  * OFFERS SLICE
@@ -16,7 +17,7 @@ const offersAdapter = createEntityAdapter({
 });
 
 const initialState = offersAdapter.getInitialState({
-  status: "idle",
+  status: {},
 });
 
 const offersSlice = createSlice({
@@ -27,7 +28,7 @@ const offersSlice = createSlice({
       .addMatcher(matchAny("matchFulfilled", ["fetchOffers"]), offersAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["fetchOffer"]), offersAdapter.upsertOne);
 
-    addStatusForEndpoints(builder, ["fetchOffers"]);
+    addStatusForEndpoints(builder, ["fetchOffers", "fetchOffer"]);
   },
 });
 
@@ -37,7 +38,8 @@ export default offersSlice.reducer;
  * OFFERS SELECTORS
  */
 
-export const selectOffersReady = readySelector("offers");
+export const selectOffersReady = readySelector("offers", "fetchOffers");
+export const selectOfferReady = readySelector("offers", "fetchOffer");
 
 export const {
   selectAll: selectAllOffers,
@@ -50,11 +52,12 @@ export const {
 export const selectFilteredOffersIds = createSelector(
   [
     selectAllOffers,
+    selectAllCompaniesById,
     (state, searchText, locationText, radius) => searchText,
     (state, searchText, locationText, radius) => locationText,
     (state, searchText, locationText, radius) => radius,
   ],
-  (offers, searchText, locationText, radius) => {
+  (offers, companiesById, searchText, locationText, radius) => {
     const hasSearchText = searchText !== "";
     const hasLocalizationText = locationText !== "";
 
@@ -63,13 +66,9 @@ export const selectFilteredOffersIds = createSelector(
 
     const filteredOffers =
       hasSearchText || hasLocalizationText
-        ? offers.filter((item) => {
-            const {
-              title,
-              company: {name: companyName},
-              description,
-              location,
-            } = item;
+        ? offers.filter((offer) => {
+            const {title, description, location} = offer;
+            const companyName = companiesById[offer.company]?.name;
 
             return (
               (!hasSearchText || searchInFields([title, companyName, description], searchText)) &&

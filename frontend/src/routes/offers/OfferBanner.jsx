@@ -5,14 +5,12 @@ import Card from "@mui/joy/Card";
 import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
-import {OfferInfoPills} from "./OfferInfoPills.jsx";
+import OfferInfoPills from "./OfferInfoPills.jsx";
+import {selectCompanyById} from "./companies-slice.js";
+import {useSelector} from "react-redux";
 
-export function OfferBanner({
-  pageTitle,
-  breadcrumbs,
-  offer: {title, company, goal, startDate},
-  cardContent,
-}) {
+export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}) {
+  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
   return (
     <>
       <Breadcrumbs breadcrumbs={breadcrumbs} />
@@ -37,14 +35,14 @@ export function OfferBanner({
                     </Card>{" "}
                   </>
                 )}
-                {title}
+                {offer.title}
               </Typography>
 
               <Typography component="h2" level="h4">
                 {company.name}
               </Typography>
 
-              <OfferInfoPills sectors={company.sectors} goal={goal} startDate={startDate} />
+              <OfferInfoPills offer={offer} company={company} />
             </Stack>
           </Grid>
 

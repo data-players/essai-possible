@@ -1,15 +1,16 @@
 import {Link as ReactRouterLink, useParams} from "react-router-dom";
 import {PageContent} from "../../components/Layout";
-import {LoadingSpinner} from "./../../components/atoms.jsx";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList} from "../../components/atoms.jsx";
-import {selectOfferById, useFetchOfferQuery} from "./offers-slice.js";
-import {OfferBanner} from "./OfferBanner.jsx";
+import {selectOfferById} from "./offers-slice.js";
+import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
+import Grid from "@mui/joy/Grid";
+import CompanySider from "./CompanySider";
 
 function BookMeetingButton(props) {
   const {t} = useTranslation();
@@ -31,14 +32,16 @@ export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
 
-  const {isLoading} = useFetchOfferQuery(id);
-  const offer = useSelector((state) => selectOfferById(state, id));
+  const offer = useSelector((state) => selectOfferById(state, id)) || {};
 
-  if (isLoading) return <LoadingSpinner />;
-
-  console.log(isLoading, offer);
-
-  const {title, description, tasks, skills, slots} = offer;
+  const ParagraphWithTitle = ({title, children}) => (
+    <Stack gap={2}>
+      <Typography level="h3" color="primary" fontWeight={"lg"}>
+        {title}
+      </Typography>
+      {children}
+    </Stack>
+  );
 
   return (
     <>
@@ -46,7 +49,7 @@ export default function PageOffer() {
         offer={offer}
         breadcrumbs={[
           {label: t("offer.backToOffers"), to: "/offers"},
-          {label: title, to: "."},
+          {label: offer.title, to: "."},
         ]}
         cardContent={
           <>
@@ -58,31 +61,35 @@ export default function PageOffer() {
                 {t("offer.theCompanyProposesBookingAMeetingSlot")}
               </Typography>
               <Typography textColor={"text.tertiary"}>
-                {t("offer.xMeetingSlotsAvailable", {count: slots?.length || 0})}
+                {t("offer.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
               </Typography>
-              {slots?.length > 0 && <BookMeetingButton />}
+              {offer.slots?.length > 0 && <BookMeetingButton />}
             </Stack>
           </>
         }
       />
 
-      <PageContent gap={2}>
-        <Typography level="h3" color="primary" fontWeight={"lg"} mt={2}>
-          {t("offer.description")}
-        </Typography>
-        <Typography>{description}</Typography>
+      <PageContent mt={4}>
+        <Grid container columnSpacing={4}>
+          <Grid xs={8}>
+            <Stack gap={2}>
+              <ParagraphWithTitle title={t("offer.description")}>
+                <Typography>{offer.description}</Typography>
+              </ParagraphWithTitle>
+              <ParagraphWithTitle title={t("offer.tasks")}>
+                <Typography>{offer.tasks}</Typography>
+              </ParagraphWithTitle>
+              <ParagraphWithTitle title={t("offer.skills")}>
+                <BasicList elements={offer.skills} />
+              </ParagraphWithTitle>
+              {offer.slots?.length > 0 && <BookMeetingButton />}
+            </Stack>
+          </Grid>
 
-        <Typography level="h3" color="primary" fontWeight={"lg"} mt={2}>
-          {t("offer.tasks")}
-        </Typography>
-        <Typography>{tasks}</Typography>
-
-        <Typography level="h3" color="primary" fontWeight={"lg"} mt={2}>
-          {t("offer.skills")}
-        </Typography>
-        <BasicList elements={skills} />
-
-        {slots?.length > 0 && <BookMeetingButton sx={{mt: 2}} />}
+          <Grid xs={4} sx={{alignSelf: "start", position: "sticky", top: 0}}>
+            <CompanySider offer={offer} />
+          </Grid>
+        </Grid>
       </PageContent>
     </>
   );

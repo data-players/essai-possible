@@ -9,7 +9,7 @@ import {user, userToken} from "./auth-slice-data.js";
 const slice = createSlice({
   name: "auth",
   initialState: {
-    status: "idle", // "idle" | "pending" | "ready"
+    status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
     token: localStorage.getItem("token") || null,
   },
@@ -55,7 +55,7 @@ export default slice.reducer;
  * AUTHENTICATION SELECTORS
  */
 
-export const selectCurrentUserReady = readySelector("auth");
+export const selectCurrentUserReady = readySelector("auth", "fetchUser");
 
 export const selectCurrentUser = (state) => state.auth.user;
 export const selectAuthTokenExists = (state) => !!state.auth.token;

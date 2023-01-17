@@ -2,26 +2,6 @@ import {loremIpsum} from "lorem-ipsum";
 import {dateISOString, dateTimeISOString, omit} from "../../app/mockUtils.js";
 
 const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
-const sectorsOptions = [
-  "Agriculture, sylviculture et pêche",
-  "Industries extractives",
-  "Production et distribution d’électricité, de gaz, de vapeur et d’air conditionné",
-  "Production et distribution d’eau; assainissement, gestion des déchets et dépollution",
-  "Construction",
-  "Commerce, réparation d’automobiles et de motocycles",
-  "Transport et entreprosage",
-  "Hébergement et restauration",
-  "Information et communication",
-  "Activités financières et d’assurances",
-  "Activités immobilières",
-  "Activités spécialisées scientifiques et techniques",
-  "Activités de services administratifs et de soutien",
-  "Administration publique",
-  "Enseignement",
-  "Santé humaine et action sociale",
-  "Autres activités de service",
-  "Activités des ménages en tant qu'employeurs",
-];
 
 // Ful data mock
 export const fullOffers = [
@@ -29,11 +9,7 @@ export const fullOffers = [
     id: "titredeloffre",
     createdAt: dateTimeISOString("2023-1-4 16:22"),
     title: "Titre de l'offre",
-    company: {
-      name: "P&V Group",
-      description: loremIpsum({count: 3}),
-      sectors: [sectorsOptions[1], sectorsOptions[8]],
-    },
+    company: 1,
     location: "Paris",
     goal: goalOptions[0],
     startDate: dateISOString("2023-2-25"),
@@ -53,13 +29,8 @@ export const fullOffers = [
     id: "comptable",
     createdAt: dateTimeISOString("2023-1-4 16:23"),
     title: "Comptable",
-    company: {
-      name: "TiBillet",
-      description: loremIpsum({count: 3}),
-      sectors: [sectorsOptions[5], sectorsOptions[8]],
-    },
+    company: 2,
     location: "La Réunion",
-    sectors: [sectorsOptions[6], sectorsOptions[7]],
     goal: goalOptions[0],
     startDate: dateISOString("2023-2-4"),
     description: loremIpsum({count: 2, units: "paragraph"}),
@@ -69,11 +40,7 @@ export const fullOffers = [
   {
     id: "devcooperatiffront",
     title: "Dev Coopératif front",
-    company: {
-      name: "TiBillet",
-      description: loremIpsum({count: 3}),
-      sectors: [sectorsOptions[4], sectorsOptions[8]],
-    },
+    company: 2,
     location: "La Réunion",
     goal: goalOptions[1],
     startDate: dateISOString("2023-3-8"),
@@ -87,11 +54,7 @@ export const fullOffers = [
     createdAt: dateTimeISOString("2023-1-4 16:15"),
     title:
       "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
-    company: {
-      name: "P&V Group",
-      description: loremIpsum({count: 3}),
-      sectors: [sectorsOptions[2], sectorsOptions[6], sectorsOptions[3]],
-    },
+    company: 1,
     location: "Paris",
     goal: goalOptions[0],
     startDate: new Date(2023, 2, 4).toISOString(),
@@ -109,11 +72,7 @@ export const fullOffers = [
     id: "consultantenergiesrenouvelables",
     createdAt: dateTimeISOString("2023-1-4 16:28"),
     title: "Consultant énergies renouvelables",
-    company: {
-      name: "Enercoop",
-      description: loremIpsum({count: 3}),
-      sectors: [sectorsOptions[1], sectorsOptions[8]],
-    },
+    company: 3,
     location: "Tours",
     goal: goalOptions[1],
     startDate: dateISOString("2023-4-12"),

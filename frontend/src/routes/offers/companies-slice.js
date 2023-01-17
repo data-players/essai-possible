@@ -16,7 +16,7 @@ const companiesAdapter = createEntityAdapter({
 });
 
 const initialState = companiesAdapter.getInitialState({
-  status: "idle",
+  status: {},
 });
 
 const companiesSlice = createSlice({
@@ -27,7 +27,7 @@ const companiesSlice = createSlice({
       .addMatcher(matchAny("matchFulfilled", ["fetchCompanies"]), companiesAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne);
 
-    addStatusForEndpoints(builder, ["fetchCompanies"]);
+    addStatusForEndpoints(builder, ["fetchCompanies", "fetchCompany"]);
   },
 });
 
@@ -37,10 +37,12 @@ export default companiesSlice.reducer;
  * COMPANIES SELECTORS
  */
 
-export const selectCompaniesReady = readySelector("companies");
+export const selectCompaniesReady = readySelector("companies", "fetchCompanies");
+export const selectCompanyReady = readySelector("companies", "fetchCompany");
 
 export const {
   selectAll: selectAllCompanies,
+  selectEntities: selectAllCompaniesById,
   selectById: selectCompanyById,
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
@@ -119,4 +121,4 @@ api.injectEndpoints({
   }),
 });
 
-export const {useFetchCompaniesQuery, useFetchCompanyQuery} = api;
+export const {useFetchCompaniesQuery, useLazyFetchCompanyQuery, useFetchCompanyQuery} = api;

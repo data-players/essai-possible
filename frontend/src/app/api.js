@@ -24,7 +24,7 @@ const api = createApi({
   }),
   // Endpoints are defined in `xxx-slice.js` files
   // https://redux-toolkit.js.org/rtk-query/usage/code-splitting
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 });
 
 export const {usePrefetch} = api;
@@ -39,15 +39,18 @@ export const matchAny = (matcherKey, endpoints = []) =>
   isAnyOf(...endpoints.map((endpoint) => api.endpoints[endpoint][matcherKey]));
 
 // Shorthand for status related selector
-export const readySelector = (sliceName) => (state) => state[sliceName].status === "ready";
+export const readySelector = (sliceName, apiEndpointName) => (state) =>
+  state[sliceName].status[apiEndpointName] === "ready";
 
 // Manages the status field properly and consistently for everybody.
 export const addStatusForEndpoints = (builder, endpoints = []) => {
-  const setStatusReducer = (status) => (state) => {
-    state.status = status;
+  const setStatusReducer = (status, endpoint) => (state) => {
+    state.status[endpoint] = status;
   };
-  builder
-    .addMatcher(matchAny("matchPending", endpoints), setStatusReducer("pending"))
-    .addMatcher(matchAny("matchRejected", endpoints), setStatusReducer("idle"))
-    .addMatcher(matchAny("matchFulfilled", endpoints), setStatusReducer("ready"));
+  for (const endpoint of endpoints) {
+    builder
+      .addMatcher(api.endpoints[endpoint].matchPending, setStatusReducer("pending", endpoint))
+      .addMatcher(api.endpoints[endpoint].matchRejected, setStatusReducer(undefined, endpoint))
+      .addMatcher(api.endpoints[endpoint].matchFulfilled, setStatusReducer("ready", endpoint));
+  }
 };

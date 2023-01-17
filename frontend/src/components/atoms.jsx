@@ -128,9 +128,9 @@ export function SearchBar({sx, ...props}) {
 }
 
 export function Form({onSubmit, initialValues, children, successText}) {
-  // https://formik.org/docs/examples/with-material-ui
-
   const [openSnackbar] = useSnackbar();
+
+  // https://formik.org/docs/examples/with-material-ui
   const {
     handleSubmit,
     handleChange: onChange,
