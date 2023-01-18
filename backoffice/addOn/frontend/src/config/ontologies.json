@@ -53,15 +53,5 @@
     "prefix": "semapps",
     "owl": "",
     "url": "http://semapps.org/ns/core#"
-  },
-  {
-    "prefix": "opal",
-    "owl": "https://data.essaipossible.fr/ontology",
-    "url": "https://data.essaipossible.fr/ontology#"
-  },
-  {
-    "prefix": "aurba",
-    "owl": "https://64617461.AUrba.data-players.com/ontology",
-    "url": "https://64617461.AUrba.data-players.com/ontology#"
   }
 ]

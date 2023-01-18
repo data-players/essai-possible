@@ -1,4 +1,11 @@
 ### Node template
+# semapps
+/data
+/keycloak
+.vscode
+.env
+
+
 # Logs
 logs
 *.log

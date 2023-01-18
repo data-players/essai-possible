@@ -21,7 +21,9 @@ services:
       start_period: 5s
 
   middleware:
-    image: dataplayers/archipelago-middleware:0.7
+    build:
+      context: ./../archipelago-build-dockerhub/
+      dockerfile: Dockerfile.mid
     depends_on:
       fuseki:
         condition: service_healthy
@@ -32,6 +34,7 @@ services:
       - './data/middleware/jwt:/archipelago/middleware/jwt'
       - './data/middleware/uploads:/archipelago/middleware/uploads'
       - './middleware/addOn:/archipelago/middleware/addOn'
+      - './data/fuseki/databases/localData:/localData'
     environment:
       - 'SEMAPPS_SPARQL_ENDPOINT=http://fuseki:3030/'
       - SEMAPPS_MAIN_DATASET=localData
@@ -53,14 +56,16 @@ services:
       - '3000:3000'
 
   backoffice:
-    image: dataplayers/archipelago-frontend:0.7
+    build:
+      context: ./../archipelago-build-dockerhub/
+      dockerfile: Dockerfile.front
     environment:
       - 'REACT_APP_MIDDLEWARE_URL=http://localhost:3000/'
       - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
       - PORT=4000
     volumes:
       - ./backoffice/addOn:/archipelago/frontend/addOn
-    command: bash -c "cp -r ./addOn/frontend/* . && yarn install && yarn start"
+    command: bash -c "cp -r ./addOn/frontend/* . && yarn install && yarn copy-and-start-addOn"
     networks:
       - semapps
     ports:
@@ -73,7 +78,7 @@ services:
   #     - ./frontend:/app
   #   environment:
   #     # - REACT_APP_MIDDLEWARE_URL=http://localhost:3000/
-  #     - REACT_APP_MIDDLEWARE_URL=https://data.essaipossible.fr/
+  #     - REACT_APP_MIDDLEWARE_URL=https://data.moncollectifemploi.fr/
   #     - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
   #     - REACT_APP_CONTACT_EMAIL=${CONTACT_EMAIL}
   #     - REACT_APP_CONTACT_LABEL=${CONTACT_LABEL}
