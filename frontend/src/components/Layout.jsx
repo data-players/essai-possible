@@ -175,13 +175,13 @@ function SideDrawer({onClose, ...props}) {
   );
 }
 
-export function HeroBanner({noBackground = false, ...props}) {
+export function HeroBanner({noBackground = false, invertedColors = true, ...props}) {
   const Component = props.component || Sheet;
   return (
     <Component
       variant="solid"
       color="neutral"
-      invertedColors
+      invertedColors={invertedColors}
       {...props}
       sx={[{py: 8}, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
       {/* Image background */}

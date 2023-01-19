@@ -23,7 +23,7 @@ function BookMeetingButton(props) {
       to={"book"}
       startDecorator={<CalendarMonthRoundedIcon />}
       {...props}>
-      {t("offer.bookAMeetingSlot", {context: "short"})}
+      {t("offers.bookAMeetingSlot", {context: "short"})}
     </Button>
   );
 }
@@ -48,20 +48,20 @@ export default function PageOffer() {
       <OfferBanner
         offer={offer}
         breadcrumbs={[
-          {label: t("offer.backToOffers"), to: "/offers"},
+          {label: t("offers.backToOffers"), to: "/offers"},
           {label: offer.title, to: "."},
         ]}
         cardContent={
           <>
             <Stack gap={3}>
               <Typography color={"neutral"} level="h3">
-                {t("offer.howToApply")}
+                {t("offers.howToApply")}
               </Typography>
               <Typography fontSize="xl" textColor={"neutral.800"}>
-                {t("offer.theCompanyProposesBookingAMeetingSlot")}
+                {t("offers.theCompanyProposesBookingAMeetingSlot")}
               </Typography>
               <Typography textColor={"text.tertiary"}>
-                {t("offer.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+                {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
               </Typography>
               {offer.slots?.length > 0 && <BookMeetingButton />}
             </Stack>
@@ -73,13 +73,13 @@ export default function PageOffer() {
         <Grid container columnSpacing={4}>
           <Grid xs={8}>
             <Stack gap={2}>
-              <ParagraphWithTitle title={t("offer.description")}>
+              <ParagraphWithTitle title={t("offers.description")}>
                 <Typography>{offer.description}</Typography>
               </ParagraphWithTitle>
-              <ParagraphWithTitle title={t("offer.tasks")}>
+              <ParagraphWithTitle title={t("offers.tasks")}>
                 <Typography>{offer.tasks}</Typography>
               </ParagraphWithTitle>
-              <ParagraphWithTitle title={t("offer.skills")}>
+              <ParagraphWithTitle title={t("offers.skills")}>
                 <BasicList elements={offer.skills} />
               </ParagraphWithTitle>
               {offer.slots?.length > 0 && <BookMeetingButton />}

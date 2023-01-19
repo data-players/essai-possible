@@ -81,7 +81,7 @@ export default function PageBook() {
   const steps = [
     // MEETING SLOT CHOICE
     <>
-      <StepTitle> {t("offer.chooseYourMeetingSlot")}</StepTitle>
+      <StepTitle> {t("offers.chooseYourMeetingSlot")}</StepTitle>
 
       <List>
         {Object.entries(slotsByDate).map(([date, slots]) => (
@@ -108,13 +108,13 @@ export default function PageBook() {
         color="success"
         onClick={nextStep}
         startDecorator={<CheckIcon />}>
-        {t("offer.chooseThisMeetingSlot")}
+        {t("offers.chooseThisMeetingSlot")}
       </Button>
     </>,
 
     // USER LOGIN/SIGNUP + COMMENTS
     <>
-      <StepTitle>{t("offer.myInformation")}</StepTitle>
+      <StepTitle>{t("offers.myInformation")}</StepTitle>
 
       <Stack gap={3}>
         <AuthCard />
@@ -152,7 +152,7 @@ export default function PageBook() {
                     color={"success"}
                     sx={{flexGrow: 1}}
                     startDecorator={<CheckIcon />}>
-                    {t("offer.validateInformation")}
+                    {t("offers.validateInformation")}
                   </Button>
                 </Stack>
               </Stack>
@@ -166,14 +166,14 @@ export default function PageBook() {
   return (
     <>
       <OfferBanner
-        pageTitle={t("offer.bookAMeetingSlot", {context: "short"})}
+        pageTitle={t("offers.bookAMeetingSlot", {context: "short"})}
         offer={offer}
         breadcrumbs={[
-          {label: t("offer.backToOffers"), to: "/offers"},
+          {label: t("offers.backToOffers"), to: "/offers"},
           {label: offer.title, to: "./.."},
-          {label: t("offer.bookAMeetingSlot"), to: ".", onClick: () => setFormStep(0)},
+          {label: t("offers.bookAMeetingSlot"), to: ".", onClick: () => setFormStep(0)},
           formStep >= 1 && {
-            label: t("offer.myInformation"),
+            label: t("offers.myInformation"),
             to: ".",
             onClick: () => setFormStep(1),
           },
@@ -190,7 +190,7 @@ export default function PageBook() {
                 {selectedMeetingSlot && (
                   <Typography sx={{alignSelf: "center"}} textColor={"text.tertiary"}>
                     <Trans
-                      i18nKey="offer.youAreAboutToBookAMeetingOnThe"
+                      i18nKey="offers.youAreAboutToBookAMeetingOnThe"
                       values={{
                         dateTime: tDateTime(
                           sortedSlots.find((slot) => slot.start.toString() === selectedMeetingSlot)
@@ -205,7 +205,7 @@ export default function PageBook() {
           </>
         ) : (
           <Typography mt={4} textColor={"text.tertiary"}>
-            {t("offer.ohOhNoMeetings")}
+            {t("offers.ohOhNoMeetings")}
           </Typography>
         )}
       </PageContent>

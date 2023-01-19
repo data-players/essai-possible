@@ -1,7 +1,7 @@
 import {loremIpsum} from "lorem-ipsum";
 import {dateISOString, dateTimeISOString, omit} from "../../app/mockUtils.js";
 
-const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
+export const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
 
 // Ful data mock
 export const fullOffers = [

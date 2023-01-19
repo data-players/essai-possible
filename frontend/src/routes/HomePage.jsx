@@ -50,7 +50,7 @@ export default function HomePage() {
                   to={"offers"}
                   size={"lg"}
                   startDecorator={<SearchRoundedIcon />}>
-                  {t("offer.seeOffers")}
+                  {t("offers.seeOffers")}
                 </Button>
                 <Button
                   component={ReactRouterLink}
@@ -58,7 +58,7 @@ export default function HomePage() {
                   to={"offers"}
                   size={"lg"}
                   startDecorator={<AddRoundedIcon />}>
-                  {t("offer.proposeAnOffer")}
+                  {t("offers.proposeAnOffer")}
                 </Button>
               </Stack>
             </Card>

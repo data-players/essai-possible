@@ -4,8 +4,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {PageContent} from "../../../components/Layout";
 import Typography from "@mui/joy/Typography";
+import {useTranslation} from "react-i18next";
 
 export default function PageMyMeetings() {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -13,7 +15,7 @@ export default function PageMyMeetings() {
 
   return (
     <PageContent gap={3}>
-      <Typography level={"h1"}>Mes rendez-vous</Typography>
+      <Typography level={"h1"}>{t("account.myMeetings")}</Typography>
     </PageContent>
   );
 }

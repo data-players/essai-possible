@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export function groupBy(xs, fn) {
   return (
     xs?.reduce(function (rv, x) {
@@ -8,6 +10,8 @@ export function groupBy(xs, fn) {
   );
 }
 
+export const cleanUrl = (url) => url.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");
+
 export const normalize = (string, caseSensitive = false) => {
   const normalized =
     string
@@ -17,4 +21,21 @@ export const normalize = (string, caseSensitive = false) => {
   return caseSensitive ? normalized : normalized.toLowerCase();
 };
 
-export const cleanUrl = (url) => url.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");
+const compare = (a, b) => {
+  if (a === b) {
+    return 0;
+  } else {
+    const aDefined = a !== undefined && a !== null;
+    const bDefined = b !== undefined && b !== null;
+    if (aDefined && bDefined) return a > b ? 1 : -1;
+    else if (aDefined) return 1;
+    else if (bDefined) return -1;
+    else return 0;
+  }
+};
+
+export const sorter = {
+  date: (a, b) => (a ? dayjs(a).valueOf() : -Infinity) - (b ? dayjs(b).valueOf() : -Infinity),
+  text: (a, b) => compare(normalize(a).replace(/ /g, ""), normalize(b).replace(/ /g, "")),
+  number: compare,
+};

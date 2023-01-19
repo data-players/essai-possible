@@ -13,19 +13,19 @@ export default function OfferInfoPills({offer, company}) {
     <Grid container columnSpacing={4} rowSpacing={3} p={0}>
       <Grid xs={12} sm={6} md={4}>
         <Chip color={"primary"} startDecorator={<LocalOfferRoundedIcon />}>
-          {t("offer.sector", {count: company.sectors?.length})}
+          {t("offers.sector", {count: company.sectors?.length})}
         </Chip>
         <BasicList elements={company.sectors} />
       </Grid>
       <Grid xs={12} sm={6} md={4}>
         <Chip color={"primary"} startDecorator={<FlagRoundedIcon />}>
-          {t("offer.goal")}
+          {t("offers.goal")}
         </Chip>
         <Box sx={{mt: 1, ml: 2}}>{offer.goal}</Box>
       </Grid>
       <Grid xs={12} sm={12} md={4}>
         <Chip color={"primary"} startDecorator={<CalendarMonthRoundedIcon />}>
-          {t("offer.startDate")}
+          {t("offers.startDate")}
         </Chip>
         <Box sx={{mt: 1, ml: 2}}>{tDate(company.startDate)}</Box>
       </Grid>

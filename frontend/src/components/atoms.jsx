@@ -16,6 +16,9 @@ import {useTranslation} from "react-i18next";
 import Input from "@mui/joy/Input";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded.js";
 import {useSnackbar} from "./snackbar.jsx";
+import ListItem from "@mui/joy/ListItem";
+import List from "@mui/joy/List";
+import Card from "@mui/joy/Card";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -119,7 +122,7 @@ export function SearchBar({sx, ...props}) {
     <Input
       variant={"soft"}
       color={"neutral"}
-      placeholder={t("offer.searchAnOffer")}
+      placeholder={t("offers.searchAnOffer")}
       startDecorator={<SearchRoundedIcon color="primary" />}
       {...props}
       sx={[{display: "flex"}, ...(Array.isArray(sx) ? sx : [sx])]}
@@ -158,4 +161,31 @@ export function Form({onSubmit, initialValues, children, successText}) {
   }
 
   return <form onSubmit={handleSubmit}>{children(register, values, onChange)}</form>;
+}
+
+export function CheckboxGroup({options, value, setFieldValue}) {
+  return (
+    <Card variant={"soft"} size={"sm"} sx={{mt: 1}}>
+      <List size="sm">
+        {options.map((option) => {
+          const checked = value.includes(option);
+          return (
+            <ListItem>
+              <Checkbox
+                label={option}
+                checked={checked}
+                onChange={(event) => {
+                  setFieldValue(
+                    event.target.checked
+                      ? [...value, option]
+                      : value.filter((checkedOption) => option !== checkedOption)
+                  );
+                }}
+              />
+            </ListItem>
+          );
+        })}
+      </List>
+    </Card>
+  );
 }

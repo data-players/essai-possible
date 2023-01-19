@@ -53,29 +53,40 @@ export const selectFilteredOffersIds = createSelector(
   [
     selectAllOffers,
     selectAllCompaniesById,
-    (state, searchText, locationText, radius) => searchText,
-    (state, searchText, locationText, radius) => locationText,
-    (state, searchText, locationText, radius) => radius,
+    (state, {search}) => search,
+    (state, {location}) => location,
+    (state, {radius}) => radius,
+    (state, {sectors}) => sectors,
+    (state, {goals}) => goals,
   ],
-  (offers, companiesById, searchText, locationText, radius) => {
-    const hasSearchText = searchText !== "";
-    const hasLocalizationText = locationText !== "";
+  (offers, companiesById, search, location, radius, sectors, goals) => {
+    const hasSearch = search !== "";
+    const hasLocalizationText = location !== "";
+    const hasSectors = sectors?.length > 0;
+    const hasGoals = goals?.length > 0;
+    const hasAnyFilter = hasSearch || hasLocalizationText || hasSectors || hasGoals;
 
-    const searchInFields = (fields, searchText) =>
-      fields.find((field) => normalize(field).includes(normalize(searchText)));
+    const searchInFields = (fields, search) =>
+      fields.find((field) => normalize(field).includes(normalize(search)));
 
-    const filteredOffers =
-      hasSearchText || hasLocalizationText
-        ? offers.filter((offer) => {
-            const {title, description, location} = offer;
-            const companyName = companiesById[offer.company]?.name;
+    const matchInArray = (elementArray, filterArray) => {
+      return filterArray.find((option) => elementArray.includes(option));
+    };
 
-            return (
-              (!hasSearchText || searchInFields([title, companyName, description], searchText)) &&
-              (!hasLocalizationText || searchInFields([location], locationText))
-            );
-          })
-        : offers;
+    const filteredOffers = hasAnyFilter
+      ? offers.filter((offer) => {
+          const company = companiesById[offer.company] || {};
+          console.log(hasSectors && matchInArray(company.sectors, sectors));
+
+          return (
+            (!hasSearch ||
+              searchInFields([offer.title, company.name, offer.description], search)) &&
+            (!hasLocalizationText || searchInFields([offer.location], location)) &&
+            (!hasSectors || matchInArray(company.sectors, sectors)) &&
+            (!hasGoals || matchInArray([offer.goal], goals))
+          );
+        })
+      : offers;
 
     return filteredOffers.map((offer) => offer.id);
   }

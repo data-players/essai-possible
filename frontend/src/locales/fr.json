@@ -1,17 +1,10 @@
 {
   "essaiPossible": "Essai Possible",
-  "nav": {
-    "logIn": "Connexion",
-    "signUp": "Inscription",
-    "hiringManagersSpace": "Espace recruteurs"
+  "goBack": "Retour",
+  "account": {
+    "myMeetings": "Mes rendez-vous"
   },
-  "logo": "LOGO",
-  "intlTime": "{{val, datetime(timeStyle: short)}}",
-  "intlDate": "{{val, datetime(dateStyle: long)}}",
-  "intlDateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
-  "intlDateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}",
-  "intlRelativeTime": "{{val, relativetime}}",
-  "offer": {
+  "offers": {
     "seeOffers": "Voir les offres",
     "searchAnOffer": "Rechercher une offre…",
     "sector": "Secteur",
@@ -38,8 +31,6 @@
     "proposeAnOffer": "Publier une offre",
     "chooseYourMeetingSlot": "Choisir mon créneau"
   },
-  "goBack": "Retour",
-  "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères.",
   "homePage": {
     "heroSubtitle": "Teste un job, un métier, une entreprise.",
     "heroExplanationCandidates": "Vous êtes à la <strong>recherche d'un emploi</strong> et voulez avoir l'opportunité de <strong>faire vos preuves</strong> ? Faîtes une immersion dans une entreprise qui vous motive !",
@@ -53,12 +44,25 @@
     "implantationsExplanation": "Nous lançons officiellement cette plateforme sur le département du Nord et à Nancy !\n\n",
     "ourPartners": "Nos partenaires"
   },
+  "nav": {
+    "logIn": "Connexion",
+    "signUp": "Inscription",
+    "companiesSpace": "Espace entreprises"
+  },
   "footer": {
     "projectFundedBy": "Un projet fondé par",
     "contact": "Contact"
   },
   "error": {
-    "subtitle": "Un problème est survenu.",
-    "title": "Oups !"
+    "aProblemOccurred": "Un problème est survenu.",
+    "oops": "Oups !",
+    "oopsNoResults": "Oups, nous n'avons rien trouvé pour votre recherche. Essayez d'élargir vos critères."
+  },
+  "intl": {
+    "time": "{{val, datetime(timeStyle: short)}}",
+    "date": "{{val, datetime(dateStyle: long)}}",
+    "dateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
+    "dateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}",
+    "relativeTime": "{{val, relativetime}}"
   }
 }

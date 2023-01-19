@@ -11,8 +11,8 @@ export default function ErrorPage() {
 
   return (
     <PageContent gap={3}>
-      <Typography level={"h1"}>{t("error.title")}</Typography>
-      <Typography>{t("error.subtitle")}</Typography>
+      <Typography level={"h1"}>{t("error.oops")}</Typography>
+      <Typography>{t("error.aProblemOccurred")}</Typography>
       <Card variant={"soft"}>
         <pre>{error.statusText || error.message}</pre>
       </Card>

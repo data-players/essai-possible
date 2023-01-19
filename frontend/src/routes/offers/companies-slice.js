@@ -1,7 +1,5 @@
-import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
-import {selectCurrentUser} from "../../app/auth-slice.js";
+import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
-import {normalize} from "../../app/utils.js";
 import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 
 /**
@@ -46,48 +44,6 @@ export const {
   selectById: selectCompanyById,
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
-
-// Apply the user filter selection to the companies list
-// More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
-export const selectFilteredCompaniesIds = createSelector(
-  [
-    selectAllCompanies,
-    (state, searchText, locationText, radius) => searchText,
-    (state, searchText, locationText, radius) => locationText,
-    (state, searchText, locationText, radius) => radius,
-  ],
-  (companies, searchText, locationText, radius) => {
-    const hasSearchText = searchText !== "";
-    const hasLocalizationText = locationText !== "";
-
-    const searchInFields = (fields, searchText) =>
-      fields.find((field) => normalize(field).includes(normalize(searchText)));
-
-    const filteredCompanies =
-      hasSearchText || hasLocalizationText
-        ? companies.filter((item) => {
-            const {
-              title,
-              company: {name: companyName},
-              description,
-              location,
-            } = item;
-
-            return (
-              (!hasSearchText || searchInFields([title, companyName, description], searchText)) &&
-              (!hasLocalizationText || searchInFields([location], locationText))
-            );
-          })
-        : companies;
-
-    return filteredCompanies.map((company) => company.id);
-  }
-);
-
-export const selectCompaniesForUser = createSelector(
-  [selectAllCompanies, (state) => selectCurrentUser(state)?.id],
-  (companies, currentUserId) => companies.filter((company) => company.user === currentUserId)
-);
 
 /**
  * COMPANIES API ENDPOINTS

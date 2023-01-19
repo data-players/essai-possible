@@ -1,7 +1,8 @@
 import {loremIpsum} from "lorem-ipsum";
 import {omit} from "../../app/mockUtils.js";
+import {sorter} from "../../app/utils.js";
 
-const sectorsOptions = [
+export const sectorsOptions = [
   "Agriculture, sylviculture et pêche",
   "Industries extractives",
   "Production et distribution d’électricité, de gaz, de vapeur et d’air conditionné",
@@ -20,7 +21,7 @@ const sectorsOptions = [
   "Santé humaine et action sociale",
   "Autres activités de service",
   "Activités des ménages en tant qu'employeurs",
-];
+].sort(sorter.text);
 
 // Ful data mock
 export const fullCompanies = [

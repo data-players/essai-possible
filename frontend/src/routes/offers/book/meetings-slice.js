@@ -1,7 +1,5 @@
-import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
-import {selectCurrentUser} from "../../../app/auth-slice.js";
+import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/api.js";
-import {normalize} from "../../../app/utils.js";
 import {meetings} from "./meetings-slice-data.js";
 
 /**
@@ -54,48 +52,6 @@ export const {
   selectById: selectMeetingById,
   selectIds: selectMeetingIds,
 } = meetingsAdapter.getSelectors((state) => state.meetings);
-
-// Apply the user filter selection to the meetings list
-// More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
-export const selectFilteredMeetingsIds = createSelector(
-  [
-    selectAllMeetings,
-    (state, searchText, locationText, radius) => searchText,
-    (state, searchText, locationText, radius) => locationText,
-    (state, searchText, locationText, radius) => radius,
-  ],
-  (meetings, searchText, locationText, radius) => {
-    const hasSearchText = searchText !== "";
-    const hasLocalizationText = locationText !== "";
-
-    const searchInFields = (fields, searchText) =>
-      fields.find((field) => normalize(field).includes(normalize(searchText)));
-
-    const filteredMeetings =
-      hasSearchText || hasLocalizationText
-        ? meetings.filter((item) => {
-            const {
-              title,
-              company: {name: companyName},
-              description,
-              location,
-            } = item;
-
-            return (
-              (!hasSearchText || searchInFields([title, companyName, description], searchText)) &&
-              (!hasLocalizationText || searchInFields([location], locationText))
-            );
-          })
-        : meetings;
-
-    return filteredMeetings.map((meeting) => meeting.id);
-  }
-);
-
-export const selectMeetingsForUser = createSelector(
-  [selectAllMeetings, (state) => selectCurrentUser(state)?.id],
-  (meetings, currentUserId) => meetings.filter((meeting) => meeting.user === currentUserId)
-);
 
 /**
  * MEETINGS API ENDPOINTS

@@ -35,12 +35,12 @@ function MobileDrawerContent() {
 
   const navigationItems = [
     {
-      label: t("offer.seeOffers"),
+      label: t("offers.seeOffers"),
       to: "offers",
       icon: AssignmentIndRoundedIcon,
     },
     {
-      label: t("nav.hiringManagersSpace"),
+      label: t("nav.companiesSpace"),
       to: "hiring-managers",
       icon: AssignmentIndRoundedIcon,
     },
