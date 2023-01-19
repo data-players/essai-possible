@@ -1,44 +1,35 @@
 import React from 'react';
-
+import { MultiViewsList } from '@semapps/list-components';
+import { MapList } from '@semapps/geo-components';
 import { Avatar } from '@material-ui/core';
+import MapIcon from '@material-ui/icons/Map';
 import ListIcon from '@material-ui/icons/List';
 import HomeIcon from '@material-ui/icons/Home';
-import { MultiViewsList } from '@semapps/list-components';
-import SimpleList from "../../common/list/SimpleList";
-import List from "../../layout/list/List";
-import { MapList } from '@semapps/geo-components';
-import MapIcon from '@material-ui/icons/Map';
-import {ReferenceField} from '@semapps/field-components';
-
-import {
-  Datagrid,
-  TextField,
-  EditButton
-} from 'react-admin';
-
-
 import OrganizationFilterSidebar from './OrganizationFilterSidebar';
+import SimpleList from "../../../../common/list/SimpleList";
+import List from "../../../../layout/list/List";
 
-const OrganizationList = props => {
-  return <MultiViewsList
+const OrganizationList = props => (
+  <MultiViewsList
     ListComponent={List}
     aside={<OrganizationFilterSidebar />}
     views={{
       list: {
         label: 'Liste',
         icon: ListIcon,
-        sort: { field: 'pair:label', order: 'DESC' },
+        sort: { field: 'pair:label', order: 'ASC' },
         perPage: 25,
         list: (
-
-          <Datagrid>
-              <TextField source="pair:label" />
-              <TextField source="pair:description" />
-              <ReferenceField reference="DataSource" source="aurba:hasDataSource">
-                <TextField source="pair:label" />
-              </ReferenceField>
-              <EditButton />
-          </Datagrid>
+          <SimpleList
+            primaryText={record => record['pair:label']}
+            secondaryText={record => record['pair:comment']}
+            leftAvatar={record => (
+              <Avatar src={record['image']} width="100%">
+                <HomeIcon />
+              </Avatar>
+            )}
+            linkType="show"
+          />
         )
       },
       map: {
@@ -51,7 +42,7 @@ const OrganizationList = props => {
             latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
             longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
             label={record => record['pair:label']}
-            /*description={record => record['pair:comment']}*/
+            description={record => record['pair:comment']}
             scrollWheelZoom
           />
         )
@@ -59,6 +50,6 @@ const OrganizationList = props => {
     }}
     {...props}
   />
-};
+);
 
 export default OrganizationList;

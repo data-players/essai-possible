@@ -13,7 +13,7 @@
     "foaf": "http://xmlns.com/foaf/0.1/",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "semapps": "http://semapps.org/ns/core#",
-    "opal": "https://data.essaipossible.fr/ontology#",
+    "essaipossible":"https://data.essaipossible.fr/ontology#",
     "aurba": "https://64617461.AUrba.data-players.com/ontology#",
 
     "id": "@id",
@@ -22,49 +22,6 @@
       "@id": "as:image",
       "@type": "@id"
     },
-    "opal:hasBusinessCreationGoal": {
-      "@type": "@id"
-    },
-    "opal:BusinessCreationGoalOf": {
-      "@type": "@id"
-    },
-    "opal:hasDegreeLevel": {
-      "@type": "@id"
-    },
-    "opal:DegreeLevelOf": {
-      "@type": "@id"
-    },
-    "opal:hasGender": {
-      "@type": "@id"
-    },
-    "opal:GenderOf": {
-      "@type": "@id"
-    },
-    "opal:hasFindingHelpGoal": {
-      "@type": "@id"
-    },
-    "opal:FindingHelpGoalOf": {
-      "@type": "@id"
-    },
-    "opal:hasJobSearchGoal": {
-      "@type": "@id"
-    },
-    "opal:JobSearchGoalOf": {
-      "@type": "@id"
-    },
-    "opal:hasTrainingGoal": {
-      "@type": "@id"
-    },
-    "opal:TrainingGoalOf": {
-      "@type": "@id"
-    },
-    "opal:hasTrainingMode": {
-      "@type": "@id"
-    },
-    "opal:TrainingModeOf": {
-      "@type": "@id"
-    },
-
     "aurba:hasDataSource": {
       "@type": "@id"
     },

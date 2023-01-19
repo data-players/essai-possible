@@ -56,7 +56,7 @@
   },
   {
     "prefix": "essaipossible",
-    "owl": "https://data-players.github.io/essai-possible/middleware/addOn/middleware/public/ontology.ttl",
+    "owl": "",
     "url": "https://data.essaipossible.fr/ontology#"
   },
   {

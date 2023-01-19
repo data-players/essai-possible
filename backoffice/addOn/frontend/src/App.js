@@ -8,6 +8,7 @@ import i18nProvider from './config/i18nProvider';
 import authProvider from './config/authProvider';
 import dataProvider from './config/dataProvider';
 import theme from './config/theme';
+import customTheme from './customTheme';
 import * as resources from './resources';
 
 import Layout from './layout/Layout';
@@ -18,12 +19,12 @@ const App = () => (
   <Admin
     disableTelemetry
     history={history}
-    title="Essai Possible"
+    title=""
     authProvider={authProvider}
     dataProvider={dataProvider}
     i18nProvider={i18nProvider}
     layout={Layout}
-    theme={theme}
+    theme={customTheme}
     loginPage={LoginPage}
     logoutButton={LogoutButton}
     dashboard={HomePage}
