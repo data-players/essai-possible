@@ -10,7 +10,8 @@ import {selectOfferById} from "./offers-slice.js";
 import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
-import CompanySider from "./CompanySider";
+import CompanyCard from "./CompanyCard.jsx";
+import Box from "@mui/joy/Box";
 
 function BookMeetingButton(props) {
   const {t} = useTranslation();
@@ -71,23 +72,34 @@ export default function PageOffer() {
 
       <PageContent mt={4}>
         <Grid container columnSpacing={4}>
-          <Grid xs={8}>
+          <Grid xs={12} md={8}>
             <Stack gap={2}>
               <ParagraphWithTitle title={t("offers.description")}>
                 <Typography>{offer.description}</Typography>
               </ParagraphWithTitle>
+
+              {/* Company card in the text on xs+ screens */}
+              <Box my={2} display={{xs: "block", md: "none"}}>
+                <CompanyCard offer={offer} />
+              </Box>
+
               <ParagraphWithTitle title={t("offers.tasks")}>
                 <Typography>{offer.tasks}</Typography>
               </ParagraphWithTitle>
+
               <ParagraphWithTitle title={t("offers.skills")}>
                 <BasicList elements={offer.skills} />
               </ParagraphWithTitle>
+
               {offer.slots?.length > 0 && <BookMeetingButton />}
             </Stack>
           </Grid>
 
-          <Grid xs={4} sx={{alignSelf: "start", position: "sticky", top: 0}}>
-            <CompanySider offer={offer} />
+          {/* Company card on the side in md+ screens */}
+          <Grid xs={0} md={4}>
+            <Box display={{xs: "none", md: "block"}}>
+              <CompanyCard offer={offer} sx={{display: {xs: "none", md: "block"}}} />
+            </Box>
           </Grid>
         </Grid>
       </PageContent>

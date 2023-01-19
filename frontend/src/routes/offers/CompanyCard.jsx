@@ -7,7 +7,7 @@ import {selectCompanyById} from "./companies-slice.js";
 
 const cleanUrl = (url) => url?.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");
 
-export default function CompanySider({offer}) {
+export default function CompanyCard({offer}) {
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
   return (
     <Card variant={"soft"}>
@@ -17,7 +17,7 @@ export default function CompanySider({offer}) {
         </Typography>
         <Typography level="h3">{company.name}</Typography>
         <Typography>{company.description}</Typography>
-        <Link to={company.website}>{cleanUrl(company.website)}</Link>
+        <Link href={company.website}>{cleanUrl(company.website)}</Link>
       </Stack>
     </Card>
   );
