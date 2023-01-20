@@ -7,7 +7,7 @@ import {
 } from "../../app/auth-slice.js";
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
 import {ButtonWithConfirmation, Form} from "../../components/atoms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
@@ -74,35 +74,48 @@ export default function PageAccount() {
         </Form>
       </Card>
 
-      <Card variant={"soft"}>
-        <Stack gap={2}>
-          <Typography level={"h2"}>Gestion du compte</Typography>
+      <Stack gap={3} direction={{md: "row"}} justifyContent={""}>
+        <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>
+          <Stack gap={2}>
+            <Typography level={"h2"}>Mes rendez-vous</Typography>
+            <Typography>Consultez vos rendez-vous en cours sur la page dédiée.</Typography>
 
-          <Button
-            color={"danger"}
-            onClick={async () => {
-              await dispatch(authActions.logOut());
-              openSnackbar("Déconnexion réussie", {color: "success"});
-              navigate("/login");
-            }}>
-            Se déconnecter
-          </Button>
+            <Button color={"neutral"} component={ReactRouterLink} to={"/my-meetings"}>
+              Voir mes rendez-vous en cours
+            </Button>
+          </Stack>
+        </Card>
 
-          <ButtonWithConfirmation
-            color={"danger"}
-            loading={isDeletingUser}
-            onClick={async () => {
-              await deleteUser().unwrap();
-              openSnackbar("Suppression du compte réussie");
-              navigate("/");
-            }}
-            areYouSureText={
-              "Toutes les données de votre compte seront supprimées, y compris vos réservations de rendez-vous."
-            }>
-            Supprimer mon compte
-          </ButtonWithConfirmation>
-        </Stack>
-      </Card>
+        <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>
+          <Stack gap={2}>
+            <Typography level={"h2"}>Gestion du compte</Typography>
+
+            <Button
+              color={"danger"}
+              onClick={async () => {
+                await dispatch(authActions.logOut());
+                openSnackbar("Déconnexion réussie", {color: "success"});
+                navigate("/login");
+              }}>
+              Se déconnecter
+            </Button>
+
+            <ButtonWithConfirmation
+              color={"danger"}
+              loading={isDeletingUser}
+              onClick={async () => {
+                await deleteUser().unwrap();
+                openSnackbar("Suppression du compte réussie");
+                navigate("/");
+              }}
+              areYouSureText={
+                "Toutes les données de votre compte seront supprimées, y compris vos réservations de rendez-vous."
+              }>
+              Supprimer mon compte
+            </ButtonWithConfirmation>
+          </Stack>
+        </Card>
+      </Stack>
     </PageContent>
   );
 }
