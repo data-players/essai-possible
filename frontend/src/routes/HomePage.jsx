@@ -14,6 +14,7 @@ import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
+import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
 
 export default function HomePage() {
   const {t} = useTranslation();
@@ -24,10 +25,11 @@ export default function HomePage() {
         <Grid container spacing={8} position={"relative"} p={2} alignItems="center">
           <Grid>
             <Stack gap={4}>
-              <Card variant={"solid"} size={"lg"} sx={{width: "fit-content"}}>
-                <Typography level="h1" textColor="primary.solidBg">
-                  {t("essaiPossible")}
-                </Typography>
+              <Card
+                variant={"solid"}
+                size={"lg"}
+                sx={{width: {xs: "fit-content", sm: "60%", md: "40%"}}}>
+                <Box component={"img"} src={EssaiPossibleLogo} width={"100%"} />
               </Card>
               <Typography level="h2">{t("homePage.heroSubtitle")}</Typography>
             </Stack>

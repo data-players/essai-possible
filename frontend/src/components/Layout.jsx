@@ -9,7 +9,7 @@ import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
-import TousTesPossiblesLogoBlue from "../assets/tous-tes-possibles-logo-blue.svg";
+import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import {Fade} from "@mui/material";
@@ -102,7 +102,7 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
           <Box
             onClick={() => navigate("/")}
             component={"img"}
-            src={TousTesPossiblesLogoBlue}
+            src={EssaiPossibleLogo}
             height={{xs: 40, md: 50}}
           />
         </Box>
