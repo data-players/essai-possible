@@ -1,5 +1,4 @@
 import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
-import {selectCurrentUser} from "../../app/auth-slice.js";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
 import {normalize} from "../../app/utils.js";
 import {fullOffers, lightOffersList} from "./offers-slice-data.js";
@@ -47,7 +46,7 @@ export const {
   selectIds: selectOfferIds,
 } = offersAdapter.getSelectors((state) => state.offers);
 
-// Apply the user filter selection to the offers list
+// Apply the filter selection to the offers list
 // More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
 export const selectFilteredOffersIds = createSelector(
   [
@@ -92,11 +91,6 @@ export const selectFilteredOffersIds = createSelector(
   }
 );
 
-export const selectOffersForUser = createSelector(
-  [selectAllOffers, (state) => selectCurrentUser(state)?.id],
-  (offers, currentUserId) => offers.filter((offer) => offer.user === currentUserId)
-);
-
 /**
  * OFFERS API ENDPOINTS
  */
@@ -105,9 +99,8 @@ api.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch the list of all offers
     fetchOffers: builder.query({
-      query() {
-        return `/breeds?limit=1`;
-      },
+      query: () => `/breeds?limit=1`,
+      // query: () => "offers",
       transformResponse() {
         // Mock data with offers
         return lightOffersList;
@@ -117,9 +110,8 @@ api.injectEndpoints({
 
     // Fetch one offer by id
     fetchOffer: builder.query({
-      query(id) {
-        return `/breeds?limit=10`;
-      },
+      query: () => `/breeds?limit=1`,
+      // query: (id) => `offers/${id}`,
       transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data with offers
         return fullOffers.find((offer) => offer.id === id);

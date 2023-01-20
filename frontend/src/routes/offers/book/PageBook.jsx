@@ -24,13 +24,17 @@ import {useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {meetingsActions, selectSavedFormData} from "./meetings-slice.js";
+import {meetingsActions, selectSavedFormData, useAddMeetingMutation} from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
+import {useSnackbar} from "../../../components/snackbar.jsx";
 
 export default function PageBook() {
+  const [openSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const {t, tTime, tDate, tDateTime} = useTranslationWithDates();
   const {id} = useParams();
+
+  const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
 
@@ -57,7 +61,7 @@ export default function PageBook() {
   const slotsByDate = groupBy(sortedSlots, (slot) => tDate(slot.start));
 
   const StepTitle = ({children}) => (
-    <Typography mt={4} mb={1} level={"h2"} color={"primary"}>
+    <Typography mb={1} level={"h2"} color={"primary"}>
       {children}
     </Typography>
   );
@@ -92,7 +96,7 @@ export default function PageBook() {
                 options={slots.map((slot) => ({
                   label: tTime(slot.start),
                   icon: CalendarMonthRoundedIcon,
-                  key: slot.start.toString(),
+                  key: slot.id,
                 }))}
                 value={selectedMeetingSlot}
                 setFieldValue={(slot) => setFormData({selectedMeetingSlot: slot})}
@@ -123,7 +127,10 @@ export default function PageBook() {
           <Form
             initialValues={{comments}}
             successText={"Rendez-vous réservé avec succès"}
-            onSubmit={(values) => dispatch(meetingsActions.saveFormData)}>
+            onSubmit={async ({comments}) => {
+              await addMeeting({slotId: selectedMeetingSlot, offerId: offer.id, comments}).unwrap();
+              openSnackbar("Votre rendez-vous est validé !");
+            }}>
             {(register) => (
               <Stack gap={3}>
                 <FormControl>
@@ -148,7 +155,7 @@ export default function PageBook() {
                   <Button
                     type={"submit"}
                     size={"lg"}
-                    disabled={!selectedMeetingSlot}
+                    loading={isAddingMeeting}
                     color={"success"}
                     sx={{flexGrow: 1}}
                     startDecorator={<CheckIcon />}>
@@ -180,7 +187,7 @@ export default function PageBook() {
         ]}
       />
 
-      <PageContent gap={2}>
+      <PageContent gap={2} mt={6}>
         {slotsByDate ? (
           <>
             {steps[formStep]}
@@ -193,8 +200,7 @@ export default function PageBook() {
                       i18nKey="offers.youAreAboutToBookAMeetingOnThe"
                       values={{
                         dateTime: tDateTime(
-                          sortedSlots.find((slot) => slot.start.toString() === selectedMeetingSlot)
-                            .start
+                          sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
                         ),
                       }}
                     />

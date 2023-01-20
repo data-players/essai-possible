@@ -2,7 +2,8 @@
   "essaiPossible": "Essai Possible",
   "goBack": "Retour",
   "account": {
-    "myMeetings": "Mes rendez-vous"
+    "myMeetings": "Mes rendez-vous",
+    "youDontHaveMeetingsYet": "Vous n'avez pas encore pris de rendez-vous."
   },
   "offers": {
     "seeOffers": "Voir les offres",
@@ -47,7 +48,8 @@
   "nav": {
     "logIn": "Connexion",
     "signUp": "Inscription",
-    "companiesSpace": "Espace entreprises"
+    "companiesSpace": "Espace entreprises",
+    "myMeetings": "Mes rendez-vous"
   },
   "footer": {
     "projectFundedBy": "Un projet fondé par",
@@ -64,5 +66,12 @@
     "dateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
     "dateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}",
     "relativeTime": "{{val, relativetime}}"
-  }
+  },
+  "meetings": {
+    "addToCalendar": "Ajouter au calendrier"
+  },
+  "meeting": {
+    "agendaEventTitle": "RDV pour  \"{{offer.title}}\" (Essai Possible)"
+  },
+  "edit": "Modifier"
 }

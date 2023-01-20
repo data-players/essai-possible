@@ -10,7 +10,7 @@ import Typography from "@mui/joy/Typography";
 import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
 import "./spinner.css";
-import React from "react";
+import React, {useState} from "react";
 import {useFormik} from "formik";
 import {useTranslation} from "react-i18next";
 import Input from "@mui/joy/Input";
@@ -19,6 +19,8 @@ import {useSnackbar} from "./snackbar.jsx";
 import ListItem from "@mui/joy/ListItem";
 import List from "@mui/joy/List";
 import Card from "@mui/joy/Card";
+import Button from "@mui/joy/Button";
+import {PageContent} from "./Layout.jsx";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -187,5 +189,53 @@ export function CheckboxGroup({options, value, setFieldValue}) {
         })}
       </List>
     </Card>
+  );
+}
+
+export function ButtonWithConfirmation({
+  children,
+  color,
+  loading,
+  areYouSureText,
+  onClick,
+  ...props
+}) {
+  const [areYouSure, setAreYouSure] = useState(false);
+
+  return !areYouSure ? (
+    <Button color={color} variant={"soft"} onClick={() => setAreYouSure(true)} {...props}>
+      {children}
+    </Button>
+  ) : (
+    <Card color={color} variant={"solid"} invertedColors>
+      <Stack gap={2}>
+        <Typography>{areYouSureText}</Typography>
+        <Button loading={loading} onClick={onClick} {...props}>
+          {children}
+        </Button>
+      </Stack>
+    </Card>
+  );
+}
+
+export function ListPageContent({ready, noResultsText, values, item: Item}) {
+  return (
+    <PageContent mt={6}>
+      {ready ? (
+        values.length > 0 ? (
+          <List>
+            {values.map((value) => (
+              <Item value={value} key={value} />
+            ))}
+          </List>
+        ) : (
+          {noResultsText}
+        )
+      ) : (
+        <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
+          <LoadingSpinner />
+        </Stack>
+      )}
+    </PageContent>
   );
 }

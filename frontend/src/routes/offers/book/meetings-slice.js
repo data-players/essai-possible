@@ -6,7 +6,7 @@ import {meetings} from "./meetings-slice-data.js";
  * MEETINGS SLICE
  */
 const meetingsAdapter = createEntityAdapter({
-  // selectId: (meeting) => `${meeting.company.name}/${meeting.id}`,
+  selectId: (meeting) => meeting.slot,
   // sortComparer: (a, b) => {
   //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
   //     return b.createdAt?.localeCompare(a.createdAt)
@@ -32,9 +32,16 @@ const meetingsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchMeetings"]), meetingsAdapter.upsertMany)
-      .addMatcher(matchAny("matchFulfilled", ["fetchMeeting"]), meetingsAdapter.upsertOne);
+      .addMatcher(matchAny("matchFulfilled", ["updateMeeting"]), meetingsAdapter.updateOne)
+      .addMatcher(matchAny("matchFulfilled", ["addMeeting"]), meetingsAdapter.addOne)
+      .addMatcher(matchAny("matchFulfilled", ["deleteMeeting"]), meetingsAdapter.removeOne);
 
-    addStatusForEndpoints(builder, ["fetchMeetings"]);
+    addStatusForEndpoints(builder, [
+      "fetchMeetings",
+      "updateMeeting",
+      "addMeeting",
+      "deleteMeeting",
+    ]);
   },
 });
 
@@ -49,38 +56,80 @@ export const selectMeetingsReady = readySelector("meetings", "fetchMeetings");
 export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
 export const {
   selectAll: selectAllMeetings,
-  selectById: selectMeetingById,
-  selectIds: selectMeetingIds,
+  selectById: selectMeetingBySlotId,
+  selectIds: selectMeetingSlotIds,
 } = meetingsAdapter.getSelectors((state) => state.meetings);
+
+export const selectMeetingForOffer = (state, offer) => {
+  const meetings = selectAllMeetings(state);
+  const slotIds = offer.slots?.map((slot) => slot.id);
+  return slotIds && meetings.find((meeting) => slotIds.includes(meeting.slot));
+};
 
 /**
  * MEETINGS API ENDPOINTS
  */
 
+// Mock data
+let counter = meetings.length + 1;
+const getCounter = () => counter++;
+
 api.injectEndpoints({
   endpoints: (builder) => ({
-    // Fetch the list of all meetings
     fetchMeetings: builder.query({
-      query(companyId) {
-        return `/breeds?limit=1`;
-      },
+      query: () => "breeds?limit=100",
+      // query: () => "meetings",
       transformResponse() {
-        // Mock data with meetings
+        // Mock data
         return meetings;
       },
     }),
 
-    // Fetch one meeting by id
-    fetchMeeting: builder.query({
-      query(id) {
-        return `/breeds?limit=10`;
+    addMeeting: builder.mutation({
+      query: (val) => {
+        console.log(val);
+        return "breeds?limit=100";
       },
+      // query: ({userId, slotId, comments}) => ({
+      //   url: "meetings",
+      //   method: "POST",
+      //   body: {slot: slotId, comments},
+      // }),
+      transformResponse(baseResponse, meta, {slotId, comments}) {
+        // Mock data
+        const res = {id: getCounter(), slot: slotId, comments};
+        console.log(res);
+        return res;
+      },
+    }),
+
+    updateMeeting: builder.mutation({
+      query: () => "breeds?limit=100",
+      // query: (meetingPatch) => ({
+      //   url: "meetings",
+      //   method: "PATCH",
+      //   body: meetingPatch,
+      // }),
+      transformResponse(baseQueryReturnValue, meta, meetingPatch) {
+        // Mock data
+        let meeting = meetings.find((meeting) => meeting.id === meetingPatch.id);
+        Object.assign(meeting, meetingPatch);
+        return meeting;
+      },
+    }),
+
+    deleteMeeting: builder.mutation({
+      query: (id) => "breeds?limit=100",
+      // query: (id) => ({
+      //   url: `meeting`,
+      //   method: "DELETE",
+      // }),
       transformResponse(baseQueryReturnValue, meta, id) {
-        // Mock data with meetings
-        return meetings.find((meeting) => meeting.id === id);
+        // Mock data
+        return id;
       },
     }),
   }),
 });
 
-export const {useFetchMeetingsQuery, useFetchMeetingQuery} = api;
+export const {useLazyFetchMeetingsQuery, useAddMeetingMutation, useDeleteMeetingMutation} = api;

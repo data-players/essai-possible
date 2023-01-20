@@ -232,6 +232,11 @@ export function PageContent({maxWidth, ...props}) {
 }
 
 export const AuthButton = {
+  MyMeetings: ({sx}) => (
+    <Button component={ReactRouterLink} variant="soft" sx={sx} to={"/my-meetings"}>
+      {t("nav.myMeetings")}
+    </Button>
+  ),
   LogIn: ({sx, currentUser}) => (
     <Button
       component={ReactRouterLink}

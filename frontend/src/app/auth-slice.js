@@ -98,7 +98,6 @@ api.injectEndpoints({
           user: user,
         };
       },
-      invalidatesTags: ["User"],
     }),
 
     fetchUser: builder.query({
@@ -123,8 +122,6 @@ api.injectEndpoints({
       // }),
       transformResponse(baseQueryReturnValue, meta, userPatch) {
         // Mock data
-        console.log(baseQueryReturnValue);
-        // user = {...user, ...userPatch};
         return {...user, ...userPatch};
       },
     }),
@@ -135,9 +132,9 @@ api.injectEndpoints({
       //   url: `user`,
       //   method: "DELETE",
       // }),
-      transformResponse(baseQueryReturnValue, meta, userPatch) {
+      transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data
-        return "OK";
+        return id;
       },
     }),
   }),

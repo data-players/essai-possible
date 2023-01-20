@@ -15,6 +15,7 @@ export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}
     <>
       <Breadcrumbs breadcrumbs={breadcrumbs} />
       <HeroBanner
+        invertedColors={false}
         component={(props) => (
           <Container>
             <Card {...props} />
@@ -25,10 +26,10 @@ export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}
         <Grid container spacing={8} position={"relative"}>
           <Grid xs={12} md={8}>
             <Stack gap={4}>
-              <Typography component="h1" level="h2">
+              <Typography component="h1" level="h2" textColor={"white"}>
                 {pageTitle && (
                   <>
-                    <Card variant={"solid"} size={"sm"} sx={{display: "inline", py: 0}}>
+                    <Card size={"sm"} sx={{display: "inline", py: 0}}>
                       <Typography level="h2" textColor="primary.solidBg">
                         {pageTitle}
                       </Typography>
@@ -38,7 +39,7 @@ export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}
                 {offer.title}
               </Typography>
 
-              <Typography component="h2" level="h4">
+              <Typography component="h2" level="h4" textColor={"white"}>
                 {company.name}
               </Typography>
 
@@ -48,9 +49,7 @@ export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}
 
           {cardContent && (
             <Grid xs={12} md={4}>
-              <Card variant={"solid"} size={"lg"}>
-                {cardContent}
-              </Card>
+              <Card size={"lg"}>{cardContent}</Card>
             </Grid>
           )}
         </Grid>

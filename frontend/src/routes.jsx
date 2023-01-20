@@ -23,6 +23,7 @@ export default createBrowserRouter([
     ),
     children: [
       {index: true, element: <HomePage />},
+
       {path: "offers", element: <PageOffersList />},
       {
         path: "offers/:id",
@@ -32,14 +33,14 @@ export default createBrowserRouter([
           {path: "book", element: <PageBook />},
         ],
       },
+
       {
         path: "account",
         element: <PageAccountRoot />,
-        children: [
-          {index: true, element: <PageAccount />},
-          {path: "my-meetings", element: <PageMyMeetings />},
-        ],
+        children: [{index: true, element: <PageAccount />}],
       },
+      {path: "my-meetings", element: <PageMyMeetings />},
+
       {path: "login", element: <AuthComponent mode={"logIn"} redirect />},
       {path: "signup", element: <AuthComponent mode={"signUp"} redirect />},
     ],

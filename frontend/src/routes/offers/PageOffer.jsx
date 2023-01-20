@@ -12,8 +12,10 @@ import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
 import CompanyCard from "./CompanyCard.jsx";
 import Box from "@mui/joy/Box";
+import {MeetingCardContent} from "../account/myoffers/PageMyMeetings.jsx";
+import {selectMeetingForOffer} from "./book/meetings-slice.js";
 
-function BookMeetingButton(props) {
+function BookMeetingButton() {
   const {t} = useTranslation();
   return (
     <Button
@@ -22,8 +24,7 @@ function BookMeetingButton(props) {
       size={"lg"}
       component={ReactRouterLink}
       to={"book"}
-      startDecorator={<CalendarMonthRoundedIcon />}
-      {...props}>
+      startDecorator={<CalendarMonthRoundedIcon />}>
       {t("offers.bookAMeetingSlot", {context: "short"})}
     </Button>
   );
@@ -34,6 +35,7 @@ export default function PageOffer() {
   const {id} = useParams();
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
+  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer));
 
   const ParagraphWithTitle = ({title, children}) => (
     <Stack gap={2}>
@@ -44,6 +46,25 @@ export default function PageOffer() {
     </Stack>
   );
 
+  function MeetingCard() {
+    return meetingForOffer ? (
+      <MeetingCardContent offer={offer} meeting={meetingForOffer} />
+    ) : (
+      <Stack gap={3}>
+        <Typography color={"neutral"} level="h3">
+          {t("offers.howToApply")}
+        </Typography>
+        <Typography fontSize="xl" textColor={"neutral.800"}>
+          {t("offers.theCompanyProposesBookingAMeetingSlot")}
+        </Typography>
+        <Typography textColor={"text.tertiary"}>
+          {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+        </Typography>
+        {offer.slots?.length > 0 && <BookMeetingButton />}
+      </Stack>
+    );
+  }
+
   return (
     <>
       <OfferBanner
@@ -52,30 +73,15 @@ export default function PageOffer() {
           {label: t("offers.backToOffers"), to: "/offers"},
           {label: offer.title, to: "."},
         ]}
-        cardContent={
-          <>
-            <Stack gap={3}>
-              <Typography color={"neutral"} level="h3">
-                {t("offers.howToApply")}
-              </Typography>
-              <Typography fontSize="xl" textColor={"neutral.800"}>
-                {t("offers.theCompanyProposesBookingAMeetingSlot")}
-              </Typography>
-              <Typography textColor={"text.tertiary"}>
-                {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
-              </Typography>
-              {offer.slots?.length > 0 && <BookMeetingButton />}
-            </Stack>
-          </>
-        }
+        cardContent={<MeetingCard />}
       />
 
-      <PageContent mt={4}>
-        <Grid container columnSpacing={4}>
+      <PageContent mt={6}>
+        <Grid container columnSpacing={8}>
           <Grid xs={12} md={8}>
-            <Stack gap={2}>
+            <Stack gap={4}>
               <ParagraphWithTitle title={t("offers.description")}>
-                <Typography>{offer.description}</Typography>
+                <Typography textAlign={"justify"}>{offer.description}</Typography>
               </ParagraphWithTitle>
 
               {/* Company card in the text on xs+ screens */}
@@ -84,7 +90,7 @@ export default function PageOffer() {
               </Box>
 
               <ParagraphWithTitle title={t("offers.tasks")}>
-                <Typography>{offer.tasks}</Typography>
+                <Typography textAlign={"justify"}>{offer.tasks}</Typography>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.skills")}>
@@ -97,9 +103,9 @@ export default function PageOffer() {
 
           {/* Company card on the side in md+ screens */}
           <Grid xs={0} md={4}>
-            <Box display={{xs: "none", md: "block"}}>
-              <CompanyCard offer={offer} sx={{display: {xs: "none", md: "block"}}} />
-            </Box>
+            <Stack gap={3} display={{xs: "none", md: "flex"}}>
+              <CompanyCard offer={offer} />
+            </Stack>
           </Grid>
         </Grid>
       </PageContent>

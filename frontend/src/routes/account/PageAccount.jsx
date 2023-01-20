@@ -6,10 +6,9 @@ import {
   useUpdateUserMutation,
 } from "../../app/auth-slice.js";
 import * as React from "react";
-import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {Form} from "../../components/atoms";
+import {ButtonWithConfirmation, Form} from "../../components/atoms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
@@ -22,7 +21,6 @@ export default function PageAccount() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openSnackbar] = useSnackbar();
-  const [deleteAreYouSure, setDeleteAreYouSure] = useState(false);
 
   const [updateUser, {isLoading: isUpdatingUser}] = useUpdateUserMutation();
   const [deleteUser, {isLoading: isDeletingUser}] = useDeleteUserMutation();
@@ -36,6 +34,7 @@ export default function PageAccount() {
   return (
     <PageContent gap={3}>
       <Typography level={"h1"}>Mon compte</Typography>
+
       <Card variant={"soft"} invertedColors>
         <Form
           initialValues={currentUser}
@@ -62,6 +61,7 @@ export default function PageAccount() {
                   {...register("password")}
                 />
               </Grid>
+
               <Grid xs={12}>
                 <Stack mt={2}>
                   <Button loading={isUpdatingUser} type="submit" size="lg" color="success">
@@ -73,9 +73,11 @@ export default function PageAccount() {
           )}
         </Form>
       </Card>
+
       <Card variant={"soft"}>
         <Stack gap={2}>
           <Typography level={"h2"}>Gestion du compte</Typography>
+
           <Button
             color={"danger"}
             onClick={async () => {
@@ -85,29 +87,20 @@ export default function PageAccount() {
             }}>
             Se déconnecter
           </Button>
-          {!deleteAreYouSure ? (
-            <Button color={"danger"} variant={"soft"} onClick={() => setDeleteAreYouSure(true)}>
-              Supprimer mon compte
-            </Button>
-          ) : (
-            <Card color={"danger"} variant={"solid"} invertedColors>
-              <Stack gap={2}>
-                <Typography>
-                  Toutes les données de votre compte seront supprimées, y compris vos réservations
-                  de rendez-vous.
-                </Typography>
-                <Button
-                  loading={isDeletingUser}
-                  onClick={async () => {
-                    await deleteUser().unwrap();
-                    openSnackbar("Suppression du compte réussie");
-                    navigate("/");
-                  }}>
-                  Supprimer mon compte
-                </Button>
-              </Stack>
-            </Card>
-          )}
+
+          <ButtonWithConfirmation
+            color={"danger"}
+            loading={isDeletingUser}
+            onClick={async () => {
+              await deleteUser().unwrap();
+              openSnackbar("Suppression du compte réussie");
+              navigate("/");
+            }}
+            areYouSureText={
+              "Toutes les données de votre compte seront supprimées, y compris vos réservations de rendez-vous."
+            }>
+            Supprimer mon compte
+          </ButtonWithConfirmation>
         </Stack>
       </Card>
     </PageContent>

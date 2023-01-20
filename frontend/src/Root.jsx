@@ -23,10 +23,16 @@ import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
-import {selectAuthTokenExists, selectCurrentUser, useLazyFetchUserQuery} from "./app/auth-slice.js";
+import {
+  selectAuthTokenExists,
+  selectCurrentUser,
+  selectCurrentUserReady,
+  useLazyFetchUserQuery,
+} from "./app/auth-slice.js";
 import {useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
+import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
@@ -102,6 +108,15 @@ const Root = ({children}) => {
   const path = useLocation().pathname;
   const currentUser = useSelector(selectCurrentUser);
 
+  // - prefetch the user meetings as soon as the user is available
+  const currentUserReady = useSelector(selectCurrentUserReady);
+  const [launchFetchMeetingsQuery] = useLazyFetchMeetingsQuery();
+  useEffect(() => {
+    if (currentUserReady) launchFetchMeetingsQuery();
+  }, [currentUserReady, launchFetchMeetingsQuery]);
+
+  const userLoggedIn = currentUser || authTokenExists;
+
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
       <ScrollRestoration
@@ -143,8 +158,9 @@ const Root = ({children}) => {
           />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
+            {userLoggedIn && <AuthButton.MyMeetings />}
             <AuthButton.LogIn currentUser={currentUser} />
-            {!currentUser && !authTokenExists && <AuthButton.SignUp />}
+            {!userLoggedIn && <AuthButton.SignUp />}
           </Stack>
         </Layout.Navigation>
 
