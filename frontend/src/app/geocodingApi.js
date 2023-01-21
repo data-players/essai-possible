@@ -3,14 +3,14 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react/index
 const geocodingApi = createApi({
   reducerPath: "geocodingApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api-adresse.data.gouv.fr/search",
+    baseUrl: "https://api-adresse.data.gouv.fr",
     mode: "cors",
   }),
   // Endpoints are defined in `xxx-slice.js` files
   // https://redux-toolkit.js.org/rtk-query/usage/code-splitting
   endpoints: (builder) => ({
     fetchGeocodingSuggestions: builder.query({
-      query: (text) => ({url: "/", params: {q: text, autocomplete: 1}}),
+      query: (text) => ({url: "search", params: {q: text, autocomplete: 1}}),
       transformResponse(baseQueryReturnValue, meta, arg) {
         const res = baseQueryReturnValue.features.map(
           ({properties: {label, context, city}, geometry: {coordinates}}) => ({

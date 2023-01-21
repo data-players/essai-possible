@@ -138,7 +138,7 @@ export default function PageBook() {
                     Avez-vous des commentaires à partager avec l'entreprise ?
                   </FormLabel>
                   <Textarea
-                    placeholder="commentaires, remarques..."
+                    placeholder="conditions particulières, remarques pour l'entreprise..."
                     minRows={3}
                     {...register("comments")}
                   />
