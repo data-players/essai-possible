@@ -5,10 +5,14 @@ import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
-import {CheckboxGroup, ListPageContent, SearchBar} from "../../components/atoms.jsx";
+import {
+  CheckboxGroup,
+  ListPageContent,
+  LocationSearchBar,
+  SearchBar,
+} from "../../components/atoms.jsx";
 import React, {useState} from "react";
 import FormControl from "@mui/joy/FormControl";
-import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import {useSelector} from "react-redux";
@@ -26,33 +30,40 @@ import debounce from "@mui/utils/debounce.js";
 import Link from "@mui/joy/Link";
 import OfferListItem from "./OfferListItem.jsx";
 
-const filtersInitialState = {
-  search: "",
-  location: "",
-  radius: 10,
-  sectors: [],
-  goals: [],
-};
-
-function getUrlParam(key, urlParams) {
-  const defaultValue = filtersInitialState[key];
+function getUrlParam(key, urlParams, type = "string", defaultValue = "") {
   let urlParamValue = urlParams.get(key);
 
   if (urlParamValue === null) return defaultValue;
-  if (Array.isArray(defaultValue) && urlParamValue.length > 0) return urlParamValue.split(";");
-  if (typeof defaultValue === "number") return parseInt(urlParamValue);
+
+  if (type === "array" && urlParamValue.length > 0) return urlParamValue.split(";");
+  else if (type === "number") return parseInt(urlParamValue);
+  else if (type === "object") return JSON.parse(urlParamValue);
+
   return urlParamValue;
 }
 
-function setURLParam(key, value) {
-  let urlParamValue = value;
+function setURLParam(key, value, type = "string") {
+  const URLParams = new URLSearchParams(window.location.search);
 
-  if (Array.isArray(value) && value.length > 0) urlParamValue = value.join(";");
-  else if (typeof value === "number") urlParamValue = value.toString();
-  const newParams = new URLSearchParams(window.location.search);
-  urlParamValue !== "" ? newParams.set(key, urlParamValue) : newParams.delete(key);
+  if (!value || value === "" || value === [] || value === {}) {
+    URLParams.delete(key);
+  } else {
+    // Case value is an Array
+    if (type === "array") value = value.join(";");
+    else if (type === "number") value = value.toString();
+    else if (type === "object") value = JSON.stringify(value);
 
-  window.history.replaceState(null, null, "/offers?" + newParams.toString());
+    // If value equals something
+    URLParams.set(key, value);
+  }
+
+  const queryParamsString = URLParams.toString();
+
+  window.history.replaceState(
+    null,
+    null,
+    queryParamsString.length > 0 ? `/offers?${queryParamsString}` : "/offers"
+  );
 }
 
 const debouncedSetURLParam = debounce(setURLParam, 1000);
@@ -63,10 +74,10 @@ export default function PageOffersList() {
   const rawUrlSearchParams = new URLSearchParams(window.location.search);
   const searchParams = {
     search: getUrlParam("search", rawUrlSearchParams),
-    location: getUrlParam("location", rawUrlSearchParams),
-    radius: getUrlParam("radius", rawUrlSearchParams),
-    sectors: getUrlParam("sectors", rawUrlSearchParams),
-    goals: getUrlParam("goals", rawUrlSearchParams),
+    location: getUrlParam("location", rawUrlSearchParams, "object", null),
+    radius: getUrlParam("radius", rawUrlSearchParams, "number", 10),
+    sectors: getUrlParam("sectors", rawUrlSearchParams, "array", []),
+    goals: getUrlParam("goals", rawUrlSearchParams, "array", []),
   };
 
   const [search, setSearch] = useState(searchParams.search);
@@ -115,14 +126,12 @@ export default function PageOffersList() {
                   <Grid xs={12} sm={7} md={4}>
                     <FormControl>
                       <FormLabel>Localisation</FormLabel>
-                      <SearchBar
+                      <LocationSearchBar
                         size={"lg"}
-                        defaultValue={location}
-                        placeholder={"Ville ou région..."}
-                        startDecorator={<PlaceRoundedIcon color="primary" />}
-                        onChange={(event) => {
-                          setLocation(event.target.value);
-                          debouncedSetURLParam("location", event.target.value);
+                        value={location}
+                        onChange={(event, value) => {
+                          setLocation(value);
+                          debouncedSetURLParam("location", value, "object");
                         }}
                       />
                     </FormControl>
@@ -137,7 +146,7 @@ export default function PageOffersList() {
                         variant={"soft"}
                         onChange={(_, value) => {
                           setRadius(value);
-                          setURLParam("radius", value);
+                          setURLParam("radius", value, "number");
                         }}>
                         <Option value={5}>0 à 5km</Option>
                         <Option value={10}>0 à 10km</Option>
@@ -189,7 +198,7 @@ export default function PageOffersList() {
                         value={goals}
                         setFieldValue={(value) => {
                           setGoals(value);
-                          setURLParam("goals", value);
+                          setURLParam("goals", value, "array");
                         }}
                       />
                     </Box>
@@ -203,7 +212,7 @@ export default function PageOffersList() {
                           value={sectors}
                           setFieldValue={(value) => {
                             setSectors(value);
-                            setURLParam("sectors", value);
+                            setURLParam("sectors", value, "array");
                           }}
                         />
                       </Box>

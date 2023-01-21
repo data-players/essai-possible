@@ -11,7 +11,7 @@
     "sector": "Secteur",
     "sector_other": "Secteurs",
     "goal": "Objectif",
-    "startDate": "Date de début",
+    "startDate": "Disponibilités",
     "theOffers": "Les offres",
     "howToApply": "Comment candidater ?",
     "theCompanyProposesBookingAMeetingSlot": "L'entreprise propose de réserver un créneau de rencontre.",
@@ -30,7 +30,8 @@
     "validateInformation": "Valider mes informations",
     "myInformation": "Mes informations",
     "proposeAnOffer": "Publier une offre",
-    "chooseYourMeetingSlot": "Choisir mon créneau"
+    "chooseYourMeetingSlot": "Choisir mon créneau",
+    "place": "Lieu"
   },
   "homePage": {
     "heroSubtitle": "Teste un job, un métier, une entreprise.",

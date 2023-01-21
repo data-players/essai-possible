@@ -86,7 +86,7 @@ export default function OfferListItem({
                   variant={"plain"}
                   startDecorator={<PlaceRoundedIcon />}
                   sx={{p: 0, opacity: 0.6}}>
-                  {offer.location}
+                  {offer.location.city}
                 </Chip>
               </Stack>
             </Stack>

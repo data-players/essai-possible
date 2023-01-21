@@ -10,7 +10,7 @@ import Typography from "@mui/joy/Typography";
 import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
 import "./spinner.css";
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useFormik} from "formik";
 import {useTranslation} from "react-i18next";
 import Input from "@mui/joy/Input";
@@ -21,6 +21,10 @@ import List from "@mui/joy/List";
 import Card from "@mui/joy/Card";
 import Button from "@mui/joy/Button";
 import {PageContent} from "./Layout.jsx";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
+import Autocomplete from "@mui/joy/Autocomplete";
+import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
+import debounce from "@mui/utils/debounce.js";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -132,6 +136,40 @@ export function SearchBar({sx, ...props}) {
   );
 }
 
+export function LocationSearchBar({sx, ...props}) {
+  const [inputValue, setInputValue] = useState(props.value?.label);
+
+  const [launchGeocodingSuggestionsFetchQuery, {data: geocodingSuggestions = []}] =
+    useLazyFetchGeocodingSuggestionsQuery();
+
+  const debouncedFetchSuggestions = useCallback(
+    debounce(launchGeocodingSuggestionsFetchQuery, 300),
+    [launchGeocodingSuggestionsFetchQuery]
+  );
+  useEffect(() => {
+    inputValue?.length > 1 && debouncedFetchSuggestions(inputValue);
+  }, [inputValue]);
+
+  return (
+    <Autocomplete
+      variant={"soft"}
+      color={"neutral"}
+      defaultValue={props.value}
+      onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+      filterOptions={(options) => options} // Do not filter automatically the options
+      isOptionEqualToValue={(option, value) =>
+        option.label === value.label && option.context === option.context
+      }
+      getOptionLabel={(option) => `${option.label} (${option.context})`}
+      options={geocodingSuggestions}
+      placeholder={"Adresse, ville, région..."}
+      startDecorator={<PlaceRoundedIcon color="primary" />}
+      {...props}
+      sx={[{display: "flex"}, ...(Array.isArray(sx) ? sx : [sx])]}
+    />
+  );
+}
+
 export function Form({onSubmit, initialValues, children, successText}) {
   const [openSnackbar] = useSnackbar();
 
@@ -169,10 +207,10 @@ export function CheckboxGroup({options, value, setFieldValue}) {
   return (
     <Card variant={"soft"} size={"sm"} sx={{mt: 1}}>
       <List size="sm">
-        {options.map((option) => {
+        {options.map((option, index) => {
           const checked = value.includes(option);
           return (
-            <ListItem>
+            <ListItem key={index}>
               <Checkbox
                 label={option}
                 checked={checked}
@@ -229,7 +267,7 @@ export function ListPageContent({ready, noResultsText, values, item: Item}) {
             ))}
           </List>
         ) : (
-          {noResultsText}
+          noResultsText
         )
       ) : (
         <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>

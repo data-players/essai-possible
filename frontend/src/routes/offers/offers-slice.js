@@ -60,10 +60,28 @@ export const selectFilteredOffersIds = createSelector(
   ],
   (offers, companiesById, search, location, radius, sectors, goals) => {
     const hasSearch = search !== "";
-    const hasLocalizationText = location !== "";
+    const hasLocationData = location?.lat && location?.long;
     const hasSectors = sectors?.length > 0;
     const hasGoals = goals?.length > 0;
-    const hasAnyFilter = hasSearch || hasLocalizationText || hasSectors || hasGoals;
+    const hasAnyFilter = hasSearch || hasLocationData || hasSectors || hasGoals;
+
+    // Sur Google Maps, 1km de large c'est 0.01344481 de longitude et 0.00924511 de latitude, grosso modo pour la france
+    const oneKmOf = {Latitude: 0.00924511, Longitude: 0.01344481};
+    const locationBoundaries = hasLocationData && {
+      north: location.lat + oneKmOf.Latitude * radius,
+      south: location.lat - oneKmOf.Latitude * radius,
+      east: location.long + oneKmOf.Longitude * radius,
+      west: location.long - oneKmOf.Longitude * radius,
+    };
+
+    const isInLocationBoundaries = ({lat, long}) => {
+      return (
+        lat < locationBoundaries.north &&
+        lat > locationBoundaries.south &&
+        long < locationBoundaries.east &&
+        long > locationBoundaries.west
+      );
+    };
 
     const searchInFields = (fields, search) =>
       fields.find((field) => normalize(field).includes(normalize(search)));
@@ -71,16 +89,14 @@ export const selectFilteredOffersIds = createSelector(
     const matchInArray = (elementArray, filterArray) => {
       return filterArray.find((option) => elementArray.includes(option));
     };
-
     const filteredOffers = hasAnyFilter
       ? offers.filter((offer) => {
           const company = companiesById[offer.company] || {};
-          console.log(hasSectors && matchInArray(company.sectors, sectors));
 
           return (
             (!hasSearch ||
               searchInFields([offer.title, company.name, offer.description], search)) &&
-            (!hasLocalizationText || searchInFields([offer.location], location)) &&
+            (!hasLocationData || isInLocationBoundaries(offer.location)) &&
             (!hasSectors || matchInArray(company.sectors, sectors)) &&
             (!hasGoals || matchInArray([offer.goal], goals))
           );
