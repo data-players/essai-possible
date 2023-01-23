@@ -1,6 +1,7 @@
 
 export { default as Organization } from "./Agent/Actor/Organization";
 export { default as Program } from "./Program";
+export { default as Job } from "./Job";
 export { default as Person } from "./Person";
 export { default as DataSource } from "./DataSource";
 

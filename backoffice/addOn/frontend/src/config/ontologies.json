@@ -55,7 +55,7 @@
     "url": "http://semapps.org/ns/core#"
   },
   {
-    "prefix": "essaipossible",
+    "prefix": "ep",
     "owl": "",
     "url": "https://data.essaipossible.fr/ontology#"
   },

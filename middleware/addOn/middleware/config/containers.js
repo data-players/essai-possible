@@ -77,6 +77,16 @@ module.exports = [
     preferredView: '/Program',
   },
   {
+    path: '/jobs',
+    acceptedTypes: ['ep:Job'],
+    preferredView: '/Program',
+  },
+  {
+    path: '/timeSlot',
+    acceptedTypes: ['ep:TimeSlot'],
+    preferredView: '/TimeSlot',
+  },
+  {
     path: '/data-sources',
     acceptedTypes: ['aurba:DataSource'],
     preferredView: '/DataSource',
