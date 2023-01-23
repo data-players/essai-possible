@@ -132,6 +132,14 @@ function Footer(props) {
                     toustespossibles.fr
                   </Link>
                 </Typography>
+                <Link
+                  component={ReactRouterLink}
+                  to={"/cgu"}
+                  fontSize={"sm"}
+                  color={"white"}
+                  mt={2}>
+                  CGU et mentions légales
+                </Link>
               </Stack>
             </Grid>
           </Grid>

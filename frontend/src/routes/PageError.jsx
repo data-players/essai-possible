@@ -4,7 +4,7 @@ import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
 import {useTranslation} from "react-i18next";
 
-export default function ErrorPage() {
+export default function PageError() {
   const {t} = useTranslation();
   const error = useRouteError();
   console.error(error);
