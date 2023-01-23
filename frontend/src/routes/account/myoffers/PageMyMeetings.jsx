@@ -89,13 +89,11 @@ export default function PageMyMeetings() {
   const meetingsReady = useSelector(selectMeetingsReady);
   const offersReady = useSelector(selectOffersReady);
 
-  function OfferListItemWithMeetingInfo({value: meeting, key}) {
+  function OfferListItemWithMeetingInfo({value: meeting}) {
     const offer = offers.find((offer) => offer.slots?.find((slot) => meeting.slot === slot.id));
-
     return (
       <OfferListItem
         offerId={offer.id}
-        key={key}
         sideElement={() => <MeetingCardContent offer={offer} meeting={meeting} />}
       />
     );
@@ -120,6 +118,7 @@ export default function PageMyMeetings() {
         noResultsText={t("account.youDontHaveMeetingsYet")}
         values={meetings}
         item={OfferListItemWithMeetingInfo}
+        getKey={(value) => value.id}
       />
     </>
   );

@@ -259,14 +259,14 @@ export function ButtonWithConfirmation({
   );
 }
 
-export function ListPageContent({ready, noResultsText, values, item: Item}) {
+export function ListPageContent({ready, noResultsText, values, item: Item, getKey}) {
   return (
     <PageContent mt={6}>
       {ready ? (
         values.length > 0 ? (
           <List>
-            {values.map((value) => (
-              <Item value={value} key={value} />
+            {values.map((value, index) => (
+              <Item value={value} key={getKey ? getKey(value) : value} />
             ))}
           </List>
         ) : (

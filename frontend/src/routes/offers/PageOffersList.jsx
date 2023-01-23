@@ -229,7 +229,7 @@ export default function PageOffersList() {
         ready={offersReady && companiesReady}
         noResultsText={t("error.oopsNoResults")}
         values={filteredOffersIds}
-        item={({value}) => <OfferListItem offerId={value} key={value} />}
+        item={({value, key}) => <OfferListItem offerId={value} key={key} />}
       />
     </>
   );
