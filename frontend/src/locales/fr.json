@@ -22,7 +22,7 @@
     "skills": "Compétences",
     "backToOffers": "Retour aux offres",
     "chooseThisMeetingSlot": "Choisir ce rendez-vous",
-    "youAreAboutToBookAMeetingOnThe": "Vous vous apprêtez à réserver un créneau le <strong>{{dateTime}}</strong>.",
+    "youAreAboutToBookAMeetingOnThe": "Vous avez choisi un créneau le <strong>{{dateTime}}</strong>.",
     "ohOhNoMeetings": "Oh oh oh... Il n'y a plus de rendez-vous disponibles pour l'instant. Revenez plus tard.",
     "xMeetingSlotsAvailable_zero": "Pas de rendez-vous disponible.",
     "xMeetingSlotsAvailable": "Un rendez-vous disponible.",

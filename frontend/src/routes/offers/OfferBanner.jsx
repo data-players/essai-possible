@@ -9,7 +9,13 @@ import OfferInfoPills from "./OfferInfoPills.jsx";
 import {selectCompanyById} from "./companies-slice.js";
 import {useSelector} from "react-redux";
 
-export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}) {
+export default function OfferBanner({
+  pageTitle,
+  breadcrumbs,
+  offer,
+  cardContent,
+  showPills = true,
+}) {
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
   return (
     <>
@@ -43,7 +49,7 @@ export default function OfferBanner({pageTitle, breadcrumbs, offer, cardContent}
                 {company.name}
               </Typography>
 
-              <OfferInfoPills offer={offer} company={company} />
+              {showPills && <OfferInfoPills offer={offer} company={company} />}
             </Stack>
           </Grid>
 

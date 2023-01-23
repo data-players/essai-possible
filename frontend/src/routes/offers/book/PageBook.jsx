@@ -79,46 +79,67 @@ export default function PageBook() {
     );
   }
 
+  const meetingChosenInfo = (
+    <Sheet>
+      <Collapse in={selectedMeetingSlot}>
+        {selectedMeetingSlot && (
+          <Typography fontSize={"lg"} sx={{alignSelf: "center"}} textColor={"text.secondary"}>
+            <Trans
+              i18nKey="offers.youAreAboutToBookAMeetingOnThe"
+              values={{
+                dateTime: tDateTime(
+                  sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
+                ),
+              }}
+            />
+          </Typography>
+        )}
+      </Collapse>
+    </Sheet>
+  );
+
   /**
    * Steps of the booking form
    */
   const steps = [
     // MEETING SLOT CHOICE
     <>
-      <StepTitle> {t("offers.chooseYourMeetingSlot")}</StepTitle>
+      <StepTitle>1. {t("offers.chooseYourMeetingSlot")}</StepTitle>
+      {meetingChosenInfo}
+      <Collapse in={formStep === 0}>
+        <List>
+          {Object.entries(slotsByDate).map(([date, slots]) => (
+            <React.Fragment key={date}>
+              <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
+              <ListItem sx={{mb: 3}}>
+                <RadioChips
+                  options={slots.map((slot) => ({
+                    label: tTime(slot.start),
+                    icon: CalendarMonthRoundedIcon,
+                    key: slot.id,
+                  }))}
+                  value={selectedMeetingSlot}
+                  setFieldValue={(slot) => setFormData({selectedMeetingSlot: slot})}
+                />
+              </ListItem>
+            </React.Fragment>
+          ))}
+        </List>
 
-      <List>
-        {Object.entries(slotsByDate).map(([date, slots]) => (
-          <React.Fragment key={date}>
-            <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
-            <ListItem sx={{mb: 3}}>
-              <RadioChips
-                options={slots.map((slot) => ({
-                  label: tTime(slot.start),
-                  icon: CalendarMonthRoundedIcon,
-                  key: slot.id,
-                }))}
-                value={selectedMeetingSlot}
-                setFieldValue={(slot) => setFormData({selectedMeetingSlot: slot})}
-              />
-            </ListItem>
-          </React.Fragment>
-        ))}
-      </List>
-
-      <Button
-        size={"lg"}
-        disabled={!selectedMeetingSlot}
-        color="success"
-        onClick={nextStep}
-        startDecorator={<CheckIcon />}>
-        {t("offers.chooseThisMeetingSlot")}
-      </Button>
+        <Button
+          size={"lg"}
+          disabled={!selectedMeetingSlot}
+          color="success"
+          onClick={nextStep}
+          startDecorator={<CheckIcon />}>
+          {t("offers.chooseThisMeetingSlot")}
+        </Button>
+      </Collapse>
     </>,
 
     // USER LOGIN/SIGNUP + COMMENTS
     <>
-      <StepTitle>{t("offers.myInformation")}</StepTitle>
+      <StepTitle>2. {t("offers.myInformation")}</StepTitle>
 
       <Stack gap={3}>
         <AuthCard />
@@ -173,6 +194,7 @@ export default function PageBook() {
   return (
     <>
       <OfferBanner
+        showPills={false}
         pageTitle={t("offers.bookAMeetingSlot", {context: "short"})}
         offer={offer}
         breadcrumbs={[
@@ -190,24 +212,8 @@ export default function PageBook() {
       <PageContent gap={2} mt={6}>
         {slotsByDate ? (
           <>
-            {steps[formStep]}
-
-            <Sheet>
-              <Collapse in={selectedMeetingSlot}>
-                {selectedMeetingSlot && (
-                  <Typography sx={{alignSelf: "center"}} textColor={"text.tertiary"}>
-                    <Trans
-                      i18nKey="offers.youAreAboutToBookAMeetingOnThe"
-                      values={{
-                        dateTime: tDateTime(
-                          sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
-                        ),
-                      }}
-                    />
-                  </Typography>
-                )}
-              </Collapse>
-            </Sheet>
+            {formStep >= 0 && steps[0]}
+            <Collapse in={formStep >= 1}>{steps[1]}</Collapse>
           </>
         ) : (
           <Typography mt={4} textColor={"text.tertiary"}>
