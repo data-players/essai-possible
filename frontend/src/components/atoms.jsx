@@ -251,6 +251,9 @@ export function ButtonWithConfirmation({
         <Button loading={loading} onClick={onClick} {...props}>
           {children}
         </Button>
+        <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)} {...props}>
+          Annuler
+        </Button>
       </Stack>
     </Card>
   );
