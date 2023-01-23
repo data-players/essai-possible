@@ -25,6 +25,8 @@ import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
 import Autocomplete from "@mui/joy/Autocomplete";
 import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
 import debounce from "@mui/utils/debounce.js";
+import {Pagination} from "@mui/material";
+import {getUrlParam, setURLParam} from "../app/utils.js";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -259,16 +261,50 @@ export function ButtonWithConfirmation({
   );
 }
 
-export function ListPageContent({ready, noResultsText, values, item: Item, getKey}) {
+export function ListPageContent({
+  ready,
+  noResultsText,
+  values,
+  item: Item,
+  getKey,
+  itemsPerPage = 10,
+}) {
+  // Pagination
+  const rawUrlSearchParams = new URLSearchParams(window.location.search);
+  const [page, setPage] = useState(getUrlParam("page", rawUrlSearchParams, "number", 1));
+  const numberOfPages = Math.ceil(values.length / itemsPerPage);
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    setURLParam("page", value, "number");
+  };
+  // If the pagination is too far away reset it back to 1
+  useEffect(() => {
+    values.length < itemsPerPage * (page - 1) && handlePageChange(undefined, 1);
+  }, [values.length, page, itemsPerPage]);
+
   return (
-    <PageContent mt={6}>
+    <PageContent mt={6} alignItems={"center"}>
       {ready ? (
         values.length > 0 ? (
-          <List>
-            {values.map((value, index) => (
-              <Item value={value} key={getKey ? getKey(value) : value} />
-            ))}
-          </List>
+          <>
+            <Typography sx={{color: "text.tertiary", opacity: 0.7}} mb={1}>
+              Résultats {itemsPerPage * (page - 1) + 1} à{" "}
+              {Math.min(itemsPerPage * page, values.length)} sur {values.length}{" "}
+            </Typography>
+            <List>
+              {values.slice(itemsPerPage * (page - 1), itemsPerPage * page).map((value, index) => (
+                <Item value={value} key={getKey ? getKey(value) : value} />
+              ))}
+            </List>
+            {values.length > itemsPerPage && (
+              <Pagination
+                count={numberOfPages}
+                page={page}
+                onChange={handlePageChange}
+                sx={{mt: 2}}
+              />
+            )}
+          </>
         ) : (
           noResultsText
         )

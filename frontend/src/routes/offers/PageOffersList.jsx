@@ -26,47 +26,9 @@ import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
 import Collapse from "@mui/material/Collapse";
 import {goalOptions} from "./offers-slice-data.js";
-import debounce from "@mui/utils/debounce.js";
 import Link from "@mui/joy/Link";
 import OfferListItem from "./OfferListItem.jsx";
-
-function getUrlParam(key, urlParams, type = "string", defaultValue = "") {
-  let urlParamValue = urlParams.get(key);
-
-  if (urlParamValue === null) return defaultValue;
-
-  if (type === "array" && urlParamValue.length > 0) return urlParamValue.split(";");
-  else if (type === "number") return parseInt(urlParamValue);
-  else if (type === "object") return JSON.parse(urlParamValue);
-
-  return urlParamValue;
-}
-
-function setURLParam(key, value, type = "string") {
-  const URLParams = new URLSearchParams(window.location.search);
-
-  if (!value || value === "" || value === [] || value === {}) {
-    URLParams.delete(key);
-  } else {
-    // Case value is an Array
-    if (type === "array") value = value.join(";");
-    else if (type === "number") value = value.toString();
-    else if (type === "object") value = JSON.stringify(value);
-
-    // If value equals something
-    URLParams.set(key, value);
-  }
-
-  const queryParamsString = URLParams.toString();
-
-  window.history.replaceState(
-    null,
-    null,
-    queryParamsString.length > 0 ? `/offers?${queryParamsString}` : "/offers"
-  );
-}
-
-const debouncedSetURLParam = debounce(setURLParam, 1000);
+import {debouncedSetURLParam, getUrlParam, setURLParam} from "../../app/utils.js";
 
 export default function PageOffersList() {
   const {t} = useTranslation();
