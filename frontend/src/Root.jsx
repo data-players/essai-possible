@@ -33,6 +33,7 @@ import {useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
+import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
@@ -94,9 +95,10 @@ const Root = ({children}) => {
 
   // When we land on the website, prepare the data:
 
-  // - prefetch the offers and companies lists directly so it's ready to be displayed.
+  // - prefetch the full offers, slots and companies lists directly so it's ready to be displayed.
   useFetchOffersQuery();
   useFetchCompaniesQuery();
+  useFetchSlotsQuery();
 
   // - prefetch the user if the user was already logged in
   const [launchFetchUserQuery] = useLazyFetchUserQuery();

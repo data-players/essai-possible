@@ -10,7 +10,7 @@ import PageAccount from "./routes/account/PageAccount.jsx";
 import {AuthComponent} from "./routes/account/AuthComponent.jsx";
 import PageOfferRoot from "./routes/offers/PageOfferRoot.jsx";
 import PageAccountRoot from "./routes/account/PageAccountRoot";
-import PageMyMeetings from "./routes/account/myoffers/PageMyMeetings.jsx";
+import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 
 export default createBrowserRouter([
   {

@@ -39,6 +39,7 @@ export default function OfferListItem({
 
   const launchOfferPrefetch = usePrefetch("fetchOffer");
   const launchCompanyPrefetch = usePrefetch("fetchCompany");
+  const launchSlotsPrefetch = usePrefetch("fetchSlots");
 
   const offer = useSelector((state) => selectOfferById(state, offerId));
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
@@ -47,6 +48,7 @@ export default function OfferListItem({
     <ListItem
       onMouseEnter={() => {
         launchOfferPrefetch(offer.id);
+        launchSlotsPrefetch({offer: offer.id});
         launchCompanyPrefetch(offer.company);
       }}>
       <Card

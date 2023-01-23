@@ -12,31 +12,16 @@ import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
 import CompanyCard from "./CompanyCard.jsx";
 import Box from "@mui/joy/Box";
-import {MeetingCardContent} from "../account/myoffers/PageMyMeetings.jsx";
+import {MeetingCardContent} from "../account/PageMyMeetings.jsx";
 import {selectMeetingForOffer} from "./book/meetings-slice.js";
 import Card from "@mui/joy/Card";
-
-function BookMeetingButton() {
-  const {t} = useTranslation();
-  return (
-    <Button
-      variant={"solid"}
-      color="primary"
-      size={"lg"}
-      component={ReactRouterLink}
-      to={"book"}
-      startDecorator={<CalendarMonthRoundedIcon />}>
-      {t("offers.bookAMeetingSlot", {context: "short"})}
-    </Button>
-  );
-}
 
 export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
-  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer));
+  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
 
   function MeetingCard() {
     return meetingForOffer ? (
@@ -52,7 +37,17 @@ export default function PageOffer() {
         <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
         </Typography>
-        {offer.slots?.length > 0 && <BookMeetingButton />}
+        {offer.slots?.length > 0 && (
+          <Button
+            variant={"solid"}
+            color="primary"
+            size={"lg"}
+            component={ReactRouterLink}
+            to={"book"}
+            startDecorator={<CalendarMonthRoundedIcon />}>
+            {t("offers.bookAMeetingSlot", {context: "short"})}
+          </Button>
+        )}
       </Stack>
     );
   }

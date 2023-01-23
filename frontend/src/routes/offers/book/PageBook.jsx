@@ -17,7 +17,6 @@ import FormLabel from "@mui/joy/FormLabel";
 import Collapse from "@mui/material/Collapse";
 import {selectOfferById} from "../offers-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
-import dayjs from "dayjs";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
@@ -27,11 +26,11 @@ import {
   selectMeetingForOffer,
   selectSavedFormData,
   useAddMeetingMutation,
-  useUpdateMeetingMutation,
 } from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
 import Divider from "@mui/joy/Divider";
 import Box from "@mui/joy/Box";
+import {selectSlotsForOffer} from "./slots-slice.js";
 
 const StepForm = ({
   stepNumber,
@@ -75,20 +74,16 @@ export default function PageBook() {
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
 
-  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer));
+  const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
   const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
-  const [updateMeeting, {isLoading: isUpdatingMeeting}] = useUpdateMeetingMutation();
 
   const currentUser = useSelector(selectCurrentUser);
-  const {slot: selectedMeetingSlot, comments} =
-    useSelector((state) => selectSavedFormData(state, id)) || {};
+  const {selectedSlot, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
 
+  // If a meeting is already booked for the offer, go back to the offer page
   useEffect(() => {
-    if (meetingForOffer)
-      setFormData({
-        comments: meetingForOffer.comments,
-        slot: meetingForOffer.slot,
-      });
+    if (meetingForOffer) navigate("..");
   }, [meetingForOffer]);
 
   const setFormData = (data) =>
@@ -99,17 +94,13 @@ export default function PageBook() {
       })
     );
 
-  const [currentFormStep, setCurrentFormStep] = useState(selectedMeetingSlot ? 1 : 0);
+  const [currentFormStep, setCurrentFormStep] = useState(selectedSlot ? 1 : 0);
 
   const pageTitle = meetingForOffer
     ? t("offers.modifyAMeetingSlot", {context: "short"})
     : t("offers.bookAMeetingSlot", {context: "short"});
 
-  const sortedSlots = [...offer.slots].sort((a, b) =>
-    dayjs(a.start).isAfter(dayjs(b.start)) ? 1 : -1
-  );
-
-  const slotsByDate = groupBy(sortedSlots, (slot) => tDate(slot.start));
+  const slotsByDate = groupBy(slotsForOffer, (slot) => tDate(slot.start));
 
   /**
    * Steps of the booking form
@@ -123,15 +114,13 @@ export default function PageBook() {
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.chooseYourMeetingSlot")}
       subtitle={
-        <Collapse in={!!selectedMeetingSlot}>
-          {selectedMeetingSlot && (
+        <Collapse in={!!selectedSlot}>
+          {selectedSlot && (
             <Typography fontSize={"lg"} textColor={"text.secondary"}>
               <Trans
                 i18nKey="offers.youAreAboutToBookAMeetingOnThe"
                 values={{
-                  dateTime: tDateTime(
-                    sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
-                  ),
+                  dateTime: tDateTime(slotsForOffer.find((slot) => slot.id === selectedSlot).start),
                 }}
               />
             </Typography>
@@ -149,8 +138,8 @@ export default function PageBook() {
                   icon: CalendarMonthRoundedIcon,
                   key: slot.id,
                 }))}
-                value={selectedMeetingSlot}
-                setFieldValue={(slot) => setFormData({slot})}
+                value={selectedSlot}
+                setFieldValue={(selectedSlot) => setFormData({selectedSlot})}
               />
             </ListItem>
           </React.Fragment>
@@ -160,7 +149,7 @@ export default function PageBook() {
       <Stack>
         <Button
           size={"lg"}
-          disabled={!selectedMeetingSlot}
+          disabled={!selectedSlot}
           color="success"
           onClick={() => setCurrentFormStep(currentFormStep + 1)}
           startDecorator={<CheckIcon />}>
@@ -179,22 +168,13 @@ export default function PageBook() {
       hasData={meetingForOffer || comments?.length > 0}
       subtitle={<AuthCard />}>
       <Form
-        initialValues={{comments: comments || meetingForOffer?.comments}}
-        successText={meetingForOffer ? "Rendez-vous modifié" : "Rendez-vous réservé avec succès"}
+        initialValues={{comments}}
+        successText={"Rendez-vous réservé avec succès"}
         onSubmit={async ({comments}) => {
-          if (meetingForOffer) {
-            await updateMeeting({
-              id: meetingForOffer.id,
-              slot: selectedMeetingSlot,
-              comments,
-            }).unwrap();
-          } else {
-            await addMeeting({
-              slot: selectedMeetingSlot,
-              comments,
-            }).unwrap();
-          }
-
+          await addMeeting({
+            slot: selectedSlot,
+            comments,
+          }).unwrap();
           navigate("/my-meetings");
         }}>
         {(register) => (
@@ -216,14 +196,12 @@ export default function PageBook() {
               <Button
                 type={"submit"}
                 size={"lg"}
-                loading={isAddingMeeting || isUpdatingMeeting}
+                loading={isAddingMeeting}
                 disabled={!currentUser}
                 color={"success"}
                 sx={{flexGrow: 1}}
                 startDecorator={<CheckIcon />}>
-                {meetingForOffer
-                  ? t("offers.modifyInformation")
-                  : t("offers.validateInformationAndBook")}
+                {t("offers.validateInformationAndBook")}
               </Button>
             </Stack>
           </Stack>

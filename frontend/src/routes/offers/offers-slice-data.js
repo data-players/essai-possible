@@ -22,14 +22,7 @@ export const fullOffers = [
     description: loremIpsum({count: 2, units: "paragraph"}),
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {id: 1, start: dateTimeISOString("2023-3-23 16:30"), duration: 30},
-      {id: 2, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {id: 3, start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
-      {id: 4, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {id: 5, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
-      {id: 6, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-    ],
+    slots: [1, 2, 3, 4, 5, 6],
   },
   {
     id: "comptable",
@@ -65,7 +58,7 @@ export const fullOffers = [
     description: loremIpsum({count: 2, units: "paragraph"}),
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [{start: dateTimeISOString("2023-3-23 15:30"), duration: 30}],
+    slots: [16],
   },
   {
     id: "devcooperatifback",
@@ -85,15 +78,10 @@ export const fullOffers = [
     description: loremIpsum({count: 2, units: "paragraph"}),
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {id: 7, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-      {id: 8, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {id: 9, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {id: 10, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
-    ],
+    slots: [7, 8, 9, 10],
   },
   {
-    id: "consultantenergiesrenouvelables",
+    id: "consultenergies",
     createdAt: dateTimeISOString("2023-1-4 16:28"),
     title: "Consultant énergies renouvelables",
     company: 3,
@@ -109,13 +97,7 @@ export const fullOffers = [
     description: loremIpsum({count: 2, units: "paragraph"}),
     tasks: loremIpsum({count: 1, units: "paragraph"}),
     skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
-    slots: [
-      {id: 11, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-      {id: 12, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {id: 13, start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
-      {id: 14, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {id: 15, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
-    ],
+    slots: [11, 12, 13, 14, 15],
   },
 ];
 

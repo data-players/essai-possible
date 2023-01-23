@@ -1,17 +1,12 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/api.js";
 import {meetings} from "./meetings-slice-data.js";
+import {selectSlotsForOffer} from "./slots-slice.js";
 
 /**
  * MEETINGS SLICE
  */
-const meetingsAdapter = createEntityAdapter({
-  // selectId: (meeting) => meeting.slot,
-  // sortComparer: (a, b) => {
-  //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
-  //     return b.createdAt?.localeCompare(a.createdAt)
-  // },
-});
+const meetingsAdapter = createEntityAdapter();
 
 const initialState = meetingsAdapter.getInitialState({
   status: {},
@@ -55,10 +50,10 @@ export const {
   selectIds: selectMeetingSlotIds,
 } = meetingsAdapter.getSelectors((state) => state.meetings);
 
-export const selectMeetingForOffer = (state, offer) => {
+export const selectMeetingForOffer = (state, offerId) => {
+  const slotsForOffer = selectSlotsForOffer(state, offerId);
   const meetings = selectAllMeetings(state);
-  const slotIds = offer.slots?.map((slot) => slot.id);
-  return slotIds && meetings.find((meeting) => slotIds.includes(meeting.slot));
+  return meetings.find((meeting) => slotsForOffer.find((slot) => slot.id === meeting.slot));
 };
 
 /**

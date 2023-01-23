@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useSelector} from "react-redux";
-import {HeroBanner} from "../../../components/Layout";
+import {HeroBanner} from "../../components/Layout.jsx";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
 import Grid from "@mui/joy/Grid";
@@ -9,19 +9,18 @@ import {
   selectAllMeetings,
   selectMeetingsReady,
   useDeleteMeetingMutation,
-} from "../../offers/book/meetings-slice.js";
-import {selectAllOffers, selectOffersReady} from "../../offers/offers-slice.js";
-import OfferListItem from "../../offers/OfferListItem.jsx";
+} from "../offers/book/meetings-slice.js";
+import {selectOfferById, selectOffersReady} from "../offers/offers-slice.js";
+import OfferListItem from "../offers/OfferListItem.jsx";
 import Stack from "@mui/joy/Stack";
-import {useTranslationWithDates} from "../../../app/i18n.js";
+import {useTranslationWithDates} from "../../app/i18n.js";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded.js";
 import Button from "@mui/joy/Button";
 import dayjs from "dayjs";
-import {Link as ReactRouterLink} from "react-router-dom";
 import Link from "@mui/joy/Link";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
-import {ButtonWithConfirmation, ListPageContent} from "../../../components/atoms.jsx";
-import {useSnackbar} from "../../../components/snackbar.jsx";
+import {ButtonWithConfirmation, ListPageContent} from "../../components/atoms.jsx";
+import {useSnackbar} from "../../components/snackbar.jsx";
+import {selectSlotById, selectSlotsForOffer} from "../offers/book/slots-slice.js";
 
 export function MeetingCardContent({meeting, offer}) {
   const {t} = useTranslation();
@@ -29,11 +28,13 @@ export function MeetingCardContent({meeting, offer}) {
   const {tDateTime} = useTranslationWithDates();
   const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
 
-  const slot = offer.slots?.find((slot) => meeting.slot === slot.id);
+  const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  const slot = slotsForOffer?.find((slot) => slot.id === meeting.slot) || {};
+
   const addToCalendarUrl =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
     "&text=" +
-    encodeURI(t("meeting.agendaEventTitle", {offer, meeting})) +
+    encodeURI(t("meeting.agendaEventTitle", {offer})) +
     "&dates=" +
     dayjs(slot.start).format("YYYYMMDD[T]HHmm[00Z") +
     "%2F" +
@@ -48,13 +49,13 @@ export function MeetingCardContent({meeting, offer}) {
       <Typography>{meeting.comments}</Typography>
       <Stack gap={2} onClick={(event) => event.stopPropagation()}>
         <Button
-          component={ReactRouterLink}
-          sx={{mt: 2}}
-          variant={"solid"}
+          component={Link}
           size={"lg"}
-          to={`/offers/${offer.id}/book`}
-          startDecorator={<CreateRoundedIcon />}>
-          {t("edit")}
+          sx={{textDecoration: "none"}}
+          href={addToCalendarUrl}
+          target={"_blank"}
+          startDecorator={<CalendarMonthRoundedIcon />}>
+          {t("meetings.addToCalendar")}
         </Button>
         <ButtonWithConfirmation
           color={"primary"}
@@ -69,15 +70,6 @@ export function MeetingCardContent({meeting, offer}) {
           }>
           Supprimer
         </ButtonWithConfirmation>
-        <Button
-          component={Link}
-          sx={{textDecoration: "none"}}
-          href={addToCalendarUrl}
-          variant={"plain"}
-          target={"_blank"}
-          startDecorator={<CalendarMonthRoundedIcon />}>
-          {t("meetings.addToCalendar")}
-        </Button>
       </Stack>
     </Stack>
   );
@@ -86,13 +78,13 @@ export function MeetingCardContent({meeting, offer}) {
 export default function PageMyMeetings() {
   const {t} = useTranslation();
 
-  const offers = useSelector(selectAllOffers);
+  const offersReady = useSelector(selectOffersReady);
   const meetings = useSelector(selectAllMeetings);
   const meetingsReady = useSelector(selectMeetingsReady);
-  const offersReady = useSelector(selectOffersReady);
 
   function OfferListItemWithMeetingInfo({value: meeting}) {
-    const offer = offers.find((offer) => offer.slots?.find((slot) => meeting.slot === slot.id));
+    const slot = useSelector((state) => selectSlotById(state, meeting.slot));
+    const offer = useSelector((state) => selectOfferById(state, slot.offer));
     return (
       <OfferListItem
         offerId={offer.id}
