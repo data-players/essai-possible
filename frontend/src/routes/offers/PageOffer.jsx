@@ -5,7 +5,7 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
-import {BasicList} from "../../components/atoms.jsx";
+import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
 import {selectOfferById} from "./offers-slice.js";
 import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
@@ -14,6 +14,7 @@ import CompanyCard from "./CompanyCard.jsx";
 import Box from "@mui/joy/Box";
 import {MeetingCardContent} from "../account/myoffers/PageMyMeetings.jsx";
 import {selectMeetingForOffer} from "./book/meetings-slice.js";
+import Card from "@mui/joy/Card";
 
 function BookMeetingButton() {
   const {t} = useTranslation();
@@ -36,15 +37,6 @@ export default function PageOffer() {
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
   const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer));
-
-  const ParagraphWithTitle = ({title, children}) => (
-    <Stack gap={2}>
-      <Typography level="h3" color="primary" fontWeight={"lg"}>
-        {title}
-      </Typography>
-      {children}
-    </Stack>
-  );
 
   function MeetingCard() {
     return meetingForOffer ? (
@@ -97,7 +89,11 @@ export default function PageOffer() {
                 <BasicList elements={offer.skills} />
               </ParagraphWithTitle>
 
-              {offer.slots?.length > 0 && <BookMeetingButton />}
+              {offer.slots?.length > 0 && (
+                <Card variant={"soft"}>
+                  <MeetingCard />
+                </Card>
+              )}
             </Stack>
           </Grid>
 

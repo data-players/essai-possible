@@ -1,13 +1,12 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {Trans} from "react-i18next";
-import {Form, RadioChips} from "../../../components/atoms.jsx";
+import {Form, ParagraphWithTitle, RadioChips} from "../../../components/atoms.jsx";
 import ListSubheader from "@mui/joy/ListSubheader";
 import CheckIcon from "@mui/icons-material/Check";
 import {groupBy} from "../../../app/utils.js";
@@ -16,31 +15,81 @@ import Textarea from "@mui/joy/Textarea";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Collapse from "@mui/material/Collapse";
-import Sheet from "@mui/joy/Sheet";
 import {selectOfferById} from "../offers-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
 import dayjs from "dayjs";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {meetingsActions, selectSavedFormData, useAddMeetingMutation} from "./meetings-slice.js";
+import {
+  meetingsActions,
+  selectMeetingForOffer,
+  selectSavedFormData,
+  useAddMeetingMutation,
+  useUpdateMeetingMutation,
+} from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
-import {useSnackbar} from "../../../components/snackbar.jsx";
+import Divider from "@mui/joy/Divider";
+import Box from "@mui/joy/Box";
+
+const StepForm = ({
+  stepNumber,
+  setCurrentFormStep,
+  currentFormStep,
+  children,
+  title,
+  subtitle,
+  hasData = false,
+}) => {
+  const showTitle = !!(currentFormStep >= stepNumber || hasData);
+  const showContent = currentFormStep === stepNumber;
+  const onClickProps = showTitle &&
+    !showContent && {
+      onClick: () => setCurrentFormStep(stepNumber),
+      sx: {cursor: "pointer"},
+    };
+  return (
+    <Stack {...onClickProps}>
+      <Collapse in={showTitle}>
+        <ParagraphWithTitle title={`${stepNumber + 1}. ${title}`}>{subtitle}</ParagraphWithTitle>
+      </Collapse>
+      <Collapse in={showContent}>
+        <Box mt={2}>{children}</Box>
+      </Collapse>
+      <Collapse in={showTitle && !showContent}>
+        <Button sx={{mt: 2}} variant="soft" size={"sm"} color="neutral">
+          Modifier
+        </Button>
+        <Divider sx={{mt: 2}} />
+      </Collapse>
+    </Stack>
+  );
+};
 
 export default function PageBook() {
-  const [openSnackbar] = useSnackbar();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {t, tTime, tDate, tDateTime} = useTranslationWithDates();
   const {id} = useParams();
 
-  const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
-
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
 
+  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer));
+  const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
+  const [updateMeeting, {isLoading: isUpdatingMeeting}] = useUpdateMeetingMutation();
+
   const currentUser = useSelector(selectCurrentUser);
-  const {selectedMeetingSlot, comments} =
+  const {slot: selectedMeetingSlot, comments} =
     useSelector((state) => selectSavedFormData(state, id)) || {};
+
+  useEffect(() => {
+    if (meetingForOffer)
+      setFormData({
+        comments: meetingForOffer.comments,
+        slot: meetingForOffer.slot,
+      });
+  }, [meetingForOffer]);
 
   const setFormData = (data) =>
     dispatch(
@@ -50,9 +99,11 @@ export default function PageBook() {
       })
     );
 
-  const [formStep, setFormStep] = useState(selectedMeetingSlot ? 1 : 0);
-  const nextStep = () => setFormStep(formStep + 1);
-  const lastStep = () => setFormStep(formStep - 1);
+  const [currentFormStep, setCurrentFormStep] = useState(selectedMeetingSlot ? 1 : 0);
+
+  const pageTitle = meetingForOffer
+    ? t("offers.modifyAMeetingSlot", {context: "short"})
+    : t("offers.bookAMeetingSlot", {context: "short"});
 
   const sortedSlots = [...offer.slots].sort((a, b) =>
     dayjs(a.start).isAfter(dayjs(b.start)) ? 1 : -1
@@ -60,161 +111,148 @@ export default function PageBook() {
 
   const slotsByDate = groupBy(sortedSlots, (slot) => tDate(slot.start));
 
-  const StepTitle = ({children}) => (
-    <Typography mb={1} level={"h2"} color={"primary"}>
-      {children}
-    </Typography>
-  );
-
-  function BackValidationButton(props) {
-    return (
-      <Button
-        size={"sm"}
-        variant={"soft"}
-        color="danger"
-        onClick={lastStep}
-        startDecorator={<ChevronLeftIcon />}
-        {...props}
-      />
-    );
-  }
-
-  const meetingChosenInfo = (
-    <Sheet>
-      <Collapse in={selectedMeetingSlot}>
-        {selectedMeetingSlot && (
-          <Typography fontSize={"lg"} sx={{alignSelf: "center"}} textColor={"text.secondary"}>
-            <Trans
-              i18nKey="offers.youAreAboutToBookAMeetingOnThe"
-              values={{
-                dateTime: tDateTime(
-                  sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
-                ),
-              }}
-            />
-          </Typography>
-        )}
-      </Collapse>
-    </Sheet>
-  );
-
   /**
    * Steps of the booking form
    */
   const steps = [
     // MEETING SLOT CHOICE
-    <>
-      <StepTitle>1. {t("offers.chooseYourMeetingSlot")}</StepTitle>
-      {meetingChosenInfo}
-      <Collapse in={formStep === 0}>
-        <List>
-          {Object.entries(slotsByDate).map(([date, slots]) => (
-            <React.Fragment key={date}>
-              <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
-              <ListItem sx={{mb: 3}}>
-                <RadioChips
-                  options={slots.map((slot) => ({
-                    label: tTime(slot.start),
-                    icon: CalendarMonthRoundedIcon,
-                    key: slot.id,
-                  }))}
-                  value={selectedMeetingSlot}
-                  setFieldValue={(slot) => setFormData({selectedMeetingSlot: slot})}
-                />
-              </ListItem>
-            </React.Fragment>
-          ))}
-        </List>
+    <StepForm
+      key={0}
+      stepNumber={0}
+      currentFormStep={currentFormStep}
+      setCurrentFormStep={setCurrentFormStep}
+      title={t("offers.chooseYourMeetingSlot")}
+      subtitle={
+        <Collapse in={!!selectedMeetingSlot}>
+          {selectedMeetingSlot && (
+            <Typography fontSize={"lg"} textColor={"text.secondary"}>
+              <Trans
+                i18nKey="offers.youAreAboutToBookAMeetingOnThe"
+                values={{
+                  dateTime: tDateTime(
+                    sortedSlots.find((slot) => slot.id === selectedMeetingSlot).start
+                  ),
+                }}
+              />
+            </Typography>
+          )}
+        </Collapse>
+      }>
+      <List>
+        {Object.entries(slotsByDate).map(([date, slots]) => (
+          <React.Fragment key={date}>
+            <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
+            <ListItem sx={{mb: 3}}>
+              <RadioChips
+                options={slots.map((slot) => ({
+                  label: tTime(slot.start),
+                  icon: CalendarMonthRoundedIcon,
+                  key: slot.id,
+                }))}
+                value={selectedMeetingSlot}
+                setFieldValue={(slot) => setFormData({slot})}
+              />
+            </ListItem>
+          </React.Fragment>
+        ))}
+      </List>
 
+      <Stack>
         <Button
           size={"lg"}
           disabled={!selectedMeetingSlot}
           color="success"
-          onClick={nextStep}
+          onClick={() => setCurrentFormStep(currentFormStep + 1)}
           startDecorator={<CheckIcon />}>
           {t("offers.chooseThisMeetingSlot")}
         </Button>
-      </Collapse>
-    </>,
+      </Stack>
+    </StepForm>,
 
     // USER LOGIN/SIGNUP + COMMENTS
-    <>
-      <StepTitle>2. {t("offers.myInformation")}</StepTitle>
+    <StepForm
+      key={1}
+      stepNumber={1}
+      currentFormStep={currentFormStep}
+      setCurrentFormStep={setCurrentFormStep}
+      title={t("offers.myInformation")}
+      hasData={meetingForOffer || comments?.length > 0}
+      subtitle={<AuthCard />}>
+      <Form
+        initialValues={{comments: comments || meetingForOffer?.comments}}
+        successText={meetingForOffer ? "Rendez-vous modifié" : "Rendez-vous réservé avec succès"}
+        onSubmit={async ({comments}) => {
+          if (meetingForOffer) {
+            await updateMeeting({
+              id: meetingForOffer.id,
+              slot: selectedMeetingSlot,
+              comments,
+            }).unwrap();
+          } else {
+            await addMeeting({
+              slot: selectedMeetingSlot,
+              comments,
+            }).unwrap();
+          }
 
-      <Stack gap={3}>
-        <AuthCard />
-
-        {currentUser && (
-          <Form
-            initialValues={{comments}}
-            successText={"Rendez-vous réservé avec succès"}
-            onSubmit={async ({comments}) => {
-              await addMeeting({slotId: selectedMeetingSlot, offerId: offer.id, comments}).unwrap();
-              openSnackbar("Votre rendez-vous est validé !");
-            }}>
-            {(register) => (
-              <Stack gap={3}>
-                <FormControl>
-                  <FormLabel htmlFor="comments">
-                    Avez-vous des commentaires à partager avec l'entreprise ?
-                  </FormLabel>
-                  <Textarea
-                    placeholder="conditions particulières, remarques pour l'entreprise..."
-                    minRows={3}
-                    {...register("comments")}
-                  />
-                </FormControl>
-
-                <Stack
-                  direction={{xs: "column-reverse", sm: "row"}}
-                  rowGap={2}
-                  columnGap={3}
-                  mt={2}>
-                  <BackValidationButton onClick={lastStep} sx={{flexGrow: 0}}>
-                    {t("goBack")}
-                  </BackValidationButton>
-                  <Button
-                    type={"submit"}
-                    size={"lg"}
-                    loading={isAddingMeeting}
-                    color={"success"}
-                    sx={{flexGrow: 1}}
-                    startDecorator={<CheckIcon />}>
-                    {t("offers.validateInformation")}
-                  </Button>
-                </Stack>
-              </Stack>
+          navigate("/my-meetings");
+        }}>
+        {(register) => (
+          <Stack gap={3}>
+            {currentUser && (
+              <FormControl>
+                <FormLabel htmlFor="comments">
+                  Avez-vous des commentaires à partager avec l'entreprise ?
+                </FormLabel>
+                <Textarea
+                  placeholder="conditions particulières, remarques pour l'entreprise..."
+                  minRows={3}
+                  {...register("comments")}
+                />
+              </FormControl>
             )}
-          </Form>
+
+            <Stack>
+              <Button
+                type={"submit"}
+                size={"lg"}
+                loading={isAddingMeeting || isUpdatingMeeting}
+                disabled={!currentUser}
+                color={"success"}
+                sx={{flexGrow: 1}}
+                startDecorator={<CheckIcon />}>
+                {meetingForOffer
+                  ? t("offers.modifyInformation")
+                  : t("offers.validateInformationAndBook")}
+              </Button>
+            </Stack>
+          </Stack>
         )}
-      </Stack>
-    </>,
+      </Form>
+    </StepForm>,
   ];
 
   return (
     <>
       <OfferBanner
         showPills={false}
-        pageTitle={t("offers.bookAMeetingSlot", {context: "short"})}
+        pageTitle={pageTitle}
         offer={offer}
         breadcrumbs={[
           {label: t("offers.backToOffers"), to: "/offers"},
           {label: offer.title, to: "./.."},
-          {label: t("offers.bookAMeetingSlot"), to: ".", onClick: () => setFormStep(0)},
-          formStep >= 1 && {
+          {label: pageTitle, to: ".", onClick: () => setCurrentFormStep(0)},
+          currentFormStep >= 1 && {
             label: t("offers.myInformation"),
             to: ".",
-            onClick: () => setFormStep(1),
+            onClick: () => setCurrentFormStep(1),
           },
         ]}
       />
 
-      <PageContent gap={2} mt={6}>
+      <PageContent gap={4} mt={6}>
         {slotsByDate ? (
-          <>
-            {formStep >= 0 && steps[0]}
-            <Collapse in={formStep >= 1}>{steps[1]}</Collapse>
-          </>
+          steps
         ) : (
           <Typography mt={4} textColor={"text.tertiary"}>
             {t("offers.ohOhNoMeetings")}

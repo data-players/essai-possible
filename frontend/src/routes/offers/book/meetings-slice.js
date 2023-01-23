@@ -6,7 +6,7 @@ import {meetings} from "./meetings-slice-data.js";
  * MEETINGS SLICE
  */
 const meetingsAdapter = createEntityAdapter({
-  selectId: (meeting) => meeting.slot,
+  // selectId: (meeting) => meeting.slot,
   // sortComparer: (a, b) => {
   //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
   //     return b.createdAt?.localeCompare(a.createdAt)
@@ -32,16 +32,11 @@ const meetingsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchMeetings"]), meetingsAdapter.upsertMany)
-      .addMatcher(matchAny("matchFulfilled", ["updateMeeting"]), meetingsAdapter.updateOne)
+      .addMatcher(matchAny("matchFulfilled", ["updateMeeting"]), meetingsAdapter.upsertOne)
       .addMatcher(matchAny("matchFulfilled", ["addMeeting"]), meetingsAdapter.addOne)
       .addMatcher(matchAny("matchFulfilled", ["deleteMeeting"]), meetingsAdapter.removeOne);
 
-    addStatusForEndpoints(builder, [
-      "fetchMeetings",
-      "updateMeeting",
-      "addMeeting",
-      "deleteMeeting",
-    ]);
+    addStatusForEndpoints(builder, ["fetchMeetings"]);
   },
 });
 
@@ -87,18 +82,16 @@ api.injectEndpoints({
 
     addMeeting: builder.mutation({
       query: (val) => {
-        console.log(val);
         return "breeds?limit=100";
       },
-      // query: ({userId, slotId, comments}) => ({
+      // query: ({slot, comments}) => ({
       //   url: "meetings",
       //   method: "POST",
-      //   body: {slot: slotId, comments},
+      //   body: {slot, comments},
       // }),
-      transformResponse(baseResponse, meta, {slotId, comments}) {
+      transformResponse(baseResponse, meta, {slot, comments}) {
         // Mock data
-        const res = {id: getCounter(), slot: slotId, comments};
-        console.log(res);
+        const res = {id: getCounter(), slot, comments};
         return res;
       },
     }),
@@ -113,8 +106,9 @@ api.injectEndpoints({
       transformResponse(baseQueryReturnValue, meta, meetingPatch) {
         // Mock data
         let meeting = meetings.find((meeting) => meeting.id === meetingPatch.id);
-        Object.assign(meeting, meetingPatch);
-        return meeting;
+
+        console.log("UPDATE", {...meeting, ...meetingPatch});
+        return {...meeting, ...meetingPatch};
       },
     }),
 
@@ -132,4 +126,9 @@ api.injectEndpoints({
   }),
 });
 
-export const {useLazyFetchMeetingsQuery, useAddMeetingMutation, useDeleteMeetingMutation} = api;
+export const {
+  useLazyFetchMeetingsQuery,
+  useAddMeetingMutation,
+  useUpdateMeetingMutation,
+  useDeleteMeetingMutation,
+} = api;

@@ -48,17 +48,15 @@ export function AuthCard() {
   };
 
   return currentUser ? (
-    <Card variant={"soft"} invertedColors>
-      <Stack gap={2}>
-        <Typography>
-          <strong>Bienvenue {currentUser.firstName} !</strong> Vos informations personnelles seront
-          communiquées dans votre demande.
-        </Typography>
-        <Link component={ReactRouterLink} size={"sm"} to={"/account"}>
+    <Stack gap={1}>
+      <Typography fontSize={"lg"} textColor={"text.secondary"}>
+        <strong>Bienvenue {currentUser.firstName} !</strong> Vos informations personnelles seront
+        communiquées dans votre demande.{" "}
+        <Link component={ReactRouterLink} size={"sm"} to={"/account"} sx={{opacity: 0.7}}>
           Modifier mes informations
         </Link>
-      </Stack>
-    </Card>
+      </Typography>
+    </Stack>
   ) : (
     <>
       <Card variant={"soft"} invertedColors>

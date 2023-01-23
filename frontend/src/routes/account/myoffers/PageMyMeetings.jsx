@@ -64,7 +64,9 @@ export function MeetingCardContent({meeting, offer}) {
             await deleteMeeting(meeting.id).unwrap();
             openSnackbar("Suppression du rendez-vous réussie");
           }}
-          areYouSureText={"Êtes vous sûr·e de supprimer ce rendez-vous ?"}>
+          areYouSureText={
+            "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
+          }>
           Supprimer
         </ButtonWithConfirmation>
         <Button

@@ -280,3 +280,14 @@ export function ListPageContent({ready, noResultsText, values, item: Item, getKe
     </PageContent>
   );
 }
+
+export function ParagraphWithTitle({title, children}) {
+  return (
+    <Stack gap={2}>
+      <Typography level="h3" color="primary" fontWeight={"lg"}>
+        {title}
+      </Typography>
+      {children}
+    </Stack>
+  );
+}
