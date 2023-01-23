@@ -1,27 +1,27 @@
 import { PairResourceCreate } from '../../pair';
-import JobEdit from './JobEdit';
-import JobList from './JobList';
-import JobIcon from '@material-ui/icons/AccountTree';
+import TimeSlotEdit from './TimeSlotEdit';
+import TimeSlotList from './TimeSlotList';
+import TimeSlotIcon from '@material-ui/icons/AccountTree';
 
 export default {
   config: {
-      list: JobList,
+      list: TimeSlotList,
       create: PairResourceCreate,
-      edit: JobEdit,
-      icon: JobIcon,
+      edit: TimeSlotEdit,
+      icon: TimeSlotIcon,
       options: {
-        label: 'Offres'
+        label: 'Disponibiltés'
       },
   },
   dataModel: {
-    types: ['ep:Job'],
+    types: ['ep:TimeSlot'],
     fieldsMapping: {
       title: 'pair:label'
     }
   },
   translations: {
     fr: {
-      name: 'Offre |||| Les Offres',
+      name: 'Disponibilité |||| Les Disponibilités',
       fields: {
         'pair:offeredBy': 'Proposé par', /*pair:Organization*/
         'pair:label': 'Nom',

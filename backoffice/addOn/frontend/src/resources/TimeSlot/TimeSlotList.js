@@ -1,9 +1,9 @@
 import React from 'react';
 import List from "../../layout/list/List";
 import SimpleList from "../../common/list/SimpleList";
-import ProgramIcon from '@material-ui/icons/AccountTree';
+import TimeSlotIcon from '@material-ui/icons/AccountTree';
 import { Avatar } from "@material-ui/core";
-import ProgramFilterSidebar from './ProgramFilterSidebar';
+import TimeSlotFilterSidebar from './TimeSlotFilterSidebar';
 import {ReferenceField} from '@semapps/field-components';
 import { Datagrid,
   TextField,
@@ -11,7 +11,7 @@ import { Datagrid,
   EditButton } from 'react-admin';
 
 const JobList = props => (
-  <List {...props} aside={<ProgramFilterSidebar/>}>
+  <List {...props} aside={<TimeSlotFilterSidebar/>}>
     <Datagrid>
         <TextField source="pair:label" />
         <TextField source="pair:description" />
