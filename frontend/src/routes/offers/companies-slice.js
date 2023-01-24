@@ -5,13 +5,7 @@ import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 /**
  * COMPANIES SLICE
  */
-const companiesAdapter = createEntityAdapter({
-  // selectId: (company) => `${company.company.name}/${company.id}`,
-  // sortComparer: (a, b) => {
-  //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
-  //     return b.createdAt?.localeCompare(a.createdAt)
-  // },
-});
+const companiesAdapter = createEntityAdapter();
 
 const initialState = companiesAdapter.getInitialState({
   status: {},

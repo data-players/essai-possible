@@ -1,4 +1,3 @@
-import {useTranslation} from "react-i18next";
 import {usePrefetch} from "../../app/api.js";
 import {useSelector} from "react-redux";
 import {selectOfferById} from "./offers-slice.js";
@@ -13,6 +12,7 @@ import OfferInfoPills from "./OfferInfoPills.jsx";
 import Chip from "@mui/joy/Chip";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
 import React from "react";
+import {useTranslationWithDates} from "../../app/i18n.js";
 
 function OfferDescriptionSideElement({offer}) {
   return (
@@ -35,7 +35,7 @@ export default function OfferListItem({
   sx,
 }) {
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const {t, tDate} = useTranslationWithDates();
 
   const launchOfferPrefetch = usePrefetch("fetchOffer");
   const launchCompanyPrefetch = usePrefetch("fetchCompany");
@@ -91,6 +91,13 @@ export default function OfferListItem({
                   {offer.location.city}
                 </Chip>
               </Stack>
+              <Typography
+                textColor={"text.tertiary"}
+                fontSize={"sm"}
+                sx={{opacity: 0.6}}
+                fontStyle={"italic"}>
+                Publiée le {tDate(offer.publishedAt)}
+              </Typography>
             </Stack>
           </Grid>
 

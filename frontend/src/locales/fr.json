@@ -68,8 +68,7 @@
     "time": "{{val, datetime(timeStyle: short)}}",
     "date": "{{val, datetime(dateStyle: long)}}",
     "dateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
-    "dateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}",
-    "relativeTime": "{{val, relativetime}}"
+    "dateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}"
   },
   "meetings": {
     "addToCalendar": "Ajouter au calendrier"

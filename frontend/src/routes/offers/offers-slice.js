@@ -1,6 +1,6 @@
 import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
-import {normalize} from "../../app/utils.js";
+import {normalize, sorter} from "../../app/utils.js";
 import {fullOffers, lightOffersList} from "./offers-slice-data.js";
 import {selectAllCompaniesById} from "./companies-slice.js";
 
@@ -8,11 +8,7 @@ import {selectAllCompaniesById} from "./companies-slice.js";
  * OFFERS SLICE
  */
 const offersAdapter = createEntityAdapter({
-  // selectId: (offer) => `${offer.company.name}/${offer.id}`,
-  // sortComparer: (a, b) => {
-  //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
-  //     return b.createdAt?.localeCompare(a.createdAt)
-  // },
+  sortComparer: (a, b) => sorter.date(a.publishedAt, b.publishedAt),
 });
 
 const initialState = offersAdapter.getInitialState({

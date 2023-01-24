@@ -7,7 +7,7 @@ export const goalOptions = ["Découverte métier/confirmation de projet pro", "R
 export const fullOffers = [
   {
     id: "titredeloffre",
-    createdAt: dateTimeISOString("2023-1-4 16:22"),
+    publishedAt: dateTimeISOString("2023-1-4 16:22"),
     title: "Titre de l'offre",
     company: 1,
     location: {
@@ -26,7 +26,7 @@ export const fullOffers = [
   },
   {
     id: "comptable",
-    createdAt: dateTimeISOString("2023-1-4 16:23"),
+    publishedAt: dateTimeISOString("2023-1-4 16:23"),
     title: "Comptable",
     company: 2,
     location: {
@@ -62,7 +62,7 @@ export const fullOffers = [
   },
   {
     id: "devcooperatifback",
-    createdAt: dateTimeISOString("2023-1-4 16:15"),
+    publishedAt: dateTimeISOString("2023-1-4 16:15"),
     title:
       "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
     company: 1,
@@ -82,7 +82,7 @@ export const fullOffers = [
   },
   {
     id: "consultenergies",
-    createdAt: dateTimeISOString("2023-1-4 16:28"),
+    publishedAt: dateTimeISOString("2023-1-4 16:28"),
     title: "Consultant énergies renouvelables",
     company: 3,
     location: {

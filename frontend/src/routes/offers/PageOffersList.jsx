@@ -20,26 +20,34 @@ import {selectFilteredOffersIds, selectOffersReady} from "./offers-slice.js";
 import {selectCompaniesReady} from "./companies-slice.js";
 import {sectorsOptions} from "./companies-slice-data.js";
 import Box from "@mui/joy/Box";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import FormLabel from "@mui/joy/FormLabel";
-import IconButton from "@mui/joy/IconButton";
 import Collapse from "@mui/material/Collapse";
 import {goalOptions} from "./offers-slice-data.js";
-import Link from "@mui/joy/Link";
 import OfferListItem from "./OfferListItem.jsx";
 import {debouncedSetURLParam, getUrlParam, setURLParam} from "../../app/utils.js";
+import Button from "@mui/joy/Button";
+
+const defaults = {
+  search: "",
+  location: null,
+  radius: 10,
+  sectors: [],
+  goals: [],
+};
 
 export default function PageOffersList() {
   const {t} = useTranslation();
 
   const rawUrlSearchParams = new URLSearchParams(window.location.search);
   const searchParams = {
-    search: getUrlParam("search", rawUrlSearchParams),
-    location: getUrlParam("location", rawUrlSearchParams, "object", null),
-    radius: getUrlParam("radius", rawUrlSearchParams, "number", 10),
-    sectors: getUrlParam("sectors", rawUrlSearchParams, "array", []),
-    goals: getUrlParam("goals", rawUrlSearchParams, "array", []),
+    search: getUrlParam("search", rawUrlSearchParams, defaults.search),
+    location: getUrlParam("location", rawUrlSearchParams, "object", defaults.location),
+    radius: getUrlParam("radius", rawUrlSearchParams, "number", defaults.radius),
+    sectors: getUrlParam("sectors", rawUrlSearchParams, "array", defaults.sectors),
+    goals: getUrlParam("goals", rawUrlSearchParams, "array", defaults.goals),
   };
 
   const [search, setSearch] = useState(searchParams.search);
@@ -47,6 +55,28 @@ export default function PageOffersList() {
   const [radius, setRadius] = useState(searchParams.radius);
   const [sectors, setSectors] = useState(searchParams.sectors);
   const [goals, setGoals] = useState(searchParams.goals);
+
+  const resetParams = () => {
+    setSearch(defaults.search);
+    setLocation(defaults.location);
+    setRadius(defaults.radius);
+    setSectors(defaults.sectors);
+    setGoals(defaults.goals);
+    window.history.replaceState(null, null, "/offers");
+  };
+
+  const ClearSearchButton = ({sx}) => (
+    <Button
+      sx={sx}
+      variant={"plain"}
+      startDecorator={<DeleteOutlineRoundedIcon />}
+      onClick={(event) => {
+        event.stopPropagation();
+        resetParams();
+      }}>
+      Effacer la recherche
+    </Button>
+  );
 
   // Advanced filters panel
   const [expanded, setExpanded] = useState(false);
@@ -77,7 +107,7 @@ export default function PageOffersList() {
                       <FormLabel>Mots clés</FormLabel>
                       <SearchBar
                         size={"lg"}
-                        defaultValue={search}
+                        value={search}
                         onChange={(event) => {
                           setSearch(event.target.value);
                           debouncedSetURLParam("search", event.target.value);
@@ -133,26 +163,33 @@ export default function PageOffersList() {
                   transition: "all 0.3s ease-in-out",
                 }}>
                 <Stack
-                  direction="row"
-                  alignItems="center"
-                  gap={2}
+                  direction={{sm: "row"}}
+                  flexWrap={"wrap"}
                   sx={{cursor: "pointer", px: 3, py: 2.5, m: -2, flexGrow: 1}}
                   onClick={() => setExpanded(!expanded)}>
-                  <IconButton>
-                    {expanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-                  </IconButton>
-                  <Link
-                    sx={{
-                      color: expanded ? "primary.solidBg" : "white",
-                      fontWeight: expanded && "lg",
-                    }}>
+                  <Button
+                    variant={"plain"}
+                    sx={{":not(:hover)": !expanded && {color: "white"}}}
+                    startDecorator={
+                      expanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />
+                    }>
                     {expanded ? "Cacher" : "Voir"} les filtres avancés
-                  </Link>
+                  </Button>
+                  <ClearSearchButton
+                    sx={{
+                      ml: "auto",
+                      display: {
+                        xs: "none",
+                        sm: "flex",
+                      },
+                      ":not(:hover)": !expanded && {color: "white"},
+                    }}
+                  />
                 </Stack>
                 <Collapse in={expanded}>
                   <Grid
                     xs={12}
-                    sx={{opacity: expanded ? 1 : 0, transition: "opacity 0.3s ease-in-out"}}>
+                    sx={{mt: 1, opacity: expanded ? 1 : 0, transition: "opacity 0.3s ease-in-out"}}>
                     <Box>
                       <FormLabel sx={{mb: 1}}>Objectifs de recrutement</FormLabel>
                       <CheckboxGroup
@@ -182,6 +219,10 @@ export default function PageOffersList() {
                   </Grid>
                 </Collapse>
               </Card>
+            </Grid>
+
+            <Grid xs={12} display={{xs: "grid", sm: "none"}}>
+              <ClearSearchButton sx={{mx: 3, ":not(:hover)": {color: "white"}}} />
             </Grid>
           </Grid>
         </Container>
