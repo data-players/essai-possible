@@ -8,14 +8,22 @@ import {
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
-import {ButtonWithConfirmation, Form} from "../../components/atoms";
+import {ButtonWithConfirmation, Form, FormInput} from "../../components/atoms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
 import Grid from "@mui/joy/Grid";
-import TextField from "@mui/joy/TextField";
 import Stack from "@mui/joy/Stack";
 import {useSnackbar} from "../../components/snackbar.jsx";
+import * as yup from "yup";
+import {
+  confirmNewPassword,
+  email,
+  firstName,
+  lastName,
+  newPassword,
+  phone,
+} from "../../app/fieldValidation.js";
 
 export default function PageAccount() {
   const dispatch = useDispatch();
@@ -37,6 +45,14 @@ export default function PageAccount() {
 
       <Card variant={"soft"} invertedColors>
         <Form
+          validationSchema={yup.object({
+            firstName,
+            lastName,
+            email,
+            phone,
+            newPassword,
+            confirmNewPassword,
+          })}
           initialValues={currentUser}
           onSubmit={onSubmit}
           successText={"Modifications enregistrées"}>
@@ -46,19 +62,50 @@ export default function PageAccount() {
                 <Typography level={"h2"}>Informations personnelles</Typography>
               </Grid>
               <Grid md={6} xs={12}>
-                <TextField label="Prénom" placeholder="prénom" {...register("firstName")} />
+                <FormInput
+                  label="Prénom"
+                  name={"firstName"}
+                  placeholder="prénom"
+                  register={register}
+                />
               </Grid>
               <Grid md={6} xs={12}>
-                <TextField label="Nom" placeholder="nom" {...register("lastName")} />
+                <FormInput label="Nom" name={"lastName"} placeholder="nom" register={register} />
               </Grid>
-              <Grid xs={12}>
-                <TextField label="Email" placeholder="email@example.com" {...register("email")} />
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Email"
+                  name={"email"}
+                  placeholder="email@example.com"
+                  type={"email"}
+                  register={register}
+                />
               </Grid>
-              <Grid xs={12}>
-                <TextField
-                  label="Mot de passe"
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Numéro de téléphone"
+                  name={"phone"}
+                  placeholder="+33 6 12 34 56 78"
+                  type={"tel"}
+                  register={register}
+                />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Nouveau mot de passe"
+                  name={"newPassword"}
                   placeholder="mot de passe"
-                  {...register("password")}
+                  type={"password"}
+                  register={register}
+                />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Confirmez le nouveau mot de passe"
+                  name={"confirmNewPassword"}
+                  placeholder="mot de passe"
+                  type={"password"}
+                  register={register}
                 />
               </Grid>
 

@@ -4,11 +4,12 @@ import * as React from "react";
 
 import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
 import Grid from "@mui/joy/Grid";
-import TextField from "@mui/joy/TextField";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {PageContent} from "../../components/Layout.jsx";
-import {Form} from "../../components/atoms.jsx";
+import {Form, FormInput} from "../../components/atoms.jsx";
+import * as yup from "yup";
+import {email, firstName, lastName, password, phone} from "../../app/fieldValidation.js";
 
 export const AuthComponent = ({mode, redirect = false}) => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export const AuthComponent = ({mode, redirect = false}) => {
 
   return (
     <PageContent mb={0}>
+      <Button onClick={onSubmit}>Bypass auth (mock)</Button>
       <Form
         initialValues={{
           ...(!isLoginPage && {
@@ -43,6 +45,15 @@ export const AuthComponent = ({mode, redirect = false}) => {
           email: "",
           password: "",
         }}
+        validationSchema={yup.object({
+          ...(!isLoginPage && {
+            firstName,
+            lastName,
+          }),
+          email,
+          phone,
+          password,
+        })}
         onSubmit={onSubmit}
         successText={isLoginPage ? "Connexion réussie" : "Compte créé avec succès"}>
         {(register) => (
@@ -50,28 +61,43 @@ export const AuthComponent = ({mode, redirect = false}) => {
             {!isLoginPage && (
               <>
                 <Grid md={6} xs={12}>
-                  <TextField label="Prénom" placeholder="prénom" {...register("firstName")} />
+                  <FormInput
+                    label="Prénom"
+                    name={"firstName"}
+                    placeholder="prénom"
+                    register={register}
+                  />
                 </Grid>
                 <Grid md={6} xs={12}>
-                  <TextField label="Nom" placeholder="nom" {...register("lastName")} />
+                  <FormInput label="Nom" name={"lastName"} placeholder="nom" register={register} />
                 </Grid>
               </>
             )}
             <Grid md={6} xs={12}>
-              <TextField label="Email" placeholder="email@example.com" {...register("email")} />
+              <FormInput
+                label="Email"
+                name={"email"}
+                placeholder="email@example.com"
+                type={"email"}
+                register={register}
+              />
             </Grid>
             <Grid md={6} xs={12}>
-              <TextField
+              <FormInput
                 label="Numéro de téléphone"
+                name={"phone"}
                 placeholder="+33 6 12 34 56 78"
-                {...register("phone")}
+                type={"tel"}
+                register={register}
               />
             </Grid>
             <Grid xs={12}>
-              <TextField
+              <FormInput
                 label="Mot de passe"
+                name={"password"}
                 placeholder="mot de passe"
-                {...register("password")}
+                type={"password"}
+                register={register}
               />
             </Grid>
             <Grid xs={12}>

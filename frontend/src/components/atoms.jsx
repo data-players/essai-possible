@@ -27,6 +27,9 @@ import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
 import debounce from "@mui/utils/debounce.js";
 import {Pagination} from "@mui/material";
 import {getUrlParam, setURLParam} from "../app/utils.js";
+import FormLabel from "@mui/joy/FormLabel";
+import FormControl from "@mui/joy/FormControl";
+import {FormHelperText} from "@mui/joy";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -172,7 +175,28 @@ export function LocationSearchBar({sx, ...props}) {
   );
 }
 
-export function Form({onSubmit, initialValues, children, successText}) {
+export function FormInput({
+  name,
+  component: InputComponent = Input,
+  label,
+  placeholder,
+  help,
+  register,
+  ...props
+}) {
+  const registration = register?.(name);
+  return (
+    <FormControl>
+      <FormLabel>{label}</FormLabel>
+      <InputComponent placeholder={placeholder} {...registration} {...props} />
+      <FormHelperText sx={registration.errors && {color: "red"}}>
+        {registration.errors || help}
+      </FormHelperText>
+    </FormControl>
+  );
+}
+
+export function Form({onSubmit, initialValues, children, successText, validationSchema}) {
   const [openSnackbar] = useSnackbar();
 
   // https://formik.org/docs/examples/with-material-ui
@@ -180,8 +204,11 @@ export function Form({onSubmit, initialValues, children, successText}) {
     handleSubmit,
     handleChange: onChange,
     values,
+    errors,
+    touched,
   } = useFormik({
     initialValues,
+    validationSchema,
     onSubmit: async (values) => {
       try {
         await onSubmit(values);
@@ -199,10 +226,12 @@ export function Form({onSubmit, initialValues, children, successText}) {
       name,
       value: values[name],
       onChange,
+      errors: errors[name],
+      color: touched[name] && errors[name] && "danger",
     };
   }
 
-  return <form onSubmit={handleSubmit}>{children(register, values, onChange)}</form>;
+  return <form onSubmit={handleSubmit}>{children(register, {values, onChange})}</form>;
 }
 
 export function CheckboxGroup({options, value, setFieldValue}) {

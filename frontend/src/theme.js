@@ -53,9 +53,19 @@ export default extendTheme({
         variant: "soft",
       },
     },
-    JoyTextField: {
+    JoyInput: {
       defaultProps: {
         variant: "soft",
+      },
+    },
+    JoyFormHelperText: {
+      defaultProps: {
+        sx: {color: "text.tertiary"},
+      },
+    },
+    JoyFormLabel: {
+      defaultProps: {
+        sx: {fontWeight: "lg"},
       },
     },
   },

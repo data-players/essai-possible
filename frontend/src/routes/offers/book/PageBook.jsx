@@ -6,14 +6,12 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {Trans} from "react-i18next";
-import {Form, ParagraphWithTitle, RadioChips} from "../../../components/atoms.jsx";
+import {Form, FormInput, ParagraphWithTitle, RadioChips} from "../../../components/atoms.jsx";
 import ListSubheader from "@mui/joy/ListSubheader";
 import CheckIcon from "@mui/icons-material/Check";
 import {groupBy} from "../../../app/utils.js";
 import {PageContent} from "../../../components/Layout.jsx";
 import Textarea from "@mui/joy/Textarea";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import Collapse from "@mui/material/Collapse";
 import {selectOfferById} from "../offers-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
@@ -180,16 +178,14 @@ export default function PageBook() {
         {(register) => (
           <Stack gap={3}>
             {currentUser && (
-              <FormControl>
-                <FormLabel htmlFor="comments">
-                  Avez-vous des commentaires à partager avec l'entreprise ?
-                </FormLabel>
-                <Textarea
-                  placeholder="conditions particulières, remarques pour l'entreprise..."
-                  minRows={3}
-                  {...register("comments")}
-                />
-              </FormControl>
+              <FormInput
+                component={Textarea}
+                label="Avez-vous des commentaires à partager avec l'entreprise ?"
+                name={"comments"}
+                placeholder="conditions particulières, remarques pour l'entreprise..."
+                minRows={3}
+                register={register}
+              />
             )}
 
             <Stack>
