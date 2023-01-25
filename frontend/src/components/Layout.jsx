@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
 import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
-import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
+import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import Fade from "@mui/material/Fade";
 import Container from "@mui/joy/Container";
@@ -19,6 +19,12 @@ import Button from "@mui/joy/Button";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded.js";
 import {t} from "i18next";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
+import Menu from "@mui/joy/Menu";
+import MenuItem from "@mui/joy/MenuItem";
+import {useSelector} from "react-redux";
+import {selectCompanyById} from "../routes/offers/companies-slice.js";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Collapse from "@mui/material/Collapse";
 
 function Root(props) {
   return (
@@ -29,7 +35,7 @@ function Root(props) {
   );
 }
 
-function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
+function Navigation({mobileDrawerContent: MobileDrawerContent, userIsCompanyMember, ...props}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const navigate = useNavigate();
@@ -64,25 +70,31 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
           }}
         />
       </Fade>
-
-      {/* Mobile side drawer */}
-
+      <Collapse in={userIsCompanyMember}>
+        <Sheet
+          variant={"soft"}
+          invertedColors
+          sx={{
+            py: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Typography fontWeight={"lg"}>Vous êtes connecté·e avec un compte entreprise.</Typography>
+        </Sheet>
+      </Collapse>
       <Container
         {...props}
         component={"header"}
-        sx={[
-          {
-            py: 3,
-            gap: {xs: 2, md: 3},
-            bgcolor: "background.surface",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          },
-          ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-        ]}>
-        {/* Website logo and menu button */}
+        sx={{
+          py: 3,
+          gap: {xs: 2, md: 3},
+          bgcolor: "background.surface",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
         <Box
           sx={{
             display: "flex",
@@ -245,17 +257,86 @@ export function PageContent({maxWidth, ...props}) {
 
 export const AuthButton = {
   MyMeetings: ({sx}) => (
-    <Button component={ReactRouterLink} variant="soft" sx={sx} to={"/my-meetings"}>
+    <Button component={ReactRouterLink} sx={sx} to={"/my-meetings"}>
       {t("nav.myMeetings")}
     </Button>
   ),
-  LogIn: ({sx, currentUser}) => (
+  CompanyOffersList: ({currentUser, sx}) => {
+    const navigate = useNavigate();
+    const {companyId: currentCompanyId} = useParams();
+
+    const companiesLength = currentUser.companies.length;
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const handleClose = () => setAnchorEl(null);
+
+    const handleNavigateToCompany = (id) => () => {
+      navigate(`/company/${id}`);
+      handleClose();
+    };
+    const open = !!anchorEl;
+
+    const Item = ({companyId}) => {
+      const company = useSelector((state) => selectCompanyById(state, companyId));
+      const selected = currentCompanyId === companyId;
+      return (
+        <MenuItem
+          {...(selected && {selected: true, variant: "soft"})}
+          onClick={handleNavigateToCompany(companyId)}>
+          {company.name}
+        </MenuItem>
+      );
+    };
+
+    return (
+      <>
+        <Button
+          id="companies-menu-button"
+          aria-controls={open ? "companies-menu-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={(event) =>
+            companiesLength > 1
+              ? setAnchorEl(event.currentTarget)
+              : handleNavigateToCompany(currentUser.companies[0])()
+          }
+          endDecorator={companiesLength > 1 && <KeyboardArrowDownIcon />}>
+          {t("company.myCompany", {count: companiesLength})}
+        </Button>
+        {companiesLength > 1 && (
+          <Menu
+            id="companies-menu-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="companies-menu-button">
+            {currentUser.companies.map((companyId) => (
+              <Item companyId={companyId} key={companyId} />
+            ))}
+          </Menu>
+        )}
+      </>
+    );
+  },
+  Account: ({sx, currentUser}) => (
     <Button
       component={ReactRouterLink}
       sx={sx}
-      to={currentUser ? "/account" : "/login"}
+      to={"/account"}
+      variant={"soft"}
+      color={"neutral"}
       startDecorator={<PersonRoundedIcon />}>
-      {currentUser ? currentUser.firstName : t("nav.logIn")}
+      {currentUser.firstName}
+    </Button>
+  ),
+  LogIn: ({sx}) => (
+    <Button
+      component={ReactRouterLink}
+      sx={sx}
+      to={"/login"}
+      variant={"solid"}
+      startDecorator={<PersonRoundedIcon />}>
+      {t("nav.logIn")}
     </Button>
   ),
   LogInShort: ({sx, currentUser}) => (

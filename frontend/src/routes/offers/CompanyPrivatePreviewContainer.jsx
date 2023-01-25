@@ -19,6 +19,7 @@ import {selectCompanyById} from "./companies-slice.js";
 export default function CompanyPrivatePreviewContainer({offer, children}) {
   const isDraft = offer.status === statusOptions[0];
   const isPublished = offer.status === statusOptions[1];
+  const isFulfilled = offer.status === statusOptions[2];
   const navigate = useNavigate();
 
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
@@ -30,12 +31,8 @@ export default function CompanyPrivatePreviewContainer({offer, children}) {
 
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
 
-  async function handlePublish() {
-    await updateOffer({id: offer.id, status: statusOptions[1]}).unwrap();
-  }
-  async function handleDraft() {
-    await updateOffer({id: offer.id, status: statusOptions[0]}).unwrap();
-  }
+  const handleChangeStatus = (status) => async () =>
+    await updateOffer({id: offer.id, status}).unwrap();
 
   const StatusCollapse = useMemo(
     () =>
@@ -90,7 +87,7 @@ export default function CompanyPrivatePreviewContainer({offer, children}) {
         transition: "background 0.5s ease-in-out",
         pb: 6,
         mb: -6,
-        bgcolor: isDraft && "warning.50",
+        bgcolor: isDraft ? "warning.50" : isFulfilled && "success.50",
       }}>
       <StatusCollapse
         open={isDraft}
@@ -107,7 +104,7 @@ export default function CompanyPrivatePreviewContainer({offer, children}) {
         button={
           <Button
             startDecorator={<VisibilityRoundedIcon />}
-            onClick={handlePublish}
+            onClick={handleChangeStatus(statusOptions[1])}
             loading={isUpdatingOffer}>
             Publier
           </Button>
@@ -127,9 +124,30 @@ export default function CompanyPrivatePreviewContainer({offer, children}) {
         button={
           <Button
             startDecorator={<VisibilityOffRoundedIcon />}
-            onClick={handleDraft}
+            onClick={handleChangeStatus(statusOptions[0])}
             loading={isUpdatingOffer}>
             Repasser en brouillon
+          </Button>
+        }
+      />
+
+      <StatusCollapse
+        open={isFulfilled}
+        title={"Cette offre est pourvue."}
+        description={
+          <>
+            Un·e candidat·e a réservé un rendez-vous avec l'entreprise pour cette offre. L'offre a
+            été automatiquement retirée des offres disponibles et n'est plus visible des autres
+            candidat·es. Cependant, vous pouvez manuellement la republier.
+          </>
+        }
+        color={"success"}
+        button={
+          <Button
+            startDecorator={<VisibilityRoundedIcon />}
+            onClick={handleChangeStatus(statusOptions[1])}
+            loading={isUpdatingOffer}>
+            Republier
           </Button>
         }
       />

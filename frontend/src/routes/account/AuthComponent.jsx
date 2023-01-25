@@ -10,6 +10,7 @@ import {PageContent} from "../../components/Layout.jsx";
 import {Form, FormInput} from "../../components/atoms.jsx";
 import * as yup from "yup";
 import {email, firstName, lastName, password, phone} from "../../app/fieldValidation.js";
+import Typography from "@mui/joy/Typography";
 
 export const AuthComponent = ({mode, redirect = false}) => {
   const navigate = useNavigate();
@@ -27,15 +28,27 @@ export const AuthComponent = ({mode, redirect = false}) => {
     await mutation(values).unwrap();
   }
 
+  const mockConnect = (id) => async () => {
+    await logIn(id).unwrap();
+  };
+
   // Redirect user to home page if it is already connected
   if (redirect && currentUser) {
-    navigate("/");
+    navigate("/offers");
     return;
   }
 
   return (
     <PageContent mb={0}>
-      <Button onClick={onSubmit}>Bypass auth (mock)</Button>
+      <Stack gap={3} alignItems={"center"} my={6}>
+        <Typography level={"h2"}>Fausse authentification</Typography>
+        <Button size={"lg"} onClick={mockConnect(1)}>
+          Candidat
+        </Button>
+        <Button size={"lg"} onClick={mockConnect(2)}>
+          Professionnel
+        </Button>
+      </Stack>
       <Form
         initialValues={{
           ...(!isLoginPage && {

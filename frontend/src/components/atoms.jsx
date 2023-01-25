@@ -344,7 +344,7 @@ export function ListPageContent({
   }, [values.length, page, itemsPerPage]);
 
   return (
-    <PageContent mt={6} alignItems={"center"}>
+    <PageContent mt={4} alignItems={"center"}>
       {ready ? (
         values.length > 0 ? (
           <>
@@ -352,11 +352,13 @@ export function ListPageContent({
               Résultats {itemsPerPage * (page - 1) + 1} à{" "}
               {Math.min(itemsPerPage * page, values.length)} sur {values.length}{" "}
             </Typography>
-            <List>
+
+            <List sx={{alignSelf: "stretch"}}>
               {values.slice(itemsPerPage * (page - 1), itemsPerPage * page).map((value, index) => (
                 <Item value={value} key={getKey ? getKey(value) : value} />
               ))}
             </List>
+
             {values.length > itemsPerPage && (
               <Pagination
                 count={numberOfPages}
@@ -423,3 +425,11 @@ export const FormStep = ({
     </Stack>
   );
 };
+
+export function StatusChip({status, options}) {
+  return (
+    <Chip color={options[status].color} startDecorator={options[status].icon}>
+      {options[status].label}
+    </Chip>
+  );
+}

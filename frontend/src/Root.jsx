@@ -76,7 +76,7 @@ function MobileDrawerContent() {
             </ListItem>
           ))}
           <ListItem>
-            <AuthButton.LogIn currentUser={currentUser} />
+            {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
           </ListItem>
           {!currentUser && (
             <ListItem>
@@ -117,7 +117,7 @@ const Root = ({children}) => {
     if (currentUserReady) launchFetchMeetingsQuery();
   }, [currentUserReady, launchFetchMeetingsQuery]);
 
-  const userLoggedIn = currentUser || authTokenExists;
+  const userIsCompanyMember = currentUser?.companies?.length > 0;
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
@@ -133,7 +133,9 @@ const Root = ({children}) => {
         }}
       />
       <Layout.Root>
-        <Layout.Navigation mobileDrawerContent={MobileDrawerContent}>
+        <Layout.Navigation
+          mobileDrawerContent={MobileDrawerContent}
+          userIsCompanyMember={userIsCompanyMember}>
           {/* Big screens: show search bar, except on /offers page */}
           {path !== "/offers" && (
             <SearchBar
@@ -160,9 +162,12 @@ const Root = ({children}) => {
           />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
-            {userLoggedIn && <AuthButton.MyMeetings />}
-            <AuthButton.LogIn currentUser={currentUser} />
-            {!userLoggedIn && <AuthButton.SignUp />}
+            {currentUser && !userIsCompanyMember && <AuthButton.MyMeetings />}
+            {currentUser && userIsCompanyMember && (
+              <AuthButton.CompanyOffersList currentUser={currentUser} />
+            )}
+            {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
+            {!authTokenExists && <AuthButton.SignUp />}
           </Stack>
         </Layout.Navigation>
 

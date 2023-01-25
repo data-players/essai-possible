@@ -80,5 +80,9 @@
   "meeting": {
     "agendaEventTitle": "RDV pour  \"{{offer.title}}\" (Essai Possible)"
   },
-  "edit": "Modifier"
+  "edit": "Modifier",
+  "company": {
+    "myCompany": "Mon Entreprise",
+    "myCompany_other": "Mes Entreprises"
+  }
 }

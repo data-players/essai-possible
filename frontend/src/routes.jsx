@@ -13,7 +13,7 @@ import PageAccountRoot from "./routes/account/PageAccountRoot";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 import PageCGU from "./routes/PageCGU";
 import PageEditOffer from "./routes/offers/edit/PageEditOffer";
-import PageCompanyOffers from "./routes/company/PageCompanyOffers.jsx";
+import PageCompanyOffersList from "./routes/company/PageCompanyOffersList.jsx";
 
 export default createBrowserRouter([
   {
@@ -44,7 +44,7 @@ export default createBrowserRouter([
         ],
       },
 
-      {path: "company/:companyId", element: <PageCompanyOffers />},
+      {path: "company/:companyId", element: <PageCompanyOffersList />},
 
       {
         path: "account",
