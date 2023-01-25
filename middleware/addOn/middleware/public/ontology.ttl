@@ -18,6 +18,17 @@
 <http://virtual-assembly.org/ontologies/pair#about> owl:inverseOf :subjectOf .
 
 
+###  https://data.essaipossible.fr/ontology#askedAffiliation
+:askedAffiliation rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliatedBy> ;
+                  owl:inverseOf :hasAskedAffilition .
+
+
+###  https://data.essaipossible.fr/ontology#hasAskedAffilition
+:hasAskedAffilition rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliates> .
+
+
 ###  https://data.essaipossible.fr/ontology#subjectOf
 :subjectOf rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#interSubjectProperty> .

@@ -42,6 +42,11 @@ export const OrganizationEdit = props => (
             shouldRenderSuggestions={value => value && value.length > 1}
             />
           </ReferenceArrayInput>
+          <ReferenceArrayInput reference="Person" source="pair:hasAskedAffilitation" fullWidth>
+            <AutocompleteArrayInput optionText="pair:label"
+            shouldRenderSuggestions={value => value && value.length > 1}
+            />
+          </ReferenceArrayInput>
 
       </FormTab>
       <FormTab label="Relations">

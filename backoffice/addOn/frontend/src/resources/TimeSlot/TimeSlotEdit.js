@@ -18,6 +18,7 @@ import {
 
 import { MarkdownInput } from '@semapps/markdown-components'
 import Title from '../commons/Title';
+import { DateTimeInput } from '../../common/input';
 import Edit from "../../layout/edit/Edit";
 import { ReferenceArrayInput,ReferenceInput } from "@semapps/input-components";
 import { QuickAppendReferenceArrayField } from '@semapps/field-components';
@@ -45,8 +46,8 @@ export const JobEdit = props => {
       <FormTab label="Principal">
         <TextInput source="pair:label" fullWidth validate={[required()]} />
         <ReferenceInput
-          source="pair:offeredBy"
-          reference="Organization"
+          source="pair:about"
+          reference="Job"
           validate={[required()]}
           fullWidth
         >
@@ -54,14 +55,8 @@ export const JobEdit = props => {
               return value && value.length > 1
             }}/>
         </ReferenceInput>
-        <MarkdownInput source="pair:description" multiline fullWidth readOnly={lock}/>
-
-        <ReferenceInput reference="DataSource" fullWidth source="aurba:hasDataSource" allowEmpty disabled={lock}>
-          <SelectInput optionText="pair:label" disabled={lock}/>
-        </ReferenceInput>
-        {lock &&
-          <BooleanInput source="aurba:externalDeleted" disabled={true} />
-        }
+        <DateTimeInput source="pair:startDate" />
+        <DateTimeInput source="pair:endDate" />
       </FormTab>
 
     </TabbedForm>

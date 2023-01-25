@@ -18,16 +18,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const JobFilterSidebar = () => {
+const ProjectFilterSidebar = () => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
       <CardContent className={classes.cardContent}>
         <ReferenceFilter
-          label="Source de données"
-          reference="DataSource"
-          source="aurba:hasDataSource"
-          inverseSource="aurba:dataSourceOf"
+          label="Intérêts"
+          reference="Theme"
+          source="pair:hasTopic"
+          inverseSource="pair:topicOf"
           sort={{ field: 'pair:label', order: 'DESC' }}
           limit={100}
         />
@@ -36,4 +36,4 @@ const JobFilterSidebar = () => {
   );
 };
 
-export default JobFilterSidebar;
+export default ProjectFilterSidebar;

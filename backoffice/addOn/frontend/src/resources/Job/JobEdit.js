@@ -21,6 +21,7 @@ import Title from '../commons/Title';
 import Edit from "../../layout/edit/Edit";
 import { ReferenceArrayInput,ReferenceInput } from "@semapps/input-components";
 import { QuickAppendReferenceArrayField } from '@semapps/field-components';
+import { ThemesInput } from '../../common/input';
 
 export const JobEdit = props => {
   const controllerProps = useEditController(props);
@@ -55,7 +56,7 @@ export const JobEdit = props => {
             }}/>
         </ReferenceInput>
         <MarkdownInput source="pair:description" multiline fullWidth readOnly={lock}/>
-
+        <ThemesInput source="pair:hasTopic" />
         <ReferenceInput reference="DataSource" fullWidth source="aurba:hasDataSource" allowEmpty disabled={lock}>
           <SelectInput optionText="pair:label" disabled={lock}/>
         </ReferenceInput>

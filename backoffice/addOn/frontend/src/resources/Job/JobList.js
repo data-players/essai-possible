@@ -15,7 +15,7 @@ const JobList = props => (
     <Datagrid>
         <TextField source="pair:label" />
         <TextField source="pair:description" />
-        <ReferenceField reference="DataSource" source="aurba:hasDataSource">
+        <ReferenceField reference="DataSource" source="aurba:hasDataSource" link="show">
           <TextField source="pair:label" />
         </ReferenceField>
         <EditButton />

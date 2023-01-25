@@ -1,5 +1,6 @@
 import { PairResourceCreate } from '../../pair';
 import TimeSlotEdit from './TimeSlotEdit';
+import TimeSlotShow from './TimeSlotShow';
 import TimeSlotList from './TimeSlotList';
 import TimeSlotIcon from '@material-ui/icons/AccountTree';
 
@@ -8,6 +9,7 @@ export default {
       list: TimeSlotList,
       create: PairResourceCreate,
       edit: TimeSlotEdit,
+      show : TimeSlotShow,
       icon: TimeSlotIcon,
       options: {
         label: 'Disponibiltés'
@@ -23,9 +25,11 @@ export default {
     fr: {
       name: 'Disponibilité |||| Les Disponibilités',
       fields: {
-        'pair:offeredBy': 'Proposé par', /*pair:Organization*/
+        'pair:about': 'Offre', /*pair:Organization*/
         'pair:label': 'Nom',
         'pair:description': 'Description',
+        'pair:startDate':'date de début',
+        'pair:endDate':'date de fin',
         'ep:subjectOf': 'Disponibilités' /*ep:TimeSlot*/
       }
     }
