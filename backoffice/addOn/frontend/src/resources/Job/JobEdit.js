@@ -12,6 +12,7 @@ import {
   SimpleFormIterator,
   TabbedForm,
   AutocompleteInput,
+  AutocompleteArrayInput,
   required,
   useEditController
 } from 'react-admin';
@@ -64,7 +65,11 @@ export const JobEdit = props => {
           <BooleanInput source="aurba:externalDeleted" disabled={true} />
         }
       </FormTab>
-
+      <FormTab label="Relations">
+            <ReferenceArrayInput reference="Theme" source='pair:hasTopic'>
+              <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
+            </ReferenceArrayInput>
+        </FormTab>
     </TabbedForm>
   </Edit>
   );
