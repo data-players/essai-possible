@@ -10,7 +10,7 @@ import {sorter} from "../../app/utils.js";
 import {useSelector} from "react-redux";
 import {selectSlotsForOffer} from "./book/slots-slice.js";
 
-export default function OfferInfoPills({offer, company}) {
+export default function OfferInfoPills({offer, company, companyMode = false}) {
   const {t, tDate} = useTranslationWithDates();
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
   const nextAvailableSlotDate =
@@ -18,19 +18,22 @@ export default function OfferInfoPills({offer, company}) {
     [...slotsForOffer].sort((a, b) => sorter.date(a.start, b.start))[0].start;
   return (
     <Grid container columnSpacing={4} rowSpacing={3} p={0}>
-      <Grid xs={12} sm={6} md={4}>
-        <Chip color={"primary"} startDecorator={<LocalOfferRoundedIcon />}>
-          {t("offers.sector", {count: company.sectors?.length})}
-        </Chip>
-        <BasicList elements={company.sectors} />
-      </Grid>
+      {!companyMode && (
+        <Grid xs={12} sm={6} md={4}>
+          <Chip color={"primary"} startDecorator={<LocalOfferRoundedIcon />}>
+            {t("offers.sector", {count: company.sectors?.length})}
+          </Chip>
+          <BasicList elements={company.sectors} />
+        </Grid>
+      )}
+
       <Grid xs={12} sm={6} md={4}>
         <Chip color={"primary"} startDecorator={<FlagRoundedIcon />}>
           {t("offers.goal")}
         </Chip>
         <Box sx={{mt: 1, ml: 2}}>{offer.goal}</Box>
       </Grid>
-      {slotsForOffer.length > 0 && (
+      {!companyMode && slotsForOffer.length > 0 && (
         <Grid xs={12} sm={12} md={4}>
           <Chip color={"primary"} startDecorator={<CalendarMonthRoundedIcon />}>
             {t("offers.startDate")}

@@ -11,7 +11,7 @@ export function groupBy(xs, fn) {
   );
 }
 
-export const cleanUrl = (url) => url.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");
+export const cleanUrl = (url) => url?.replace(/https?:\/\/(www.)?/, "").replace(/\/$/, "");
 
 export const normalize = (string, caseSensitive = false) => {
   const normalized =
@@ -78,3 +78,12 @@ export function setURLParam(key, value, type = "string") {
 }
 
 export const debouncedSetURLParam = debounce(setURLParam, 1000);
+
+export function getDeepValue(obj, splitName) {
+  let final = obj;
+  for (const namePart of splitName) {
+    final = final?.[namePart];
+  }
+
+  return final;
+}

@@ -7,7 +7,7 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Card from "@mui/joy/Card";
 import Typography from "@mui/joy/Typography";
-import {ChipDelete} from "@mui/joy";
+import ChipDelete from "@mui/joy/ChipDelete";
 
 // Snackbar default values
 export const defaultDuration = 5000;

@@ -31,6 +31,7 @@ function OfferDescriptionSideElement({offer}) {
 
 export default function OfferListItem({
   offerId,
+  companyMode = false,
   sideElement: SideElement = OfferDescriptionSideElement,
   sx,
 }) {
@@ -69,9 +70,9 @@ export default function OfferListItem({
                 {offer.title}
               </Typography>
 
-              <Typography level="h4">{company.name}</Typography>
+              {!companyMode && <Typography level="h4">{company.name}</Typography>}
 
-              <OfferInfoPills company={company} offer={offer} />
+              <OfferInfoPills company={company} offer={offer} companyMode={companyMode} />
 
               <Stack
                 gap={2}
@@ -83,13 +84,15 @@ export default function OfferListItem({
                   {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
                 </Typography>
 
-                <Chip
-                  color={"neutral.tertiary"}
-                  variant={"plain"}
-                  startDecorator={<PlaceRoundedIcon />}
-                  sx={{p: 0, opacity: 0.6}}>
-                  {offer.location.city}
-                </Chip>
+                {!companyMode && (
+                  <Chip
+                    color={"neutral.tertiary"}
+                    variant={"plain"}
+                    startDecorator={<PlaceRoundedIcon />}
+                    sx={{p: 0, opacity: 0.6}}>
+                    {offer.location.city}
+                  </Chip>
+                )}
               </Stack>
               <Typography
                 textColor={"text.tertiary"}

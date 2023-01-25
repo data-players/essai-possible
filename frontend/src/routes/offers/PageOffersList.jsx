@@ -73,6 +73,7 @@ export default function PageOffersList() {
       onClick={(event) => {
         event.stopPropagation();
         resetParams();
+        setExpanded(false);
       }}>
       Effacer la recherche
     </Button>
@@ -191,7 +192,7 @@ export default function PageOffersList() {
                     xs={12}
                     sx={{mt: 1, opacity: expanded ? 1 : 0, transition: "opacity 0.3s ease-in-out"}}>
                     <Box>
-                      <FormLabel sx={{mb: 1}}>Objectifs de recrutement</FormLabel>
+                      <FormLabel>Objectifs de recrutement</FormLabel>
                       <CheckboxGroup
                         options={goalOptions}
                         value={goals}

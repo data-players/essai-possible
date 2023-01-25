@@ -25,11 +25,15 @@ import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
 import Autocomplete from "@mui/joy/Autocomplete";
 import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
 import debounce from "@mui/utils/debounce.js";
-import {Pagination} from "@mui/material";
-import {getUrlParam, setURLParam} from "../app/utils.js";
+import Pagination from "@mui/material/Pagination";
+import {getDeepValue, getUrlParam, setURLParam} from "../app/utils.js";
 import FormLabel from "@mui/joy/FormLabel";
 import FormControl from "@mui/joy/FormControl";
-import {FormHelperText} from "@mui/joy";
+import FormHelperText from "@mui/joy/FormHelperText";
+import Radio from "@mui/joy/Radio";
+import MuiRadioGroup from "@mui/joy/RadioGroup";
+import Collapse from "@mui/material/Collapse";
+import Divider from "@mui/joy/Divider";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -178,6 +182,7 @@ export function LocationSearchBar({sx, ...props}) {
 export function FormInput({
   name,
   component: InputComponent = Input,
+  wrapperComponent: WrapperComponent = FormControl,
   label,
   placeholder,
   help,
@@ -186,13 +191,13 @@ export function FormInput({
 }) {
   const registration = register?.(name);
   return (
-    <FormControl>
+    <WrapperComponent>
       <FormLabel>{label}</FormLabel>
       <InputComponent placeholder={placeholder} {...registration} {...props} />
-      <FormHelperText sx={registration.errors && {color: "red"}}>
-        {registration.errors || help}
+      <FormHelperText sx={registration?.errors && {color: "red", fontWeight: "lg"}}>
+        {registration?.errors || help}
       </FormHelperText>
-    </FormControl>
+    </WrapperComponent>
   );
 }
 
@@ -203,12 +208,15 @@ export function Form({onSubmit, initialValues, children, successText, validation
   const {
     handleSubmit,
     handleChange: onChange,
+    setFieldValue,
     values,
     errors,
+    dirty,
     touched,
   } = useFormik({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         await onSubmit(values);
@@ -222,41 +230,64 @@ export function Form({onSubmit, initialValues, children, successText, validation
 
   // A function to register easily fields by putting {...register("fieldName") inside field components
   function register(name) {
+    const splitName = name.split(".");
+
     return {
       name,
-      value: values[name],
+      value: getDeepValue(values, splitName),
       onChange,
-      errors: errors[name],
-      color: touched[name] && errors[name] && "danger",
+      errors: getDeepValue(errors, splitName),
+      color: getDeepValue(touched, splitName) && getDeepValue(errors, splitName) && "danger",
     };
   }
 
-  return <form onSubmit={handleSubmit}>{children(register, {values, onChange})}</form>;
+  return (
+    <form onSubmit={handleSubmit}>
+      {children(register, {values, setFieldValue, onChange, errors, dirty})}
+    </form>
+  );
 }
 
-export function CheckboxGroup({options, value, setFieldValue}) {
+export const CheckboxGroup = React.memo(
+  function ({options, value, setFieldValue}) {
+    const [val, setVal] = useState(value);
+    console.log("render");
+    return (
+      <Card variant={"soft"} size={"sm"} sx={{my: 1}}>
+        <List size="sm">
+          {options.map((option, index) => {
+            const checked = val.includes(option);
+            return (
+              <ListItem key={index}>
+                <Checkbox
+                  label={option}
+                  checked={checked}
+                  onChange={(event) => {
+                    const newVal = event.target.checked
+                      ? [...val, option]
+                      : val.filter((checkedOption) => option !== checkedOption);
+                    setVal(newVal);
+                    setFieldValue(newVal);
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </Card>
+    );
+  },
+  (pp, np) => true
+);
+
+export function RadioGroup({options, ...props}) {
   return (
-    <Card variant={"soft"} size={"sm"} sx={{mt: 1}}>
-      <List size="sm">
-        {options.map((option, index) => {
-          const checked = value.includes(option);
-          return (
-            <ListItem key={index}>
-              <Checkbox
-                label={option}
-                checked={checked}
-                onChange={(event) => {
-                  setFieldValue(
-                    event.target.checked
-                      ? [...value, option]
-                      : value.filter((checkedOption) => option !== checkedOption)
-                  );
-                }}
-              />
-            </ListItem>
-          );
-        })}
-      </List>
+    <Card variant={"soft"} size={"sm"} sx={{mt: 1, p: 2}}>
+      <MuiRadioGroup {...props}>
+        {options.map((option) => (
+          <Radio value={option} key={option} label={option} />
+        ))}
+      </MuiRadioGroup>
     </Card>
   );
 }
@@ -264,6 +295,7 @@ export function CheckboxGroup({options, value, setFieldValue}) {
 export function ButtonWithConfirmation({
   children,
   color,
+  cardColor = color,
   loading,
   areYouSureText,
   onClick,
@@ -276,7 +308,7 @@ export function ButtonWithConfirmation({
       {children}
     </Button>
   ) : (
-    <Card color={color} variant={"solid"} invertedColors>
+    <Card color={cardColor} variant={"solid"} invertedColors>
       <Stack gap={2}>
         <Typography>{areYouSureText}</Typography>
         <Button loading={loading} onClick={onClick} {...props}>
@@ -356,3 +388,38 @@ export function ParagraphWithTitle({title, children}) {
     </Stack>
   );
 }
+
+export const FormStep = ({
+  stepNumber,
+  setCurrentFormStep,
+  currentFormStep,
+  children,
+  title,
+  subtitle,
+  showTitle = false,
+  showContent = false,
+}) => {
+  showTitle = !!(currentFormStep >= stepNumber || showTitle);
+  showContent = currentFormStep === stepNumber || showContent;
+  const onClickProps = showTitle &&
+    !showContent && {
+      onClick: () => setCurrentFormStep(stepNumber),
+      sx: {cursor: "pointer"},
+    };
+  return (
+    <Stack {...onClickProps}>
+      <Collapse in={showTitle}>
+        <ParagraphWithTitle title={`${stepNumber + 1}. ${title}`}>{subtitle}</ParagraphWithTitle>
+      </Collapse>
+      <Collapse in={showContent}>
+        <Box mt={2}>{children}</Box>
+      </Collapse>
+      <Collapse in={showTitle && !showContent}>
+        <Button sx={{mt: 2}} variant="soft" size={"sm"} color="neutral">
+          Modifier
+        </Button>
+        <Divider sx={{mt: 2}} />
+      </Collapse>
+    </Stack>
+  );
+};

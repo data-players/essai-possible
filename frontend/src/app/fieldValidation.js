@@ -1,7 +1,24 @@
 import * as yup from "yup";
 
+export const requiredString = yup
+  .string("Ce champ n'est pas valide.")
+  .required("Ce champ est requis");
+export const requiredUrl = requiredString.url("Ce champ doit être une URL valide.");
+export const requiredNumber = yup
+  .number("Ce champ n'est pas valide.")
+  .required("Ce champ est requis");
+export const requiredArray = yup.array().min(1, "Donnez au moins une réponse.");
+
 export const firstName = yup.string("Entrez un prénom").required("Le prénom est requis");
 export const lastName = yup.string("Entrez un nom").required("Le nom est requis");
+
+export const location = yup.object({
+  label: requiredString,
+  context: requiredString,
+  city: requiredString,
+  lat: requiredNumber,
+  long: requiredNumber,
+});
 
 export const email = yup
   .string("Entrez un email")

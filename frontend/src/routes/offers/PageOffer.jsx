@@ -10,11 +10,12 @@ import {selectOfferById} from "./offers-slice.js";
 import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
-import CompanyCard from "./CompanyCard.jsx";
-import Box from "@mui/joy/Box";
 import {MeetingCardContent} from "../account/PageMyMeetings.jsx";
 import {selectMeetingForOffer} from "./book/meetings-slice.js";
 import Card from "@mui/joy/Card";
+import React from "react";
+import CompanyPrivatePreviewContainer from "./CompanyPrivatePreviewContainer.jsx";
+import OfferSider from "./OfferSider.jsx";
 
 export default function PageOffer() {
   const {t} = useTranslation();
@@ -53,7 +54,7 @@ export default function PageOffer() {
   }
 
   return (
-    <>
+    <CompanyPrivatePreviewContainer offer={offer}>
       <OfferBanner
         offer={offer}
         breadcrumbs={[
@@ -72,16 +73,22 @@ export default function PageOffer() {
               </ParagraphWithTitle>
 
               {/* Company card in the text on xs+ screens */}
-              <Box my={2} display={{xs: "block", md: "none"}}>
-                <CompanyCard offer={offer} />
-              </Box>
+              <OfferSider offer={offer} display={{xs: "flex", md: "none"}} />
 
               <ParagraphWithTitle title={t("offers.tasks")}>
                 <Typography textAlign={"justify"}>{offer.tasks}</Typography>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.skills")}>
-                <BasicList elements={offer.skills} />
+                <Typography textAlign={"justify"}>{offer.skills}</Typography>
+              </ParagraphWithTitle>
+
+              <ParagraphWithTitle title={t("offers.softSkills")}>
+                <BasicList elements={offer.softSkills} />
+              </ParagraphWithTitle>
+
+              <ParagraphWithTitle title={t("offers.workEnvironment")}>
+                <Typography textAlign={"justify"}>{offer.workEnvironment}</Typography>
               </ParagraphWithTitle>
 
               {offer.slots?.length > 0 && (
@@ -94,12 +101,10 @@ export default function PageOffer() {
 
           {/* Company card on the side in md+ screens */}
           <Grid xs={0} md={4}>
-            <Stack gap={3} display={{xs: "none", md: "flex"}}>
-              <CompanyCard offer={offer} />
-            </Stack>
+            <OfferSider offer={offer} display={{xs: "none", md: "flex"}} />
           </Grid>
         </Grid>
       </PageContent>
-    </>
+    </CompanyPrivatePreviewContainer>
   );
 }

@@ -21,8 +21,10 @@ const offersSlice = createSlice({
   extraReducers(builder) {
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchOffers"]), offersAdapter.upsertMany)
-      .addMatcher(matchAny("matchFulfilled", ["fetchOffer"]), offersAdapter.upsertOne);
-
+      .addMatcher(matchAny("matchFulfilled", ["fetchOffer"]), offersAdapter.upsertOne)
+      .addMatcher(matchAny("matchFulfilled", ["updateOffer"]), offersAdapter.upsertOne)
+      .addMatcher(matchAny("matchFulfilled", ["addOffer"]), offersAdapter.addOne)
+      .addMatcher(matchAny("matchFulfilled", ["deleteOffer"]), offersAdapter.removeOne);
     addStatusForEndpoints(builder, ["fetchOffers", "fetchOffer"]);
   },
 });
@@ -35,6 +37,11 @@ export default offersSlice.reducer;
 
 export const selectOffersReady = readySelector("offers", "fetchOffers");
 export const selectOfferReady = readySelector("offers", "fetchOffer");
+
+export const selectOfferIdsForCompany = (state, companyId) =>
+  selectAllOffers(state)
+    .filter((offer) => offer.company === companyId)
+    .map((offer) => offer.id);
 
 export const {
   selectAll: selectAllOffers,
@@ -130,7 +137,56 @@ api.injectEndpoints({
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
+
+    addOffer: builder.mutation({
+      query: (offer) => {
+        return "breeds?limit=100";
+      },
+      // query: ({slot, comments}) => ({
+      //   url: "offers",
+      //   method: "POST",
+      //   body: {slot, comments},
+      // }),
+      transformResponse(baseResponse, meta, offer) {
+        // Mock data
+        const res = {...offer, id: fullOffers.length + 1};
+        return res;
+      },
+    }),
+
+    updateOffer: builder.mutation({
+      query: () => "breeds?limit=100",
+      // query: (offerPatch) => ({
+      //   url: "offers",
+      //   method: "PATCH",
+      //   body: offerPatch,
+      // }),
+      transformResponse(baseQueryReturnValue, meta, offerPatch) {
+        // Mock data
+        let offer = fullOffers.find((offer) => offer.id === offerPatch.id);
+
+        console.log("UPDATE", {...offer, ...offerPatch});
+        return {...offer, ...offerPatch};
+      },
+    }),
+    deleteOffer: builder.mutation({
+      query: (id) => "breeds?limit=100",
+      // query: (id) => ({
+      //   url: `offer`,
+      //   method: "DELETE",
+      // }),
+      transformResponse(baseQueryReturnValue, meta, id) {
+        // Mock data
+        return id;
+      },
+    }),
   }),
 });
 
-export const {useFetchOffersQuery, useFetchOfferQuery} = api;
+export const {
+  useFetchOffersQuery,
+  useFetchOfferQuery,
+  useAddOfferMutation,
+  useUpdateOfferMutation,
+  useDeleteOfferMutation,
+} = api;

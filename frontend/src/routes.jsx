@@ -12,6 +12,8 @@ import PageOfferRoot from "./routes/offers/PageOfferRoot.jsx";
 import PageAccountRoot from "./routes/account/PageAccountRoot";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 import PageCGU from "./routes/PageCGU";
+import PageEditOffer from "./routes/offers/edit/PageEditOffer";
+import PageCompanyOffers from "./routes/company/PageCompanyOffers.jsx";
 
 export default createBrowserRouter([
   {
@@ -24,17 +26,25 @@ export default createBrowserRouter([
     ),
     children: [
       {index: true, element: <HomePage />},
-      {path: "cgu", element: <PageCGU />},
 
-      {path: "offers", element: <PageOffersList />},
       {
-        path: "offers/:id",
-        element: <PageOfferRoot />,
+        path: "offers",
         children: [
-          {index: true, element: <PageOffer />},
-          {path: "book", element: <PageBook />},
+          {index: true, element: <PageOffersList />},
+          {path: "new", element: <PageEditOffer mode={"new"} />},
+          {
+            path: ":id",
+            element: <PageOfferRoot />,
+            children: [
+              {index: true, element: <PageOffer />},
+              {path: "book", element: <PageBook />},
+              {path: "edit", element: <PageEditOffer mode={"edit"} />},
+            ],
+          },
         ],
       },
+
+      {path: "company/:companyId", element: <PageCompanyOffers />},
 
       {
         path: "account",
@@ -45,6 +55,8 @@ export default createBrowserRouter([
 
       {path: "login", element: <AuthComponent mode={"logIn"} redirect />},
       {path: "signup", element: <AuthComponent mode={"signUp"} redirect />},
+
+      {path: "cgu", element: <PageCGU />},
     ],
   },
 ]);

@@ -6,7 +6,7 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {Trans} from "react-i18next";
-import {Form, FormInput, ParagraphWithTitle, RadioChips} from "../../../components/atoms.jsx";
+import {Form, FormInput, FormStep, RadioChips} from "../../../components/atoms.jsx";
 import ListSubheader from "@mui/joy/ListSubheader";
 import CheckIcon from "@mui/icons-material/Check";
 import {groupBy} from "../../../app/utils.js";
@@ -26,43 +26,8 @@ import {
   useAddMeetingMutation,
 } from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
-import Divider from "@mui/joy/Divider";
-import Box from "@mui/joy/Box";
 import {selectSlotsForOffer} from "./slots-slice.js";
-
-const StepForm = ({
-  stepNumber,
-  setCurrentFormStep,
-  currentFormStep,
-  children,
-  title,
-  subtitle,
-  hasData = false,
-}) => {
-  const showTitle = !!(currentFormStep >= stepNumber || hasData);
-  const showContent = currentFormStep === stepNumber;
-  const onClickProps = showTitle &&
-    !showContent && {
-      onClick: () => setCurrentFormStep(stepNumber),
-      sx: {cursor: "pointer"},
-    };
-  return (
-    <Stack {...onClickProps}>
-      <Collapse in={showTitle}>
-        <ParagraphWithTitle title={`${stepNumber + 1}. ${title}`}>{subtitle}</ParagraphWithTitle>
-      </Collapse>
-      <Collapse in={showContent}>
-        <Box mt={2}>{children}</Box>
-      </Collapse>
-      <Collapse in={showTitle && !showContent}>
-        <Button sx={{mt: 2}} variant="soft" size={"sm"} color="neutral">
-          Modifier
-        </Button>
-        <Divider sx={{mt: 2}} />
-      </Collapse>
-    </Stack>
-  );
-};
+import CompanyPrivatePreviewContainer from "../CompanyPrivatePreviewContainer.jsx";
 
 export default function PageBook() {
   const navigate = useNavigate();
@@ -105,7 +70,7 @@ export default function PageBook() {
    */
   const steps = [
     // MEETING SLOT CHOICE
-    <StepForm
+    <FormStep
       key={0}
       stepNumber={0}
       currentFormStep={currentFormStep}
@@ -154,16 +119,16 @@ export default function PageBook() {
           {t("offers.chooseThisMeetingSlot")}
         </Button>
       </Stack>
-    </StepForm>,
+    </FormStep>,
 
     // USER LOGIN/SIGNUP + COMMENTS
-    <StepForm
+    <FormStep
       key={1}
       stepNumber={1}
       currentFormStep={currentFormStep}
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.myInformation")}
-      hasData={meetingForOffer || comments?.length > 0}
+      showTitle={meetingForOffer || comments?.length > 0}
       subtitle={<AuthCard />}>
       <Form
         initialValues={{comments}}
@@ -203,11 +168,11 @@ export default function PageBook() {
           </Stack>
         )}
       </Form>
-    </StepForm>,
+    </FormStep>,
   ];
 
   return (
-    <>
+    <CompanyPrivatePreviewContainer offer={offer}>
       <OfferBanner
         showPills={false}
         pageTitle={pageTitle}
@@ -233,6 +198,6 @@ export default function PageBook() {
           </Typography>
         )}
       </PageContent>
-    </>
+    </CompanyPrivatePreviewContainer>
   );
 }

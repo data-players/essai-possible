@@ -34,7 +34,11 @@
     "proposeAnOffer": "Publier une offre",
     "chooseYourMeetingSlot": "Choisir mon créneau",
     "place": "Lieu",
-    "modifyInformation": "Mettre à jour le RDV"
+    "modifyInformation": "Mettre à jour le RDV",
+    "modifyAnOffer": "Modifier une offre",
+    "createANewOffer": "Créer une offre",
+    "softSkills": "Savoir-être",
+    "workEnvironment": "Environnement de travail"
   },
   "homePage": {
     "heroSubtitle": "Teste un job, un métier, une entreprise.",

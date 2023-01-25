@@ -12,7 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu.js";
 import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
 import Slide from "@mui/material/Slide";
-import {Fade} from "@mui/material";
+import Fade from "@mui/material/Fade";
 import Container from "@mui/joy/Container";
 import Link from "@mui/joy/Link";
 import Button from "@mui/joy/Button";
@@ -183,8 +183,12 @@ function SideDrawer({onClose, ...props}) {
   );
 }
 
-export function HeroBanner({noBackground = false, invertedColors = true, ...props}) {
-  const Component = props.component || Sheet;
+export function HeroBanner({
+  noBackground = false,
+  invertedColors = true,
+  component: Component = Sheet,
+  ...props
+}) {
   return (
     <Component
       variant="solid"

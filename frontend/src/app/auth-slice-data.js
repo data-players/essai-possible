@@ -4,6 +4,7 @@ export let user = {
   firstName: "John",
   lastName: "Doe",
   phone: "+33672649583",
+  companies: ["tibillet"],
 };
 
 export const userToken = "myTokenEtc";

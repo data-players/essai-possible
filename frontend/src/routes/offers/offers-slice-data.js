@@ -1,15 +1,60 @@
 import {loremIpsum} from "lorem-ipsum";
-import {dateISOString, dateTimeISOString, omit} from "../../app/mockUtils.js";
+import {dateTimeISOString, omit} from "../../app/mockUtils.js";
 
 export const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
+export const softSkillsOptions = [
+  "Capacité d’adaptation",
+  "Gestion du stress",
+  "Travail en équipe",
+  "Capacité à fédérer",
+  "Sens de la communication",
+  "Sens de l’organisation",
+  "Rigueur",
+  "Force de proposition",
+  "Curiosité",
+  "Persévérance",
+  "Autonomie",
+  "Capacité de décision",
+  "Prise de recul",
+  "Réactivité",
+];
+
+export const statusOptions = ["Brouillon", "Publiée", "Pourvue"];
+
+export const offerDefaultValues = {
+  // Job description
+  title: "",
+  goal: "",
+  description: "",
+  tasks: "",
+  skills: "",
+  softSkills: [],
+  workEnvironment: "",
+
+  //Modalities
+  duration: undefined,
+  timeSchedule: "",
+  location: null,
+  particularConditions: "",
+  possibleArrangements: "",
+
+  // Mentor contact
+  mentorPhone: "",
+  mentorEmail: "",
+
+  // Status
+  status: "Brouillon",
+  publishedAt: undefined,
+};
 
 // Ful data mock
 export const fullOffers = [
   {
     id: "titredeloffre",
+    status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:22"),
     title: "Titre de l'offre",
-    company: 1,
+    company: "pvgroep",
     location: {
       label: "Place de la Cathédrale 67000 Strasbourg",
       context: "67, Bas-Rhin, Grand Est",
@@ -18,17 +63,26 @@ export const fullOffers = [
       long: 7.750263,
     },
     goal: goalOptions[0],
-    startDate: dateISOString("2023-2-25"),
     description: loremIpsum({count: 2, units: "paragraph"}),
+    workEnvironment: loremIpsum({count: 2}),
+    softSkills: [softSkillsOptions[1], softSkillsOptions[7], softSkillsOptions[2]],
+    duration: 7,
+    timeSchedule: loremIpsum({count: 1}),
+    mentorEmail: "mymentor@email.com",
+    mentorPhone: "+33651274934",
     tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
+    skills: new Array(3)
+      .fill(0)
+      .map(() => loremIpsum({count: 4, units: "words"}))
+      .join("\n"),
     slots: [1, 2, 3, 4, 5, 6],
   },
   {
     id: "comptable",
+    status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:23"),
     title: "Comptable",
-    company: 2,
+    company: "tibillet",
     location: {
       label: "Pre Neuf 01300 Saint-Germain-les-Paroisses",
       context: "01, Ain, Auvergne-Rhône-Alpes",
@@ -37,15 +91,24 @@ export const fullOffers = [
       long: 5.614924,
     },
     goal: goalOptions[0],
-    startDate: dateISOString("2023-2-4"),
     description: loremIpsum({count: 2, units: "paragraph"}),
+    workEnvironment: loremIpsum({count: 2}),
+    softSkills: [softSkillsOptions[1], softSkillsOptions[7], softSkillsOptions[2]],
+    duration: 7,
+    timeSchedule: loremIpsum({count: 1}),
+    mentorEmail: "mymentor@email.com",
+    mentorPhone: "+33651274934",
     tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
+    skills: new Array(3)
+      .fill(0)
+      .map(() => loremIpsum({count: 4, units: "words"}))
+      .join("\n"),
   },
   {
     id: "devcooperatiffront",
+    status: statusOptions[1],
     title: "Dev Coopératif front",
-    company: 2,
+    company: "tibillet",
     location: {
       label: "Pre Neuf 01300 Saint-Germain-les-Paroisses",
       context: "01, Ain, Auvergne-Rhône-Alpes",
@@ -54,18 +117,27 @@ export const fullOffers = [
       long: 5.614924,
     },
     goal: goalOptions[1],
-    startDate: dateISOString("2023-3-8"),
     description: loremIpsum({count: 2, units: "paragraph"}),
+    workEnvironment: loremIpsum({count: 2}),
+    softSkills: [softSkillsOptions[1], softSkillsOptions[7], softSkillsOptions[2]],
+    duration: 7,
+    timeSchedule: loremIpsum({count: 1}),
+    mentorEmail: "mymentor@email.com",
+    mentorPhone: "+33651274934",
     tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
+    skills: new Array(3)
+      .fill(0)
+      .map(() => loremIpsum({count: 4, units: "words"}))
+      .join("\n"),
     slots: [16],
   },
   {
     id: "devcooperatifback",
+    status: statusOptions[2],
     publishedAt: dateTimeISOString("2023-1-4 16:15"),
     title:
       "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
-    company: 1,
+    company: "pvgroep",
     location: {
       label: "Place de la Cathédrale 67000 Strasbourg",
       context: "67, Bas-Rhin, Grand Est",
@@ -74,17 +146,26 @@ export const fullOffers = [
       long: 7.750263,
     },
     goal: goalOptions[0],
-    startDate: new Date(2023, 2, 4).toISOString(),
     description: loremIpsum({count: 2, units: "paragraph"}),
+    workEnvironment: loremIpsum({count: 2}),
+    softSkills: [softSkillsOptions[1], softSkillsOptions[7], softSkillsOptions[2]],
+    duration: 7,
+    timeSchedule: loremIpsum({count: 1}),
+    mentorEmail: "mymentor@email.com",
+    mentorPhone: "+33651274934",
     tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
+    skills: new Array(3)
+      .fill(0)
+      .map(() => loremIpsum({count: 4, units: "words"}))
+      .join("\n"),
     slots: [7, 8, 9, 10],
   },
   {
     id: "consultenergies",
+    status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:28"),
     title: "Consultant énergies renouvelables",
-    company: 3,
+    company: "enercoop",
     location: {
       label: "Rue de la Ville en Pierre 44000 Nantes",
       context: "44, Loire-Atlantique, Pays de la Loire",
@@ -93,13 +174,35 @@ export const fullOffers = [
       long: -1.526928,
     },
     goal: goalOptions[1],
-    startDate: dateISOString("2023-4-12"),
     description: loremIpsum({count: 2, units: "paragraph"}),
+    workEnvironment: loremIpsum({count: 2}),
+    softSkills: [softSkillsOptions[1], softSkillsOptions[7], softSkillsOptions[2]],
+    duration: 7,
+    timeSchedule: loremIpsum({count: 1}),
+    mentorEmail: "mymentor@email.com",
+    mentorPhone: "+33651274934",
     tasks: loremIpsum({count: 1, units: "paragraph"}),
-    skills: new Array(3).fill(0).map(() => loremIpsum({count: 4, units: "words"})),
+    skills: new Array(3)
+      .fill(0)
+      .map(() => loremIpsum({count: 4, units: "words"}))
+      .join("\n"),
     slots: [11, 12, 13, 14, 15],
   },
 ];
 
 // List data mock with less attributes
-export const lightOffersList = fullOffers.map((offer) => omit(["tasks", "skills"], offer));
+export const lightOffersList = fullOffers.map((offer) =>
+  omit(
+    [
+      "tasks",
+      "skills",
+      "softSkills",
+      "duration",
+      "timeSchedule",
+      "mentorEmail",
+      "mentorPhone",
+      "workEnvironment",
+    ],
+    offer
+  )
+);
