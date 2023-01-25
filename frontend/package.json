@@ -6,7 +6,7 @@
   "scripts": {
     "start": "serve -s -p 4010 dist/",
     "prestart": "npm run build",
-    "dev": "vite",
+    "dev": "vite --port=4010 --host",
     "build": "vite build"
   },
   "dependencies": {
