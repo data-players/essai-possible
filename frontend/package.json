@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite preview --port=4010 --host",
+    "start": "serve -s -p 4010 dist/",
     "prestart": "npm run build",
     "dev": "vite",
     "build": "vite build"
@@ -28,7 +28,8 @@
     "react-i18next": "^11.18.6",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.6.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "serve": "^14.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
