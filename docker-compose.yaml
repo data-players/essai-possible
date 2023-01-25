@@ -66,27 +66,18 @@ services:
     ports:
       - '4000:4000'
 
-  # frontend:
-  #   build: frontend
-  #   container_name: frontend_opaline
-  #   volumes:
-  #     - ./frontend:/app
-  #   environment:
-  #     # - REACT_APP_MIDDLEWARE_URL=http://localhost:3000/
-  #     - REACT_APP_MIDDLEWARE_URL=https://data.essaipossible.fr/
-  #     - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
-  #     - REACT_APP_CONTACT_EMAIL=${CONTACT_EMAIL}
-  #     - REACT_APP_CONTACT_LABEL=${CONTACT_LABEL}
-  #     - PORT=5001
-  #   depends_on:
-  #     - middleware
-  #   ports:
-  #     - "5001:5001"
-  #   expose:
-  #     - "5001"
-  #   networks:
-  #     - semapps
-  #   command: bash -c "node -v && yarn install && yarn start"
+  frontend:
+    command: bash -c "yarn install && yarn start"
+    environment:
+      - 'VITE_MIDDLEWARE_URL=http://localhost:3000/'
+    volumes:
+      - ./frontend:/app/
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4010:4010"
 
   redis:
     image: redis
@@ -101,7 +92,7 @@ services:
       - semapps
     volumes:
       - ./data/redis_data:/data
-    command: ["redis-server", "--appendonly", "yes"]
+    command: [ "redis-server", "--appendonly", "yes" ]
 
 networks:
   semapps:
