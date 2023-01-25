@@ -19,8 +19,8 @@ export const initI18n = () =>
 
 export function useTranslationWithDates() {
   const {t} = useTranslation();
-  const tDate = (date, context) => t("intlDate", {val: dayjs(date), context});
-  const tDateTime = (date, context) => t("intlDateTime", {val: dayjs(date), context});
-  const tTime = (date, context) => t("intlTime", {val: dayjs(date), context});
+  const tDate = (date, context) => t("intl.date", {val: dayjs(date), context});
+  const tDateTime = (date, context) => t("intl.dateTime", {val: dayjs(date), context});
+  const tTime = (date, context) => t("intl.time", {val: dayjs(date), context});
   return {t, tTime, tDate, tDateTime};
 }

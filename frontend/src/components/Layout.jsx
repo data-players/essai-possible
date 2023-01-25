@@ -9,7 +9,7 @@ import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
-import TousTesPossiblesLogoBlue from "../assets/tous-tes-possibles-logo-blue.svg";
+import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import {Fade} from "@mui/material";
@@ -102,7 +102,7 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
           <Box
             onClick={() => navigate("/")}
             component={"img"}
-            src={TousTesPossiblesLogoBlue}
+            src={EssaiPossibleLogo}
             height={{xs: 40, md: 50}}
           />
         </Box>
@@ -132,6 +132,14 @@ function Footer(props) {
                     toustespossibles.fr
                   </Link>
                 </Typography>
+                <Link
+                  component={ReactRouterLink}
+                  to={"/cgu"}
+                  fontSize={"sm"}
+                  color={"white"}
+                  mt={2}>
+                  CGU et mentions légales
+                </Link>
               </Stack>
             </Grid>
           </Grid>
@@ -175,13 +183,13 @@ function SideDrawer({onClose, ...props}) {
   );
 }
 
-export function HeroBanner({noBackground = false, ...props}) {
+export function HeroBanner({noBackground = false, invertedColors = true, ...props}) {
   const Component = props.component || Sheet;
   return (
     <Component
       variant="solid"
       color="neutral"
-      invertedColors
+      invertedColors={invertedColors}
       {...props}
       sx={[{py: 8}, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
       {/* Image background */}
@@ -232,6 +240,11 @@ export function PageContent({maxWidth, ...props}) {
 }
 
 export const AuthButton = {
+  MyMeetings: ({sx}) => (
+    <Button component={ReactRouterLink} variant="soft" sx={sx} to={"/my-meetings"}>
+      {t("nav.myMeetings")}
+    </Button>
+  ),
   LogIn: ({sx, currentUser}) => (
     <Button
       component={ReactRouterLink}

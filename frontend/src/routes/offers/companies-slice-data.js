@@ -1,8 +1,8 @@
 import {loremIpsum} from "lorem-ipsum";
-import {dateTimeISOString, omit} from "../../app/mockUtils.js";
+import {omit} from "../../app/mockUtils.js";
+import {sorter} from "../../app/utils.js";
 
-const goalOptions = ["Découverte métier/confirmation de projet pro", "Recrutement"];
-const sectorsOptions = [
+export const sectorsOptions = [
   "Agriculture, sylviculture et pêche",
   "Industries extractives",
   "Production et distribution d’électricité, de gaz, de vapeur et d’air conditionné",
@@ -21,36 +21,34 @@ const sectorsOptions = [
   "Santé humaine et action sociale",
   "Autres activités de service",
   "Activités des ménages en tant qu'employeurs",
-];
+].sort(sorter.text);
 
 // Ful data mock
 export const fullCompanies = [
   {
     id: 1,
-    name: "P&V Group",
+    name: "P&V Grouuup",
+    website: "https://www.pvgroep.coop/",
     description: loremIpsum({count: 3}),
     sectors: [sectorsOptions[1], sectorsOptions[8]],
   },
   {
     id: 2,
     name: "TiBillet",
+    website: "https://tibillet.org",
     description: loremIpsum({count: 3}),
     sectors: [sectorsOptions[5], sectorsOptions[8]],
   },
   {
     id: 3,
     name: "Enercoop",
+    website: "https://www.enercoop.fr/",
     description: loremIpsum({count: 3}),
     sectors: [sectorsOptions[1], sectorsOptions[8]],
-    slots: [
-      {id: 11, start: dateTimeISOString("2023-3-23 15:30"), duration: 30},
-      {id: 12, start: dateTimeISOString("2023-3-23 16:0"), duration: 30},
-      {id: 13, start: dateTimeISOString("2023-3-24 15:30"), duration: 30},
-      {id: 14, start: dateTimeISOString("2023-3-24 16:0"), duration: 30},
-      {id: 15, start: dateTimeISOString("2023-3-25 16:30"), duration: 30},
-    ],
   },
 ];
 
 // List data mock with less attributes
-export const lightCompaniesList = fullCompanies.map((offer) => omit(["tasks", "skills"], offer));
+export const lightCompaniesList = fullCompanies.map((company) =>
+  omit(["description", "website"], company)
+);

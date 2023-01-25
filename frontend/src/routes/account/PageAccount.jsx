@@ -2,48 +2,57 @@ import Button from "@mui/joy/Button";
 import {
   authActions,
   selectCurrentUser,
-  selectCurrentUserReady,
   useDeleteUserMutation,
-  useFetchUserQuery,
   useUpdateUserMutation,
 } from "../../app/auth-slice.js";
 import * as React from "react";
-import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
-import {Form, LoadingSpinner} from "../../components/atoms";
+import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
+import {ButtonWithConfirmation, Form, FormInput} from "../../components/atoms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
 import Grid from "@mui/joy/Grid";
-import TextField from "@mui/joy/TextField";
 import Stack from "@mui/joy/Stack";
 import {useSnackbar} from "../../components/snackbar.jsx";
+import * as yup from "yup";
+import {
+  confirmNewPassword,
+  email,
+  firstName,
+  lastName,
+  newPassword,
+  phone,
+} from "../../app/fieldValidation.js";
 
 export default function PageAccount() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openSnackbar] = useSnackbar();
-  const [deleteAreYouSure, setDeleteAreYouSure] = useState(false);
 
-  useFetchUserQuery();
   const [updateUser, {isLoading: isUpdatingUser}] = useUpdateUserMutation();
   const [deleteUser, {isLoading: isDeletingUser}] = useDeleteUserMutation();
 
   const currentUser = useSelector(selectCurrentUser);
-  const currentUserReady = useSelector(selectCurrentUserReady);
 
   async function onSubmit(values) {
     await updateUser(values).unwrap();
   }
 
-  if (!currentUserReady) return <LoadingSpinner />;
-
   return (
     <PageContent gap={3}>
       <Typography level={"h1"}>Mon compte</Typography>
+
       <Card variant={"soft"} invertedColors>
         <Form
+          validationSchema={yup.object({
+            firstName,
+            lastName,
+            email,
+            phone,
+            newPassword,
+            confirmNewPassword,
+          })}
           initialValues={currentUser}
           onSubmit={onSubmit}
           successText={"Modifications enregistrées"}>
@@ -53,21 +62,53 @@ export default function PageAccount() {
                 <Typography level={"h2"}>Informations personnelles</Typography>
               </Grid>
               <Grid md={6} xs={12}>
-                <TextField label="Prénom" placeholder="prénom" {...register("firstName")} />
-              </Grid>
-              <Grid md={6} xs={12}>
-                <TextField label="Nom" placeholder="nom" {...register("lastName")} />
-              </Grid>
-              <Grid xs={12}>
-                <TextField label="Email" placeholder="email@example.com" {...register("email")} />
-              </Grid>
-              <Grid xs={12}>
-                <TextField
-                  label="Mot de passe"
-                  placeholder="mot de passe"
-                  {...register("password")}
+                <FormInput
+                  label="Prénom"
+                  name={"firstName"}
+                  placeholder="prénom"
+                  register={register}
                 />
               </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput label="Nom" name={"lastName"} placeholder="nom" register={register} />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Email"
+                  name={"email"}
+                  placeholder="email@example.com"
+                  type={"email"}
+                  register={register}
+                />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Numéro de téléphone"
+                  name={"phone"}
+                  placeholder="+33 6 12 34 56 78"
+                  type={"tel"}
+                  register={register}
+                />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Nouveau mot de passe"
+                  name={"newPassword"}
+                  placeholder="mot de passe"
+                  type={"password"}
+                  register={register}
+                />
+              </Grid>
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Confirmez le nouveau mot de passe"
+                  name={"confirmNewPassword"}
+                  placeholder="mot de passe"
+                  type={"password"}
+                  register={register}
+                />
+              </Grid>
+
               <Grid xs={12}>
                 <Stack mt={2}>
                   <Button loading={isUpdatingUser} type="submit" size="lg" color="success">
@@ -79,43 +120,49 @@ export default function PageAccount() {
           )}
         </Form>
       </Card>
-      <Card variant={"soft"}>
-        <Stack gap={2}>
-          <Typography level={"h2"}>Gestion du compte</Typography>
-          <Button
-            color={"danger"}
-            onClick={async () => {
-              await dispatch(authActions.logOut());
-              openSnackbar("Déconnexion réussie", {color: "success"});
-              navigate("/login");
-            }}>
-            Se déconnecter
-          </Button>
-          {!deleteAreYouSure ? (
-            <Button color={"danger"} variant={"soft"} onClick={() => setDeleteAreYouSure(true)}>
-              Supprimer mon compte
+
+      <Stack gap={3} direction={{md: "row"}} justifyContent={""}>
+        <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>
+          <Stack gap={2}>
+            <Typography level={"h2"}>Mes rendez-vous</Typography>
+            <Typography>Consultez vos rendez-vous en cours sur la page dédiée.</Typography>
+
+            <Button color={"neutral"} component={ReactRouterLink} to={"/my-meetings"}>
+              Voir mes rendez-vous en cours
             </Button>
-          ) : (
-            <Card color={"danger"} variant={"solid"} invertedColors>
-              <Stack gap={2}>
-                <Typography>
-                  Toutes les données de votre compte seront supprimées, y compris vos réservations
-                  de rendez-vous.
-                </Typography>
-                <Button
-                  loading={isDeletingUser}
-                  onClick={async () => {
-                    await deleteUser().unwrap();
-                    openSnackbar("Suppression du compte réussie");
-                    navigate("/");
-                  }}>
-                  Supprimer mon compte
-                </Button>
-              </Stack>
-            </Card>
-          )}
-        </Stack>
-      </Card>
+          </Stack>
+        </Card>
+
+        <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>
+          <Stack gap={2}>
+            <Typography level={"h2"}>Gestion du compte</Typography>
+
+            <Button
+              color={"danger"}
+              onClick={async () => {
+                await dispatch(authActions.logOut());
+                openSnackbar("Déconnexion réussie", {color: "success"});
+                navigate("/login");
+              }}>
+              Se déconnecter
+            </Button>
+
+            <ButtonWithConfirmation
+              color={"danger"}
+              loading={isDeletingUser}
+              onClick={async () => {
+                await deleteUser().unwrap();
+                openSnackbar("Suppression du compte réussie");
+                navigate("/");
+              }}
+              areYouSureText={
+                "Toutes les données de votre compte seront supprimées, y compris vos réservations de rendez-vous."
+              }>
+              Supprimer mon compte
+            </ButtonWithConfirmation>
+          </Stack>
+        </Card>
+      </Stack>
     </PageContent>
   );
 }

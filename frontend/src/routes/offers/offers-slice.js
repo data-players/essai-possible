@@ -1,22 +1,18 @@
 import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
-import {selectCurrentUser} from "../../app/auth-slice.js";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
-import {normalize} from "../../app/utils.js";
+import {normalize, sorter} from "../../app/utils.js";
 import {fullOffers, lightOffersList} from "./offers-slice-data.js";
+import {selectAllCompaniesById} from "./companies-slice.js";
 
 /**
  * OFFERS SLICE
  */
 const offersAdapter = createEntityAdapter({
-  // selectId: (offer) => `${offer.company.name}/${offer.id}`,
-  // sortComparer: (a, b) => {
-  //     console.log(a.createdAt, b.createdAt, b.createdAt?.localeCompare(a.createdAt));
-  //     return b.createdAt?.localeCompare(a.createdAt)
-  // },
+  sortComparer: (a, b) => sorter.date(a.publishedAt, b.publishedAt),
 });
 
 const initialState = offersAdapter.getInitialState({
-  status: "idle",
+  status: {},
 });
 
 const offersSlice = createSlice({
@@ -27,7 +23,7 @@ const offersSlice = createSlice({
       .addMatcher(matchAny("matchFulfilled", ["fetchOffers"]), offersAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["fetchOffer"]), offersAdapter.upsertOne);
 
-    addStatusForEndpoints(builder, ["fetchOffers"]);
+    addStatusForEndpoints(builder, ["fetchOffers", "fetchOffer"]);
   },
 });
 
@@ -37,7 +33,8 @@ export default offersSlice.reducer;
  * OFFERS SELECTORS
  */
 
-export const selectOffersReady = readySelector("offers");
+export const selectOffersReady = readySelector("offers", "fetchOffers");
+export const selectOfferReady = readySelector("offers", "fetchOffer");
 
 export const {
   selectAll: selectAllOffers,
@@ -45,46 +42,65 @@ export const {
   selectIds: selectOfferIds,
 } = offersAdapter.getSelectors((state) => state.offers);
 
-// Apply the user filter selection to the offers list
+// Apply the filter selection to the offers list
 // More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
 export const selectFilteredOffersIds = createSelector(
   [
     selectAllOffers,
-    (state, searchText, locationText, radius) => searchText,
-    (state, searchText, locationText, radius) => locationText,
-    (state, searchText, locationText, radius) => radius,
+    selectAllCompaniesById,
+    (state, {search}) => search,
+    (state, {location}) => location,
+    (state, {radius}) => radius,
+    (state, {sectors}) => sectors,
+    (state, {goals}) => goals,
   ],
-  (offers, searchText, locationText, radius) => {
-    const hasSearchText = searchText !== "";
-    const hasLocalizationText = locationText !== "";
+  (offers, companiesById, search, location, radius, sectors, goals) => {
+    const hasSearch = search !== "";
+    const hasLocationData = location?.lat && location?.long;
+    const hasSectors = sectors?.length > 0;
+    const hasGoals = goals?.length > 0;
+    const hasAnyFilter = hasSearch || hasLocationData || hasSectors || hasGoals;
 
-    const searchInFields = (fields, searchText) =>
-      fields.find((field) => normalize(field).includes(normalize(searchText)));
+    // Sur Google Maps, 1km de large c'est 0.01344481 de longitude et 0.00924511 de latitude, grosso modo pour la france
+    const oneKmOf = {Latitude: 0.00924511, Longitude: 0.01344481};
+    const locationBoundaries = hasLocationData && {
+      north: location.lat + oneKmOf.Latitude * radius,
+      south: location.lat - oneKmOf.Latitude * radius,
+      east: location.long + oneKmOf.Longitude * radius,
+      west: location.long - oneKmOf.Longitude * radius,
+    };
 
-    const filteredOffers =
-      hasSearchText || hasLocalizationText
-        ? offers.filter((item) => {
-            const {
-              title,
-              company: {name: companyName},
-              description,
-              location,
-            } = item;
+    const isInLocationBoundaries = ({lat, long}) => {
+      return (
+        lat < locationBoundaries.north &&
+        lat > locationBoundaries.south &&
+        long < locationBoundaries.east &&
+        long > locationBoundaries.west
+      );
+    };
 
-            return (
-              (!hasSearchText || searchInFields([title, companyName, description], searchText)) &&
-              (!hasLocalizationText || searchInFields([location], locationText))
-            );
-          })
-        : offers;
+    const searchInFields = (fields, search) =>
+      fields.find((field) => normalize(field).includes(normalize(search)));
+
+    const matchInArray = (elementArray, filterArray) => {
+      return filterArray.find((option) => elementArray.includes(option));
+    };
+    const filteredOffers = hasAnyFilter
+      ? offers.filter((offer) => {
+          const company = companiesById[offer.company] || {};
+
+          return (
+            (!hasSearch ||
+              searchInFields([offer.title, company.name, offer.description], search)) &&
+            (!hasLocationData || isInLocationBoundaries(offer.location)) &&
+            (!hasSectors || matchInArray(company.sectors, sectors)) &&
+            (!hasGoals || matchInArray([offer.goal], goals))
+          );
+        })
+      : offers;
 
     return filteredOffers.map((offer) => offer.id);
   }
-);
-
-export const selectOffersForUser = createSelector(
-  [selectAllOffers, (state) => selectCurrentUser(state)?.id],
-  (offers, currentUserId) => offers.filter((offer) => offer.user === currentUserId)
 );
 
 /**
@@ -95,9 +111,8 @@ api.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch the list of all offers
     fetchOffers: builder.query({
-      query() {
-        return `/breeds?limit=1`;
-      },
+      query: () => `/breeds?limit=1`,
+      // query: () => "offers",
       transformResponse() {
         // Mock data with offers
         return lightOffersList;
@@ -107,9 +122,8 @@ api.injectEndpoints({
 
     // Fetch one offer by id
     fetchOffer: builder.query({
-      query(id) {
-        return `/breeds?limit=10`;
-      },
+      query: () => `/breeds?limit=1`,
+      // query: (id) => `offers/${id}`,
       transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data with offers
         return fullOffers.find((offer) => offer.id === id);

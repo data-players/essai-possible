@@ -23,9 +23,17 @@ import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
-import {selectAuthTokenExists, selectCurrentUser, useLazyFetchUserQuery} from "./app/auth-slice.js";
+import {
+  selectAuthTokenExists,
+  selectCurrentUser,
+  selectCurrentUserReady,
+  useLazyFetchUserQuery,
+} from "./app/auth-slice.js";
 import {useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
+import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
+import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
+import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
@@ -34,12 +42,12 @@ function MobileDrawerContent() {
 
   const navigationItems = [
     {
-      label: t("offer.seeOffers"),
+      label: t("offers.seeOffers"),
       to: "offers",
       icon: AssignmentIndRoundedIcon,
     },
     {
-      label: t("nav.hiringManagersSpace"),
+      label: t("nav.companiesSpace"),
       to: "hiring-managers",
       icon: AssignmentIndRoundedIcon,
     },
@@ -87,8 +95,10 @@ const Root = ({children}) => {
 
   // When we land on the website, prepare the data:
 
-  // - prefetch the offers list directly so it's ready to be displayed.
+  // - prefetch the full offers, slots and companies lists directly so it's ready to be displayed.
   useFetchOffersQuery();
+  useFetchCompaniesQuery();
+  useFetchSlotsQuery();
 
   // - prefetch the user if the user was already logged in
   const [launchFetchUserQuery] = useLazyFetchUserQuery();
@@ -99,6 +109,15 @@ const Root = ({children}) => {
 
   const path = useLocation().pathname;
   const currentUser = useSelector(selectCurrentUser);
+
+  // - prefetch the user meetings as soon as the user is available
+  const currentUserReady = useSelector(selectCurrentUserReady);
+  const [launchFetchMeetingsQuery] = useLazyFetchMeetingsQuery();
+  useEffect(() => {
+    if (currentUserReady) launchFetchMeetingsQuery();
+  }, [currentUserReady, launchFetchMeetingsQuery]);
+
+  const userLoggedIn = currentUser || authTokenExists;
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
@@ -122,7 +141,7 @@ const Root = ({children}) => {
                 display: {xs: "none", sm: "flex"},
                 flexBasis: {sm: "200px", md: "300px", lg: "500px"},
               }}
-              onClick={() => navigate("offers")}
+              onClick={() => navigate("/offers")}
             />
           )}
           {/* Small screens: show search icon */}
@@ -130,7 +149,7 @@ const Root = ({children}) => {
             variant="soft"
             color="neutral"
             sx={{display: {sm: "none"}, ml: "auto"}}
-            onClick={() => navigate("offers")}>
+            onClick={() => navigate("/offers")}>
             <SearchRoundedIcon color="primary" />
           </IconButton>
 
@@ -141,12 +160,15 @@ const Root = ({children}) => {
           />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
+            {userLoggedIn && <AuthButton.MyMeetings />}
             <AuthButton.LogIn currentUser={currentUser} />
-            {!currentUser && !authTokenExists && <AuthButton.SignUp />}
+            {!userLoggedIn && <AuthButton.SignUp />}
           </Stack>
         </Layout.Navigation>
 
-        <Layout.Main sx={{overflow: "hidden"}}>{children ? children : <Outlet />}</Layout.Main>
+        <Layout.Main sx={{overflow: "hidden"}}>
+          <Outlet />
+        </Layout.Main>
 
         <Layout.Footer>
           <Chip color={"primary"} variant={"soft"}>

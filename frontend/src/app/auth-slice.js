@@ -9,7 +9,7 @@ import {user, userToken} from "./auth-slice-data.js";
 const slice = createSlice({
   name: "auth",
   initialState: {
-    status: "idle", // "idle" | "pending" | "ready"
+    status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
     token: localStorage.getItem("token") || null,
   },
@@ -55,7 +55,7 @@ export default slice.reducer;
  * AUTHENTICATION SELECTORS
  */
 
-export const selectCurrentUserReady = readySelector("auth");
+export const selectCurrentUserReady = readySelector("auth", "fetchUser");
 
 export const selectCurrentUser = (state) => state.auth.user;
 export const selectAuthTokenExists = (state) => !!state.auth.token;
@@ -98,7 +98,6 @@ api.injectEndpoints({
           user: user,
         };
       },
-      invalidatesTags: ["User"],
     }),
 
     fetchUser: builder.query({
@@ -123,8 +122,6 @@ api.injectEndpoints({
       // }),
       transformResponse(baseQueryReturnValue, meta, userPatch) {
         // Mock data
-        console.log(baseQueryReturnValue);
-        // user = {...user, ...userPatch};
         return {...user, ...userPatch};
       },
     }),
@@ -135,9 +132,9 @@ api.injectEndpoints({
       //   url: `user`,
       //   method: "DELETE",
       // }),
-      transformResponse(baseQueryReturnValue, meta, userPatch) {
+      transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data
-        return "OK";
+        return id;
       },
     }),
   }),
