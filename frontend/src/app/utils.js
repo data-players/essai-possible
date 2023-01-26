@@ -87,3 +87,91 @@ export function getDeepValue(obj, splitName) {
 
   return final;
 }
+
+/**
+ * Create a marshaller that can marshall and unmarshall objects. Keys not specified in the schema are ignored.
+ * Marshallers can be nested inside each other like in the example below.
+ *
+ * Usage:
+ *
+ * const offersMarshaller = createMarshaller({
+ *   title: "pair:title",
+ *   location: createMarshaller(
+ *     {
+ *       city: "location:city",
+ *       label: "location:label",
+ *     },
+ *     "pair:location"
+ *   ),
+ * });
+ *
+ * const offer = {
+ *   "pair:title": "Truc Muche",
+ *   "pair:location": {
+ *     "location:city": "Avranches",
+ *     "location:label": "Ville d'avranches",
+ *   },
+ * };
+ *
+ * const marshalledOffer = offersMarshaller.marshall(offer);
+ * const unmarshalledOffer = offersMarshaller.unmarshall(marshalledOffer);
+ *
+ * console.log(offer, marshalledOffer, unmarshalledOffer); // offer == unmarshalledOffer
+ *
+ *
+ * @param renamingsSchema Keys are either like:
+ * "newName": "oldName"
+ *    --> oldFieldNameOrMarshaller is a string
+ * or :
+ * "newName": createMarshaller(nestedRenamingsSchema, "oldName")
+ *    --> oldFieldNameOrMarshaller is a marshaller that contains an attribute oldFieldName containing "oldName"
+ * @param oldFieldName Needed for nested marshallers. Its the old name of the field.
+ * @returns {{marshall: (function(*): {}), oldFieldName: string, unmarshall: (function(*): {})}}
+ */
+export function createMarshaller(renamingsSchema, oldFieldName = undefined) {
+  const isObjectMarshaller = (obj) =>
+    typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
+
+  return {
+    marshall: function (inObject) {
+      const outObject = {};
+
+      for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
+        if (typeof oldFieldNameOrMarshaller === "string") {
+          outObject[newFieldName] = inObject[oldFieldNameOrMarshaller]; // The value at oldFieldName
+        } else if (
+          isObjectMarshaller(oldFieldNameOrMarshaller) &&
+          oldFieldNameOrMarshaller.oldFieldName
+        ) {
+          const valueToMarshall = inObject[oldFieldNameOrMarshaller.oldFieldName];
+          outObject[newFieldName] = oldFieldNameOrMarshaller.marshall(valueToMarshall);
+        } else {
+          throw new Error("The renamings schema is incorrect");
+        }
+      }
+      return outObject;
+    },
+
+    unmarshall: function (outObject) {
+      const inObject = {};
+
+      for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
+        if (typeof oldFieldNameOrMarshaller === "string") {
+          inObject[oldFieldNameOrMarshaller] = outObject[newFieldName]; // The value at oldFieldName
+        } else if (
+          isObjectMarshaller(oldFieldNameOrMarshaller) &&
+          oldFieldNameOrMarshaller.oldFieldName
+        ) {
+          const valueToUnmarshall = outObject[newFieldName];
+          inObject[oldFieldNameOrMarshaller.oldFieldName] =
+            oldFieldNameOrMarshaller.unmarshall(valueToUnmarshall);
+        } else {
+          throw new Error("The renamings schema is incorrect");
+        }
+      }
+      return inObject;
+    },
+
+    oldFieldName,
+  };
+}
