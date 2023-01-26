@@ -20,7 +20,7 @@ import ListItem from "@mui/joy/ListItem";
 import List from "@mui/joy/List";
 import Card from "@mui/joy/Card";
 import Button from "@mui/joy/Button";
-import {PageContent} from "./Layout.jsx";
+import {HeroBanner, PageContent} from "./Layout.jsx";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
 import Autocomplete from "@mui/joy/Autocomplete";
 import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
@@ -36,6 +36,7 @@ import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/joy/Divider";
 import Link from "@mui/joy/Link";
 import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded.js";
+import Grid from "@mui/joy/Grid";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -381,10 +382,10 @@ export function ListPageContent({
   );
 }
 
-export function ParagraphWithTitle({title, children}) {
+export function ParagraphWithTitle({title, children, sx}) {
   return (
     <Stack gap={2}>
-      <Typography level="h3" color="primary" fontWeight={"lg"}>
+      <Typography level="h3" color="primary" fontWeight={"lg"} mb={1}>
         {title}
       </Typography>
       {children}
@@ -392,7 +393,7 @@ export function ParagraphWithTitle({title, children}) {
   );
 }
 
-export const FormStep = ({
+export function FormStep({
   stepNumber,
   setCurrentFormStep,
   currentFormStep,
@@ -401,7 +402,8 @@ export const FormStep = ({
   subtitle,
   showTitle = false,
   showContent = false,
-}) => {
+  showDivider = false,
+}) {
   showTitle = !!(currentFormStep >= stepNumber || showTitle);
   showContent = currentFormStep === stepNumber || showContent;
   const onClickProps = showTitle &&
@@ -411,7 +413,7 @@ export const FormStep = ({
     };
   return (
     <Stack {...onClickProps}>
-      <Collapse in={showTitle}>
+      <Collapse in={showTitle} sx={{mb: 1}}>
         <ParagraphWithTitle title={stepNumber ? `${stepNumber}. ${title}` : title}>
           {subtitle}
         </ParagraphWithTitle>
@@ -425,9 +427,10 @@ export const FormStep = ({
         </Button>
         <Divider sx={{mt: 2}} />
       </Collapse>
+      {showDivider && <Divider sx={{mt: 2}} />}
     </Stack>
   );
-};
+}
 
 export function StatusChip({status, options}) {
   return (
@@ -448,3 +451,17 @@ export function ExternalLink(props) {
     />
   );
 }
+
+export const SimpleBanner = ({children}) => (
+  <HeroBanner invertedColors={false}>
+    <Container mx={2}>
+      <Grid container spacing={2}>
+        <Grid xs={12} display={"flex"} justifyContent={"center"}>
+          <Typography level="h1" color={"white"}>
+            {children}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Container>
+  </HeroBanner>
+);

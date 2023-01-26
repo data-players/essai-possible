@@ -11,9 +11,10 @@ import {
   FormStep,
   LocationSearchBar,
   RadioGroup,
+  SimpleBanner,
 } from "../../../components/atoms.jsx";
 import CheckIcon from "@mui/icons-material/Check";
-import {HeroBanner, PageContent} from "../../../components/Layout.jsx";
+import {PageContent} from "../../../components/Layout.jsx";
 import Textarea from "@mui/joy/Textarea";
 import Collapse from "@mui/material/Collapse";
 import {
@@ -27,8 +28,6 @@ import OfferBanner from "../OfferBanner.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {useSelector} from "react-redux";
-import Grid from "@mui/joy/Grid";
-import Container from "@mui/joy/Container";
 import {selectCompanyById, selectCompanyReady} from "../companies-slice";
 import {sectorsOptions} from "../companies-slice-data.js";
 import {
@@ -143,17 +142,7 @@ export default function PageEditOffer({mode}) {
             ]}
           />
         ) : (
-          <HeroBanner invertedColors={false}>
-            <Container mx={2}>
-              <Grid container spacing={2}>
-                <Grid xs={12} display={"flex"} justifyContent={"center"}>
-                  <Typography level="h1" color={"white"}>
-                    {pageTitle}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Container>
-          </HeroBanner>
+          <SimpleBanner>{pageTitle}</SimpleBanner>
         )}
 
         <Form
@@ -169,7 +158,7 @@ export default function PageEditOffer({mode}) {
           successText={isEditMode ? "Modifications réussies" : "Création réussie"}
           onSubmit={onSubmit}>
           {(register, {values, setFieldValue, errors, dirty}) => (
-            <PageContent gap={3} mt={6}>
+            <PageContent gap={3} mt={6} maxWidth={"lg"}>
               <Card variant="soft" color={"warning"} size={"lg"}>
                 <Stack gap={1}>
                   <Typography fontWeight={"lg"} fontSize={"lg"}>
