@@ -295,7 +295,6 @@ export function RadioGroup({options, color, ...props}) {
 export function ButtonWithConfirmation({
   children,
   color,
-  cardColor = color,
   loading,
   areYouSureText,
   onClick,
@@ -308,13 +307,13 @@ export function ButtonWithConfirmation({
       {children}
     </Button>
   ) : (
-    <Card color={cardColor} variant={"solid"} invertedColors>
+    <Card color={color} variant={"solid"} invertedColors>
       <Stack gap={2}>
         <Typography>{areYouSureText}</Typography>
         <Button loading={loading} onClick={onClick} {...props}>
           {children}
         </Button>
-        <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)} {...props}>
+        <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)}>
           Annuler
         </Button>
       </Stack>
