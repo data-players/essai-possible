@@ -277,7 +277,7 @@ export const CheckboxGroup = React.memo(
       </Card>
     );
   },
-  (pp, np) => true
+  (pp, np) => pp.color === np.color
 );
 
 export function RadioGroup({options, color, ...props}) {

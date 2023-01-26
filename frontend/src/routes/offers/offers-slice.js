@@ -1,7 +1,7 @@
 import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
 import {normalize, sorter} from "../../app/utils.js";
-import {fullOffers, lightOffersList} from "./offers-slice-data.js";
+import {fullOffers, lightOffersList, statusOptions} from "./offers-slice-data.js";
 import {selectAllCompaniesById} from "./companies-slice.js";
 
 /**
@@ -53,7 +53,7 @@ export const {
 // More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
 export const selectFilteredOffersIds = createSelector(
   [
-    selectAllOffers,
+    (state) => selectAllOffers(state).filter((offer) => offer.status === statusOptions[1]),
     selectAllCompaniesById,
     (state, {search}) => search,
     (state, {location}) => location,
