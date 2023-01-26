@@ -34,6 +34,8 @@ import Radio from "@mui/joy/Radio";
 import MuiRadioGroup from "@mui/joy/RadioGroup";
 import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/joy/Divider";
+import Link from "@mui/joy/Link";
+import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded.js";
 
 export function BasicList({elements, component = "ul"}) {
   return (
@@ -432,5 +434,17 @@ export function StatusChip({status, options}) {
     <Chip color={options[status].color} startDecorator={options[status].icon}>
       {options[status].label}
     </Chip>
+  );
+}
+
+export function ExternalLink(props) {
+  return (
+    <Link
+      startDecorator={<FileOpenRoundedIcon />}
+      textColor={"primary.700"}
+      target="_blank"
+      rel="noopener"
+      {...props}
+    />
   );
 }

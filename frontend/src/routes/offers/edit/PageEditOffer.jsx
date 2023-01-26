@@ -5,6 +5,7 @@ import Button from "@mui/joy/Button";
 import {
   ButtonWithConfirmation,
   CheckboxGroup,
+  ExternalLink,
   Form,
   FormInput,
   FormStep,
@@ -51,6 +52,8 @@ import * as yup from "yup";
 import Card from "@mui/joy/Card";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
 import {useSnackbar} from "../../../components/snackbar.jsx";
+import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
+import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 
 const offerValidationSchema = yup.object({
   // Job description
@@ -167,6 +170,23 @@ export default function PageEditOffer({mode}) {
           onSubmit={onSubmit}>
           {(register, {values, setFieldValue, errors, dirty}) => (
             <PageContent gap={3} mt={6}>
+              <Card variant="soft" color={"warning"} size={"lg"}>
+                <Stack gap={1}>
+                  <Typography fontWeight={"lg"} fontSize={"lg"}>
+                    Voici un peu d'aide !
+                  </Typography>
+                  <Typography>
+                    Rédiger une offre de qualité relève d'un travail d'analyse de besoins et de
+                    rédaction. Nous avons créé des fiches d'aide pour vous guider.
+                  </Typography>
+                  <ExternalLink href={HelpPdf1}>
+                    Comment analyser les besoins d'un poste ?
+                  </ExternalLink>
+                  <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
+                </Stack>
+              </Card>
+              <Divider sx={{my: 2}} />
+
               <FormStep
                 stepNumber={1}
                 showTitle
@@ -395,8 +415,8 @@ export default function PageEditOffer({mode}) {
 
               <Divider sx={{my: 2}} />
 
-              <Collapse in={showErrors && Object.keys(errors).length > 0}>
-                <Card variant="soft" color="danger">
+              <Collapse in={showErrors && Object.keys(errors).length > 0} sx={{mb: -2}}>
+                <Card variant="soft" color="danger" sx={{mb: 2}}>
                   Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
                   informations.
                 </Card>

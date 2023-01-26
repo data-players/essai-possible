@@ -29,7 +29,7 @@ import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import Divider from "@mui/joy/Divider";
 import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
-import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded";
+import {ExternalLink} from "./atoms.jsx";
 
 function Root(props) {
   return (
@@ -42,16 +42,6 @@ function Root(props) {
 
 function Navigation({mobileDrawerContent, isCompanyAccount, ...props}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-
-  const ExternalLink = (props) => (
-    <Link
-      startDecorator={<FileOpenRoundedIcon />}
-      textColor={"primary.700"}
-      fontSize={"sm"}
-      target="_blank"
-      {...props}
-    />
-  );
 
   const navigate = useNavigate();
   return (
@@ -112,8 +102,12 @@ function Navigation({mobileDrawerContent, isCompanyAccount, ...props}) {
           <Typography fontWeight={"lg"} textAlign={"center"}>
             Vous êtes connecté·e avec un compte entreprise.
           </Typography>
-          <ExternalLink href={HelpPdf1}>Comment analyser les besoins d'un poste ?</ExternalLink>
-          <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
+          <ExternalLink href={HelpPdf1} fontSize={"sm"}>
+            Comment analyser les besoins d'un poste ?
+          </ExternalLink>
+          <ExternalLink href={HelpPdf2} fontSize={"sm"}>
+            Comment rédiger une fiche de poste ?
+          </ExternalLink>
         </Sheet>
       </Collapse>
       <Container
