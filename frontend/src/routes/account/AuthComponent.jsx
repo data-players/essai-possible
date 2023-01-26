@@ -9,7 +9,7 @@ import Button from "@mui/joy/Button";
 import {PageContent} from "../../components/Layout.jsx";
 import {Form, FormInput} from "../../components/atoms.jsx";
 import * as yup from "yup";
-import {email, firstName, lastName, password, phone} from "../../app/fieldValidation.js";
+import {password, requiredEmail, requiredPhone, requiredString} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";
 import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
 
@@ -70,11 +70,11 @@ export const AuthComponent = ({mode, redirect = false}) => {
         }}
         validationSchema={yup.object({
           ...(!isLoginPage && {
-            firstName,
-            lastName,
+            firstName: requiredString,
+            lastName: requiredString,
           }),
-          email,
-          phone,
+          email: requiredEmail,
+          phone: requiredPhone,
           password,
         })}
         onSubmit={onSubmit}

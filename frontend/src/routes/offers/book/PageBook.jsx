@@ -35,14 +35,15 @@ export default function PageBook() {
   const {t, tTime, tDate, tDateTime} = useTranslationWithDates();
   const {id} = useParams();
 
-  const offer = useSelector((state) => selectOfferById(state, id)) || {};
+  const currentUser = useSelector(selectCurrentUser);
 
+  const {selectedSlot, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
+  const [currentFormStep, setCurrentFormStep] = useState(selectedSlot ? 2 : 1);
+
+  const offer = useSelector((state) => selectOfferById(state, id)) || {};
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
   const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
   const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
-
-  const currentUser = useSelector(selectCurrentUser);
-  const {selectedSlot, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
 
   // If a meeting is already booked for the offer, go back to the offer page
   useEffect(() => {
@@ -57,8 +58,6 @@ export default function PageBook() {
       })
     );
 
-  const [currentFormStep, setCurrentFormStep] = useState(selectedSlot ? 1 : 0);
-
   const pageTitle = meetingForOffer
     ? t("offers.modifyAMeetingSlot", {context: "short"})
     : t("offers.bookAMeetingSlot", {context: "short"});
@@ -71,8 +70,8 @@ export default function PageBook() {
   const steps = [
     // MEETING SLOT CHOICE
     <FormStep
-      key={0}
-      stepNumber={0}
+      key={1}
+      stepNumber={1}
       currentFormStep={currentFormStep}
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.chooseYourMeetingSlot")}
@@ -123,8 +122,8 @@ export default function PageBook() {
 
     // USER LOGIN/SIGNUP + COMMENTS
     <FormStep
-      key={1}
-      stepNumber={1}
+      key={2}
+      stepNumber={2}
       currentFormStep={currentFormStep}
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.myInformation")}
@@ -180,11 +179,11 @@ export default function PageBook() {
         breadcrumbs={[
           {label: t("offers.backToOffers"), to: "/offers"},
           {label: offer.title, to: "./.."},
-          {label: pageTitle, to: ".", onClick: () => setCurrentFormStep(0)},
-          currentFormStep >= 1 && {
+          {label: pageTitle, to: ".", onClick: () => setCurrentFormStep(1)},
+          currentFormStep >= 2 && {
             label: t("offers.myInformation"),
             to: ".",
-            onClick: () => setCurrentFormStep(1),
+            onClick: () => setCurrentFormStep(2),
           },
         ]}
       />

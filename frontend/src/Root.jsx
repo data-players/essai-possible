@@ -1,21 +1,8 @@
 import React, {useEffect} from "react";
 import {useTranslation} from "react-i18next";
-import {
-  Link as ReactRouterLink,
-  Outlet,
-  ScrollRestoration,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import {Outlet, ScrollRestoration, useLocation, useNavigate} from "react-router-dom";
 import IconButton from "@mui/joy/IconButton";
-import List from "@mui/joy/List";
-import ListItem from "@mui/joy/ListItem";
-import ListItemButton from "@mui/joy/ListItemButton";
-import ListItemContent from "@mui/joy/ListItemContent";
-import ListItemDecorator from "@mui/joy/ListItemDecorator";
-import ListSubheader from "@mui/joy/ListSubheader";
 import Typography from "@mui/joy/Typography";
-import AssignmentIndRoundedIcon from "@mui/icons-material/AssignmentIndRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Layout, {AuthButton} from "./components/Layout.jsx";
 import Box from "@mui/joy/Box";
@@ -34,60 +21,6 @@ import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
 import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
-
-function MobileDrawerContent() {
-  const navigate = useNavigate();
-  const currentUser = useSelector(selectCurrentUser);
-  const {t} = useTranslation();
-
-  const navigationItems = [
-    {
-      label: t("offers.seeOffers"),
-      to: "offers",
-      icon: AssignmentIndRoundedIcon,
-    },
-    {
-      label: t("nav.companiesSpace"),
-      to: "hiring-managers",
-      icon: AssignmentIndRoundedIcon,
-    },
-  ];
-
-  return (
-    <List size="sm" sx={{"--List-item-radius": "8px", "--List-gap": "4px"}}>
-      <ListItem nested>
-        <ListSubheader>{t("essaiPossible")}</ListSubheader>
-        <List
-          aria-labelledby="nav-list-browse"
-          sx={{
-            "& .JoyListItemButton-root": {p: "8px"},
-          }}>
-          <ListItem>
-            <SearchBar onClick={() => navigate("/offers")} />
-          </ListItem>
-          {navigationItems.map(({label, to, icon: Icon}) => (
-            <ListItem>
-              <ListItemButton component={ReactRouterLink} to={to}>
-                <ListItemDecorator sx={{color: "text.secondary"}}>
-                  <Icon fontSize="small" />
-                </ListItemDecorator>
-                <ListItemContent>{label}</ListItemContent>
-              </ListItemButton>
-            </ListItem>
-          ))}
-          <ListItem>
-            {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
-          </ListItem>
-          {!currentUser && (
-            <ListItem>
-              <AuthButton.SignUp />
-            </ListItem>
-          )}
-        </List>
-      </ListItem>
-    </List>
-  );
-}
 
 export default function Root() {
   const {t} = useTranslation();
@@ -117,7 +50,18 @@ export default function Root() {
     if (currentUserReady) launchFetchMeetingsQuery();
   }, [currentUserReady, launchFetchMeetingsQuery]);
 
-  const userIsCompanyMember = currentUser?.companies?.length > 0;
+  const isCompanyAccount = currentUser?.companies?.length > 0;
+
+  const connectionButtons = (
+    <>
+      {currentUser && !isCompanyAccount && <AuthButton.MyMeetings />}
+      {currentUser && isCompanyAccount && (
+        <AuthButton.CompanyOffersList currentUser={currentUser} />
+      )}
+      {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
+      {!authTokenExists && <AuthButton.SignUp />}
+    </>
+  );
 
   return (
     <Box sx={{minHeight: "100vh", bgcolor: "neutral.solidBg"}}>
@@ -134,8 +78,17 @@ export default function Root() {
       />
       <Layout.Root>
         <Layout.Navigation
-          mobileDrawerContent={MobileDrawerContent}
-          userIsCompanyMember={userIsCompanyMember}>
+          mobileDrawerContent={
+            <>
+              <SearchBar
+                onClick={() => {
+                  navigate("/offers");
+                }}
+              />
+              <Stack gap={1.5}>{connectionButtons} </Stack>
+            </>
+          }
+          isCompanyAccount={isCompanyAccount}>
           {/* Big screens: show search bar, except on /offers page */}
           {path !== "/offers" && (
             <SearchBar
@@ -147,27 +100,23 @@ export default function Root() {
             />
           )}
           {/* Small screens: show search icon */}
-          <IconButton
-            variant="soft"
-            color="neutral"
-            sx={{display: {sm: "none"}, ml: "auto"}}
-            onClick={() => navigate("/offers")}>
-            <SearchRoundedIcon color="primary" />
-          </IconButton>
+          <Stack direction={"row"} gap={1.5} display={{sm: "none"}} ml={"auto"}>
+            <IconButton variant="soft" color="neutral" onClick={() => navigate("/offers")}>
+              <SearchRoundedIcon color="primary" />
+            </IconButton>
+            {isCompanyAccount ? (
+              <AuthButton.CompanyOffersList currentUser={currentUser} small />
+            ) : (
+              <AuthButton.LogInShort
+                currentUser={currentUser}
+                sx={{display: {xs: "block", sm: "none"}}}
+              />
+            )}
+          </Stack>
 
-          {/* Small screens: only icon button to log in */}
-          <AuthButton.LogInShort
-            currentUser={currentUser}
-            sx={{display: {xs: "block", sm: "none"}}}
-          />
           {/* Big screens: two regular buttons for login and signup */}
           <Stack direction={"row"} gap={1.5} display={{xs: "none", sm: "flex"}}>
-            {currentUser && !userIsCompanyMember && <AuthButton.MyMeetings />}
-            {currentUser && userIsCompanyMember && (
-              <AuthButton.CompanyOffersList currentUser={currentUser} />
-            )}
-            {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
-            {!authTokenExists && <AuthButton.SignUp />}
+            {connectionButtons}
           </Stack>
         </Layout.Navigation>
 

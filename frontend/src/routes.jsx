@@ -8,7 +8,7 @@ import HomePage from "./routes/HomePage.jsx";
 import PageBook from "./routes/offers/book/PageBook.jsx";
 import PageAccount from "./routes/account/PageAccount.jsx";
 import {AuthComponent} from "./routes/account/AuthComponent.jsx";
-import PageOfferRoot from "./routes/offers/PageOfferRoot.jsx";
+import PageOfferProtection from "./routes/offers/PageOfferProtection.jsx";
 import ConnectedUserProtection from "./routes/account/ConnectedUserProtection.jsx";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 import PageCGU from "./routes/PageCGU";
@@ -16,6 +16,7 @@ import PageEditOffer from "./routes/offers/edit/PageEditOffer";
 import PageCompanyOffersList from "./routes/company/PageCompanyOffersList.jsx";
 import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
+import CompanyAccountProtection from "./routes/company/CompanyAccountProtection.jsx";
 
 export default function Router() {
   const currentUser = useSelector(selectCurrentUser);
@@ -38,26 +39,18 @@ export default function Router() {
           path: "offers",
           children: [
             {index: true, element: <PageOffersList />},
-            isACompanyAccount && {
-              path: "new",
-              element: (
-                <ConnectedUserProtection>
-                  <PageEditOffer mode={"new"} />
-                </ConnectedUserProtection>
-              ),
-            },
             {
               path: ":id",
-              element: <PageOfferRoot />,
+              element: <PageOfferProtection />,
               children: [
                 {index: true, element: <PageOffer />},
                 {path: "book", element: <PageBook />},
-                isACompanyAccount && {
+                {
                   path: "edit",
                   element: (
-                    <ConnectedUserProtection>
+                    <CompanyAccountProtection redirectTo={".."}>
                       <PageEditOffer mode={"edit"} />
-                    </ConnectedUserProtection>
+                    </CompanyAccountProtection>
                   ),
                 },
               ],
@@ -65,8 +58,27 @@ export default function Router() {
           ],
         },
 
-        isACompanyAccount && {path: "company/:companyId", element: <PageCompanyOffersList />},
-
+        {
+          path: "company/:companyId",
+          children: [
+            {
+              index: true,
+              element: (
+                <CompanyAccountProtection>
+                  <PageCompanyOffersList />
+                </CompanyAccountProtection>
+              ),
+            },
+            {
+              path: "new-offer",
+              element: (
+                <CompanyAccountProtection>
+                  <PageEditOffer mode={"new"} />
+                </CompanyAccountProtection>
+              ),
+            },
+          ],
+        },
         {
           path: "account",
           element: (

@@ -25,6 +25,11 @@ import {useSelector} from "react-redux";
 import {selectCompanyById} from "../routes/offers/companies-slice.js";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Collapse from "@mui/material/Collapse";
+import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
+import Divider from "@mui/joy/Divider";
+import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
+import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
+import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded";
 
 function Root(props) {
   return (
@@ -35,8 +40,18 @@ function Root(props) {
   );
 }
 
-function Navigation({mobileDrawerContent: MobileDrawerContent, userIsCompanyMember, ...props}) {
+function Navigation({mobileDrawerContent, isCompanyAccount, ...props}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const ExternalLink = (props) => (
+    <Link
+      startDecorator={<FileOpenRoundedIcon />}
+      textColor={"primary.700"}
+      fontSize={"sm"}
+      target="_blank"
+      {...props}
+    />
+  );
 
   const navigate = useNavigate();
   return (
@@ -53,7 +68,16 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, userIsCompanyMemb
               height: "100%",
               p: 2,
             }}>
-            <MobileDrawerContent />
+            <Stack gap={3}>
+              <Box
+                onClick={() => navigate("/")}
+                component={"img"}
+                src={EssaiPossibleLogo}
+                height={40}
+                alignSelf={"start"}
+              />
+              {mobileDrawerContent}
+            </Stack>
           </Sheet>
         </Box>
       </Slide>
@@ -70,17 +94,26 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, userIsCompanyMemb
           }}
         />
       </Fade>
-      <Collapse in={userIsCompanyMember}>
+      <Collapse in={isCompanyAccount}>
         <Sheet
           variant={"soft"}
           invertedColors
           sx={{
             py: 1,
             display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            rowGap: 1,
+            columnGap: 5,
             alignItems: "center",
             justifyContent: "center",
+            px: 2,
           }}>
-          <Typography fontWeight={"lg"}>Vous êtes connecté·e avec un compte entreprise.</Typography>
+          <Typography fontWeight={"lg"} textAlign={"center"}>
+            Vous êtes connecté·e avec un compte entreprise.
+          </Typography>
+          <ExternalLink href={HelpPdf1}>Comment analyser les besoins d'un poste ?</ExternalLink>
+          <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
         </Sheet>
       </Collapse>
       <Container
@@ -261,11 +294,13 @@ export const AuthButton = {
       {t("nav.myMeetings")}
     </Button>
   ),
-  CompanyOffersList: ({currentUser, sx}) => {
+  CompanyOffersList: ({currentUser, small}) => {
     const navigate = useNavigate();
     const {companyId: currentCompanyId} = useParams();
 
     const companiesLength = currentUser.companies.length;
+
+    const displayMenu = small || companiesLength > 1;
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handleClose = () => setAnchorEl(null);
@@ -275,6 +310,18 @@ export const AuthButton = {
       handleClose();
     };
     const open = !!anchorEl;
+
+    const buttonProps = small
+      ? {
+          children: <PersonRoundedIcon />,
+          variant: "solid",
+        }
+      : {
+          startDecorator: <ApartmentRoundedIcon />,
+          endDecorator: companiesLength > 1 && <KeyboardArrowDownIcon />,
+          children: t("company.myCompany", {count: companiesLength}),
+        };
+    const ButtonComp = small ? IconButton : Button;
 
     const Item = ({companyId}) => {
       const company = useSelector((state) => selectCompanyById(state, companyId));
@@ -290,26 +337,40 @@ export const AuthButton = {
 
     return (
       <>
-        <Button
-          id="companies-menu-button"
-          aria-controls={open ? "companies-menu-menu" : undefined}
+        <ButtonComp
+          id="companies-button"
+          aria-controls={open ? "companies-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
-          onClick={(event) =>
-            companiesLength > 1
-              ? setAnchorEl(event.currentTarget)
-              : handleNavigateToCompany(currentUser.companies[0])()
-          }
-          endDecorator={companiesLength > 1 && <KeyboardArrowDownIcon />}>
-          {t("company.myCompany", {count: companiesLength})}
-        </Button>
-        {companiesLength > 1 && (
+          onClick={(event) => {
+            if (displayMenu) {
+              event.stopPropagation();
+              setAnchorEl(event.currentTarget);
+            } else {
+              handleNavigateToCompany(currentUser.companies[0])();
+            }
+          }}
+          {...buttonProps}
+        />
+        {displayMenu && (
           <Menu
-            id="companies-menu-menu"
+            id="companies-menu"
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
-            aria-labelledby="companies-menu-button">
+            aria-labelledby="companies-button">
+            {small && (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/account");
+                    handleClose();
+                  }}>
+                  Mon compte
+                </MenuItem>
+                <Divider sx={{mb: 1}} />
+              </>
+            )}
             {currentUser.companies.map((companyId) => (
               <Item companyId={companyId} key={companyId} />
             ))}
@@ -339,13 +400,23 @@ export const AuthButton = {
       {t("nav.logIn")}
     </Button>
   ),
-  LogInShort: ({sx, currentUser}) => (
-    <ReactRouterLink to={currentUser ? "/account" : "/login"}>
-      <IconButton sx={sx} variant={"solid"}>
-        <PersonRoundedIcon />
-      </IconButton>
-    </ReactRouterLink>
-  ),
+  LogInShort: ({sx, currentUser}) => {
+    const isCompanyAccount = currentUser?.companies?.length > 0;
+    return (
+      <ReactRouterLink
+        to={
+          currentUser
+            ? isCompanyAccount
+              ? `/company/${currentUser.companies[0]}`
+              : "/my-meetings"
+            : "/login"
+        }>
+        <IconButton sx={sx} variant={"solid"}>
+          <PersonRoundedIcon />
+        </IconButton>
+      </ReactRouterLink>
+    );
+  },
   SignUp: ({sx}) => (
     <Button
       component={ReactRouterLink}

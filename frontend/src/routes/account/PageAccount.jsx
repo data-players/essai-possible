@@ -18,11 +18,10 @@ import {useSnackbar} from "../../components/snackbar.jsx";
 import * as yup from "yup";
 import {
   confirmNewPassword,
-  email,
-  firstName,
-  lastName,
   newPassword,
-  phone,
+  requiredEmail,
+  requiredPhone,
+  requiredString,
 } from "../../app/fieldValidation.js";
 
 export default function PageAccount() {
@@ -46,10 +45,10 @@ export default function PageAccount() {
       <Card variant={"soft"} invertedColors>
         <Form
           validationSchema={yup.object({
-            firstName,
-            lastName,
-            email,
-            phone,
+            firstName: requiredString,
+            lastName: requiredString,
+            email: requiredEmail,
+            phone: requiredPhone,
             newPassword,
             confirmNewPassword,
           })}

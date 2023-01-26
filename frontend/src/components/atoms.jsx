@@ -216,7 +216,6 @@ export function Form({onSubmit, initialValues, children, successText, validation
   } = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         await onSubmit(values);
@@ -232,12 +231,13 @@ export function Form({onSubmit, initialValues, children, successText, validation
   function register(name) {
     const splitName = name.split(".");
 
+    const error = getDeepValue(touched, splitName) && getDeepValue(errors, splitName);
     return {
       name,
       value: getDeepValue(values, splitName),
       onChange,
-      errors: getDeepValue(errors, splitName),
-      color: getDeepValue(touched, splitName) && getDeepValue(errors, splitName) && "danger",
+      errors: error,
+      color: error && "danger",
     };
   }
 
@@ -249,10 +249,11 @@ export function Form({onSubmit, initialValues, children, successText, validation
 }
 
 export const CheckboxGroup = React.memo(
-  function ({options, value, setFieldValue}) {
+  function ({options, value, onChange, color}) {
+    console.log("col", color);
     const [val, setVal] = useState(value);
     return (
-      <Card variant={"soft"} size={"sm"} sx={{my: 1}}>
+      <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1}}>
         <List size="sm">
           {options.map((option, index) => {
             const checked = val.includes(option);
@@ -266,7 +267,7 @@ export const CheckboxGroup = React.memo(
                       ? [...val, option]
                       : val.filter((checkedOption) => option !== checkedOption);
                     setVal(newVal);
-                    setFieldValue(newVal);
+                    onChange(newVal);
                   }}
                 />
               </ListItem>
@@ -279,9 +280,9 @@ export const CheckboxGroup = React.memo(
   (pp, np) => true
 );
 
-export function RadioGroup({options, ...props}) {
+export function RadioGroup({options, color, ...props}) {
   return (
-    <Card variant={"soft"} size={"sm"} sx={{mt: 1, p: 2}}>
+    <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2}}>
       <MuiRadioGroup {...props}>
         {options.map((option) => (
           <Radio value={option} key={option} label={option} />
@@ -410,7 +411,9 @@ export const FormStep = ({
   return (
     <Stack {...onClickProps}>
       <Collapse in={showTitle}>
-        <ParagraphWithTitle title={`${stepNumber + 1}. ${title}`}>{subtitle}</ParagraphWithTitle>
+        <ParagraphWithTitle title={stepNumber ? `${stepNumber}. ${title}` : title}>
+          {subtitle}
+        </ParagraphWithTitle>
       </Collapse>
       <Collapse in={showContent}>
         <Box mt={2}>{children}</Box>

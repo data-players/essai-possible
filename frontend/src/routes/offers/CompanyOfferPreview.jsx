@@ -15,6 +15,7 @@ import Collapse from "@mui/material/Collapse";
 import {useSelector} from "react-redux";
 import {selectCurrentUser, selectCurrentUserReady} from "../../app/auth-slice.js";
 import {selectCompanyById} from "./companies-slice.js";
+import CheckIcon from "@mui/icons-material/Check.js";
 
 export default function CompanyOfferPreview({offer, children}) {
   const isDraft = offer.status === statusOptions[0];
@@ -27,7 +28,7 @@ export default function CompanyOfferPreview({offer, children}) {
   const currentUserReady = useSelector(selectCurrentUserReady);
 
   const isConnected = currentUserReady && currentUser?.id;
-  const isCompanyMember = isConnected && currentUser.companies?.includes(company.id);
+  const isMemberOfTheCompany = isConnected && currentUser.companies?.includes(company.id);
 
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
 
@@ -75,13 +76,13 @@ export default function CompanyOfferPreview({offer, children}) {
     if (!currentUserReady) return <LoadingSpinner />;
 
     // If ready, then check if it has the right to be there. If not allowed, redirect to the offers list
-    if (!isCompanyMember) {
+    if (!isMemberOfTheCompany) {
       navigate("/offers");
       return;
     }
   }
 
-  return isCompanyMember ? (
+  return isMemberOfTheCompany ? (
     <Box
       sx={{
         transition: "background 0.5s ease-in-out",
@@ -122,12 +123,21 @@ export default function CompanyOfferPreview({offer, children}) {
         }
         color={"neutral"}
         button={
-          <Button
-            startDecorator={<VisibilityOffRoundedIcon />}
-            onClick={handleChangeStatus(statusOptions[0])}
-            loading={isUpdatingOffer}>
-            Repasser en brouillon
-          </Button>
+          <>
+            <Button
+              startDecorator={<VisibilityOffRoundedIcon />}
+              onClick={handleChangeStatus(statusOptions[0])}
+              loading={isUpdatingOffer}>
+              Repasser en brouillon
+            </Button>
+            <Button
+              startDecorator={<CheckIcon />}
+              variant={"soft"}
+              onClick={handleChangeStatus(statusOptions[2])}
+              loading={isUpdatingOffer}>
+              Marquer pourvue
+            </Button>
+          </>
         }
       />
 

@@ -41,10 +41,15 @@ export default function PageCompanyOffersList() {
                   <Typography>
                     Bienvenue sur la page de votre entreprise. Consultez vos offres en cours.
                   </Typography>
-                  <Stack direction={"row"} gap={3} justifyContent={"center"}>
+                  <Stack
+                    direction={{xs: "column", sm: "row"}}
+                    gap={3}
+                    justifyContent={"center"}
+                    alignItems={"stretch"}
+                    flexWrap={"wrap"}>
                     <Button
                       component={ReactRouterLink}
-                      to={"/offers/new?company=" + companyId}
+                      to={"new-offer"}
                       size={"lg"}
                       startDecorator={<AddRoundedIcon />}>
                       {t("offers.proposeAnOffer")}
