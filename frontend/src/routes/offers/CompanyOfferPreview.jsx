@@ -132,7 +132,6 @@ export default function CompanyOfferPreview({offer, children}) {
             </Button>
             <Button
               startDecorator={<CheckIcon />}
-              variant={"soft"}
               onClick={handleChangeStatus(statusOptions[2])}
               loading={isUpdatingOffer}>
               Marquer pourvue

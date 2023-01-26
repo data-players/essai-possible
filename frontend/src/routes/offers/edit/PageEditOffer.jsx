@@ -50,6 +50,7 @@ import {
 import * as yup from "yup";
 import Card from "@mui/joy/Card";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
+import {useSnackbar} from "../../../components/snackbar.jsx";
 
 const offerValidationSchema = yup.object({
   // Job description
@@ -88,6 +89,7 @@ const validationSchema = yup.object({
 });
 
 export default function PageEditOffer({mode}) {
+  const [openSnackbar] = useSnackbar();
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
@@ -117,6 +119,8 @@ export default function PageEditOffer({mode}) {
 
   async function handleDeleteOffer() {
     await deleteOffer(id).unwrap();
+    openSnackbar("Suppression réussie");
+    navigate("/company/" + company.id);
   }
 
   return (
@@ -397,16 +401,18 @@ export default function PageEditOffer({mode}) {
                 {isEditMode ? "Valider les modifications" : "Valider la création"}
               </Button>
 
-              <ButtonWithConfirmation
-                areYouSureText={
-                  "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
-                }
-                loading={isDeletingOffer}
-                onClick={handleDeleteOffer}
-                color="danger"
-                startDecorator={<DeleteOutlineRoundedIcon />}>
-                Supprimer l'offre
-              </ButtonWithConfirmation>
+              {isEditMode && (
+                <ButtonWithConfirmation
+                  areYouSureText={
+                    "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
+                  }
+                  loading={isDeletingOffer}
+                  onClick={handleDeleteOffer}
+                  color="danger"
+                  startDecorator={<DeleteOutlineRoundedIcon />}>
+                  Supprimer l'offre
+                </ButtonWithConfirmation>
+              )}
             </PageContent>
           )}
         </Form>
