@@ -33,7 +33,7 @@ export default function PageOffer() {
           {t("offers.howToApply")}
         </Typography>
         <Typography fontSize="xl" textColor={"neutral.800"}>
-          {t("offers.theCompanyProposesBookingAMeetingSlot")}
+          {t("offers.chooseASlotToExchangeWithTheCompany")}
         </Typography>
         <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
