@@ -23,8 +23,10 @@ export const AuthComponent = ({mode, redirect = false}) => {
   const isLoginPage = mode === "logIn";
 
   async function onSubmit(values) {
-    const mutation = isLoginPage ? logIn : signUp;
-    await mutation(values).unwrap();
+    // navigate('http://localhost:3000/auth')
+    window.location.assign('http://localhost:3000/auth')
+    // const mutation = isLoginPage ? logIn : signUp;
+    // await mutation(values).unwrap();
   }
 
   // Redirect user to home page if it is already connected

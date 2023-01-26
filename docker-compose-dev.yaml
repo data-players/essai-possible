@@ -10,8 +10,6 @@ services:
       - "3030:3030"
     expose:
       - "3030"
-    networks:
-      - semapps
     environment:
       ADMIN_PASSWORD: "admin"
     healthcheck:
@@ -50,8 +48,6 @@ services:
       - MJ_APIKEY_PUBLIC=${MJ_APIKEY_PUBLIC}
       - MJ_APIKEY_PRIVATE=${MJ_APIKEY_PRIVATE}
     command: bash -c "cp -r ./addOn/middleware/* . && yarn install && pm2-runtime 'yarn run dev'"
-    networks:
-      - semapps
     ports:
       - '3000:3000'
 
@@ -66,13 +62,11 @@ services:
     volumes:
       - ./backoffice/addOn:/archipelago/frontend/addOn
     command: bash -c "cp -r ./addOn/frontend/* . && yarn install && yarn copy-and-start-addOn"
-    networks:
-      - semapps
     ports:
       - '4000:4000'
 
   frontend:
-    command: bash -c "yarn install && yarn dev"
+    command: bash -c "yarn install && yarn start"
     environment:
       - 'VITE_MIDDLEWARE_URL=http://localhost:3000/'
     volumes:
@@ -93,13 +87,6 @@ services:
       - REDIS_PASSWORD=passw
     ports:
       - "6379:6379"
-    networks:
-      - semapps
     volumes:
       - ./data/redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
-
-networks:
-  semapps:
-    name: bus_network
-    # external: true

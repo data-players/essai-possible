@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useState} from "react";
 import {useTranslation} from "react-i18next";
 import {
   Link as ReactRouterLink,
@@ -28,12 +28,14 @@ import {
   selectCurrentUser,
   selectCurrentUserReady,
   useLazyFetchUserQuery,
+  authActions,
 } from "./app/auth-slice.js";
-import {useSelector} from "react-redux";
+import {useSelector,useDispatch} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
 import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
+import queryString from 'query-string'
 
 function MobileDrawerContent() {
   const navigate = useNavigate();
@@ -92,6 +94,8 @@ function MobileDrawerContent() {
 const Root = ({children}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const [semaphore, setSemaphore] = useState(false);
 
   // When we land on the website, prepare the data:
 
@@ -107,7 +111,33 @@ const Root = ({children}) => {
     if (authTokenExists) launchFetchUserQuery();
   }, [authTokenExists, launchFetchUserQuery]);
 
-  const path = useLocation().pathname;
+  const location = useLocation();
+  // console.log('location',location);
+  const values = queryString.parse(location.search)
+  // console.log('values',values);
+  // dispatch({ type: 'increment-counter' })
+
+
+  const path = location.pathname;
+
+  useEffect(() => {
+    // console.log('authActions',authActions);
+    // console.log('authTokenExists',authTokenExists);
+    // console.log('values',values);
+    // console.log('semaphore',semaphore);
+    if (!authTokenExists && values.token && !semaphore) {
+      // console.log('CALLL');
+      // setSemaphore(true);
+      // try {
+        dispatch(authActions.setToken({token:values.token,path:location.pathname}));
+      // } catch (e) {
+      //   console.log('DISPATCH ERRROR',e);
+      // } finally {
+      //
+      // }
+
+    };
+  },[authTokenExists]);
   const currentUser = useSelector(selectCurrentUser);
 
   // - prefetch the user meetings as soon as the user is available

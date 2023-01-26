@@ -1,5 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
+// import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
 import {user, userToken} from "./auth-slice-data.js";
 
 /**
@@ -14,6 +15,11 @@ const slice = createSlice({
     token: localStorage.getItem("token") || null,
   },
   reducers: {
+    setToken : (state, {payload}) => {
+      console.log('auth-slice token',{payload: {path, token}});
+      state.token = payload;
+      localStorage.setItem("token", payload); // Also persist token to local storage
+    },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
       state.token = token;
@@ -67,7 +73,7 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 api.injectEndpoints({
   endpoints: (builder) => ({
     logIn: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "auth",
       // query: ({email, password}) => ({
       //   url: "auth",
       //   method: "POST",
@@ -83,7 +89,7 @@ api.injectEndpoints({
     }),
 
     signUp: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "auth",
       // query(initialUser) {
       //   return {
       //     url: "user",
