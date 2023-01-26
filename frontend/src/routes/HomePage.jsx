@@ -14,7 +14,7 @@ import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
-import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
+import Link from "@mui/joy/Link";
 
 export default function HomePage() {
   const {t} = useTranslation();
@@ -22,31 +22,40 @@ export default function HomePage() {
     <>
       {/* HERO HEADER */}
       <HeroBanner>
-        <Grid container spacing={8} position={"relative"} p={2} alignItems="center">
-          <Grid>
-            <Stack gap={4}>
-              <Card
-                variant={"solid"}
-                size={"lg"}
-                sx={{width: {xs: "fit-content", sm: "60%", md: "40%"}}}>
-                <Box component={"img"} src={EssaiPossibleLogo} width={"100%"} />
-              </Card>
-              <Typography level="h2">{t("homePage.heroSubtitle")}</Typography>
-            </Stack>
+        <Grid
+          container
+          columnSpacing={10}
+          rowSpacing={5}
+          position={"relative"}
+          p={2}
+          alignItems="center">
+          <Grid xs={12}>
+            <Typography level="h1" component={"h2"} mb={{xs: 2, md: 4}}>
+              {t("homePage.heroHeadline")}
+            </Typography>
+            <Typography level="h4" component={"h3"} mb={{xs: 4, md: 6}}>
+              {t("homePage.heroSubtitle")}
+            </Typography>
+            <Typography level="h6" component={"h4"} textColor={"text.tertiary"}>
+              {t("homePage.heroCreatedBy")}
+              <Link
+                variant={"soft"}
+                href={"https://www.toustespossibles.fr"}
+                target="_blank"
+                textColor={"text.tertiary"}
+                rel="noreferrer">
+                {t("tousTesPossibles")}
+              </Link>
+            </Typography>
           </Grid>
-          <Grid xs={12} md={7}>
-            <Stack gap={4}>
-              <Typography level="h4">
-                <Trans i18nKey="homePage.heroExplanationCandidates" />
-              </Typography>
-              <Typography level="h4">
-                <Trans i18nKey="homePage.heroExplanationHiringManagers" />
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid xs={12} md={5}>
+          <Grid xs={12}></Grid>
+          <Grid xs={12} md={6}>
             <Card invertedColors color={"primary"} variant={"solid"} size={"lg"}>
               <Stack gap={4} m={1}>
+                <Typography level="h2">{t("homePage.candidates")}</Typography>
+                <Typography level="h4">
+                  <Trans i18nKey="homePage.heroExplanationCandidates" />
+                </Typography>
                 <Button
                   component={ReactRouterLink}
                   to={"offers"}
@@ -54,6 +63,16 @@ export default function HomePage() {
                   startDecorator={<SearchRoundedIcon />}>
                   {t("offers.seeOffers")}
                 </Button>
+              </Stack>
+            </Card>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Card variant={"soft"} size={"lg"}>
+              <Stack gap={4} m={1}>
+                <Typography level="h2">{t("homePage.companies")}</Typography>
+                <Typography level="h4">
+                  <Trans i18nKey="homePage.heroExplanationHiringManagers" />
+                </Typography>
                 <Button
                   component={ReactRouterLink}
                   variant={"soft"}
@@ -81,6 +100,14 @@ export default function HomePage() {
                   <Typography level={"h4"} component={"p"}>
                     {t("homePage.videoExplanation")}
                   </Typography>
+                  <Button
+                    component={ReactRouterLink}
+                    color={"neutral"}
+                    to={"offers"}
+                    size={"lg"}
+                    startDecorator={<SearchRoundedIcon />}>
+                    {t("homePage.iJumpIn")}
+                  </Button>
                 </Stack>
               </Grid>
               <Grid xs={12} md={8} sx={{alignItems: "stretch"}}>

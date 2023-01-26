@@ -173,7 +173,7 @@ function Footer(props) {
                 <Box component={"img"} src={TousTesPossiblesLogoWhite} width={"100%"} />
                 <Typography fontSize={"lg"}>
                   {t("footer.projectFundedBy")}{" "}
-                  <Link href={"https://toustespossibles.fr"} target="_blank">
+                  <Link href={"https://www.toustespossibles.fr"} target="_blank">
                     toustespossibles.fr
                   </Link>
                 </Typography>
@@ -252,7 +252,7 @@ export function HeroBanner({
               zIndex: 0,
               top: 0,
               right: 0,
-              opacity: props.opacity || 0.35,
+              opacity: props.opacity || 0.27,
               backgroundImage: `url("${HeroHomeImage}")`,
               backgroundPositionY: "30%",
               backgroundPositionX: "70%",
@@ -268,7 +268,7 @@ export function HeroBanner({
               top: 0,
               right: 0,
               opacity: 0.5,
-              backgroundImage: `linear-gradient(to right, ${theme.vars.palette.neutral.solidBg}, 75%,  transparent)`,
+              backgroundImage: `linear-gradient(to right, ${theme.vars.palette.neutral.solidBg}, 60%,  transparent)`,
               backgroundPositionY: "30%",
               backgroundPositionX: "70%",
             })}
