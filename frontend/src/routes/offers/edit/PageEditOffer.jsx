@@ -78,13 +78,14 @@ const offerValidationSchema = yup.object({
 const companyValidationSchema = yup.object({
   // Job description
   name: requiredString,
-  decription: requiredString,
+  description: requiredString,
   sectors: requiredArray,
   website: requiredUrl,
 });
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
+  company: companyValidationSchema,
 });
 
 export default function PageEditOffer({mode}) {
@@ -94,27 +95,33 @@ export default function PageEditOffer({mode}) {
   const {id} = useParams();
   const companyId = !isEditMode && new URLSearchParams(window.location.search).get("company");
 
-  const currentUser = useSelector(selectCurrentUser);
+  const [showErrors, setShowErrors] = useState(false);
+  const [currentFormStep, setCurrentFormStep] = useState(0);
 
+  const currentUser = useSelector(selectCurrentUser);
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, id) : undefined));
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : companyId)
   );
   const companyReady = useSelector(selectCompanyReady);
   const offerReady = useSelector(selectOfferReady);
+
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
+  // Make sure that the user has the right to edit the offer
+  const userIsCompanyMember = currentUser?.companies.includes(company.id);
+  if (!userIsCompanyMember) {
+    navigate(`/offers/${id}`);
+    return;
+  }
+
+  const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
+
   async function handleDeleteOffer() {
     await deleteOffer(id).unwrap();
   }
-
-  const [showErrors, setShowErrors] = useState(false);
-
-  const [currentFormStep, setCurrentFormStep] = useState(0);
-
-  const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
 
   return (
     companyReady &&
@@ -159,7 +166,6 @@ export default function PageEditOffer({mode}) {
           onSubmit={async (values) => {
             const method = isEditMode ? updateOffer : addOffer;
             const newOffer = await method({...values.offer, id: offer.id}).unwrap();
-            console.log(method, values.offer, newOffer);
             navigate("/offers/" + offer.id);
           }}>
           {(register, {values, setFieldValue, errors, dirty}) => (
@@ -395,7 +401,6 @@ export default function PageEditOffer({mode}) {
                 <Card variant="soft" color="danger">
                   Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
                   informations.
-                  {errors?.offer && Object.entries(errors?.offer)?.join("\n")}
                 </Card>
               </Collapse>
 

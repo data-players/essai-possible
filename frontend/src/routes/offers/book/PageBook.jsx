@@ -27,7 +27,7 @@ import {
 } from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
 import {selectSlotsForOffer} from "./slots-slice.js";
-import CompanyPrivatePreviewContainer from "../CompanyPrivatePreviewContainer.jsx";
+import CompanyOfferPreview from "../CompanyOfferPreview.jsx";
 
 export default function PageBook() {
   const navigate = useNavigate();
@@ -172,7 +172,7 @@ export default function PageBook() {
   ];
 
   return (
-    <CompanyPrivatePreviewContainer offer={offer}>
+    <CompanyOfferPreview offer={offer}>
       <OfferBanner
         showPills={false}
         pageTitle={pageTitle}
@@ -198,6 +198,6 @@ export default function PageBook() {
           </Typography>
         )}
       </PageContent>
-    </CompanyPrivatePreviewContainer>
+    </CompanyOfferPreview>
   );
 }

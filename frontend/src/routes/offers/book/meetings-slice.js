@@ -101,8 +101,6 @@ api.injectEndpoints({
       transformResponse(baseQueryReturnValue, meta, meetingPatch) {
         // Mock data
         let meeting = meetings.find((meeting) => meeting.id === meetingPatch.id);
-
-        console.log("UPDATE", {...meeting, ...meetingPatch});
         return {...meeting, ...meetingPatch};
       },
     }),

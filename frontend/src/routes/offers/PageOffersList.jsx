@@ -231,7 +231,7 @@ export default function PageOffersList() {
 
       <ListPageContent
         ready={offersReady && companiesReady}
-        noResultsText={t("error.oopsNoResults")}
+        noResultsContent={t("error.oopsNoResults")}
         values={filteredOffersIds}
         item={OfferListItem}
       />

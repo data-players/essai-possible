@@ -11,17 +11,20 @@ import {Form, FormInput} from "../../components/atoms.jsx";
 import * as yup from "yup";
 import {email, firstName, lastName, password, phone} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";
+import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
 
 export const AuthComponent = ({mode, redirect = false}) => {
   const navigate = useNavigate();
 
+  const isLoginPage = mode === "logIn";
+
   const currentUser = useSelector(selectCurrentUser);
+  const meetings = useSelector(selectAllMeetings);
+  const meetingsReady = useSelector(selectMeetingsReady);
 
   // Log in and sign up actions
   const [logIn, {isLoading: isLogInLoading}] = useLogInMutation();
   const [signUp, {isLoading: isSignUpLoading}] = useSignUpMutation();
-
-  const isLoginPage = mode === "logIn";
 
   async function onSubmit(values) {
     const mutation = isLoginPage ? logIn : signUp;
@@ -32,9 +35,16 @@ export const AuthComponent = ({mode, redirect = false}) => {
     await logIn(id).unwrap();
   };
 
-  // Redirect user to home page if it is already connected
-  if (redirect && currentUser) {
-    navigate("/offers");
+  // Redirect user to the offers page if it is a basic user, to its meetings
+  // if it has already meetings, and to the company offers if it is a pro account
+  if (redirect && currentUser && meetingsReady) {
+    navigate(
+      currentUser.companies?.length > 0
+        ? `/company/${currentUser.companies[0]}`
+        : meetings.length > 0
+        ? "/my-meetings"
+        : "/offers"
+    );
     return;
   }
 
@@ -86,7 +96,7 @@ export const AuthComponent = ({mode, redirect = false}) => {
                 </Grid>
               </>
             )}
-            <Grid md={6} xs={12}>
+            <Grid md={isLoginPage ? 12 : 6} xs={12}>
               <FormInput
                 label="Email"
                 name={"email"}
@@ -95,15 +105,17 @@ export const AuthComponent = ({mode, redirect = false}) => {
                 register={register}
               />
             </Grid>
-            <Grid md={6} xs={12}>
-              <FormInput
-                label="Numéro de téléphone"
-                name={"phone"}
-                placeholder="+33 6 12 34 56 78"
-                type={"tel"}
-                register={register}
-              />
-            </Grid>
+            {!isLoginPage && (
+              <Grid md={6} xs={12}>
+                <FormInput
+                  label="Numéro de téléphone"
+                  name={"phone"}
+                  placeholder="+33 6 12 34 56 78"
+                  type={"tel"}
+                  register={register}
+                />
+              </Grid>
+            )}
             <Grid xs={12}>
               <FormInput
                 label="Mot de passe"

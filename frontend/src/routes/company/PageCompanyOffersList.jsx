@@ -62,7 +62,7 @@ export default function PageCompanyOffersList() {
 
       <ListPageContent
         ready={offersReady && company}
-        noResultsText={"Vous n'avez pas encore créé d'offres pour votre entreprise."}
+        noResultsContent={"Vous n'avez pas encore créé d'offres pour votre entreprise."}
         values={offersForCompany}
         item={OfferListItemForCompany}
       />

@@ -109,7 +109,7 @@ export default function PageMyMeetings() {
 
       <ListPageContent
         ready={offersReady && meetingsReady}
-        noResultsText={t("account.youDontHaveMeetingsYet")}
+        noResultsContent={t("account.youDontHaveMeetingsYet")}
         values={meetings}
         item={OfferListItemWithMeetingInfo}
         getKey={(value) => value.id}

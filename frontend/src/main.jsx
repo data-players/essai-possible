@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {initI18n} from "./app/i18n.js";
-import routes from "./routes.jsx";
-import {RouterProvider} from "react-router-dom";
+import Router from "./routes.jsx";
 import "@fontsource/public-sans";
 import CssBaseline from "@mui/joy/CssBaseline";
 import {CssVarsProvider} from "@mui/joy/styles";
@@ -19,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <CssBaseline />
       <Provider store={store}>
         <SnackbarProvider>
-          <RouterProvider router={routes} />
+          <Router />
         </SnackbarProvider>
       </Provider>
     </CssVarsProvider>

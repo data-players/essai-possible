@@ -164,8 +164,6 @@ api.injectEndpoints({
       transformResponse(baseQueryReturnValue, meta, offerPatch) {
         // Mock data
         let offer = fullOffers.find((offer) => offer.id === offerPatch.id);
-
-        console.log("UPDATE", {...offer, ...offerPatch});
         return {...offer, ...offerPatch};
       },
     }),

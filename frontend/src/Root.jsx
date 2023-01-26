@@ -89,7 +89,7 @@ function MobileDrawerContent() {
   );
 }
 
-const Root = ({children}) => {
+export default function Root() {
   const {t} = useTranslation();
   const navigate = useNavigate();
 
@@ -188,6 +188,4 @@ const Root = ({children}) => {
       </Layout.Root>
     </Box>
   );
-};
-
-export default Root;
+}

@@ -16,7 +16,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentUser, selectCurrentUserReady} from "../../app/auth-slice.js";
 import {selectCompanyById} from "./companies-slice.js";
 
-export default function CompanyPrivatePreviewContainer({offer, children}) {
+export default function CompanyOfferPreview({offer, children}) {
   const isDraft = offer.status === statusOptions[0];
   const isPublished = offer.status === statusOptions[1];
   const isFulfilled = offer.status === statusOptions[2];
@@ -27,7 +27,7 @@ export default function CompanyPrivatePreviewContainer({offer, children}) {
   const currentUserReady = useSelector(selectCurrentUserReady);
 
   const isConnected = currentUserReady && currentUser?.id;
-  const isCompanyMember = isConnected && currentUser.companies.includes(company.id);
+  const isCompanyMember = isConnected && currentUser.companies?.includes(company.id);
 
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
 

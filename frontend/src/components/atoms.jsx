@@ -251,7 +251,6 @@ export function Form({onSubmit, initialValues, children, successText, validation
 export const CheckboxGroup = React.memo(
   function ({options, value, setFieldValue}) {
     const [val, setVal] = useState(value);
-    console.log("render");
     return (
       <Card variant={"soft"} size={"sm"} sx={{my: 1}}>
         <List size="sm">
@@ -324,7 +323,7 @@ export function ButtonWithConfirmation({
 
 export function ListPageContent({
   ready,
-  noResultsText,
+  noResultsContent,
   values,
   item: Item,
   getKey,
@@ -369,7 +368,7 @@ export function ListPageContent({
             )}
           </>
         ) : (
-          noResultsText
+          <Box mt={2}>{noResultsContent}</Box>
         )
       ) : (
         <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
