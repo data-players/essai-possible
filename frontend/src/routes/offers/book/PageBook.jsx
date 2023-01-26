@@ -76,18 +76,23 @@ export default function PageBook() {
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.chooseYourMeetingSlot")}
       subtitle={
-        <Collapse in={!!selectedSlot}>
-          {selectedSlot && (
-            <Typography fontSize={"lg"} textColor={"text.secondary"}>
-              <Trans
-                i18nKey="offers.youAreAboutToBookAMeetingOnThe"
-                values={{
-                  dateTime: tDateTime(slotsForOffer.find((slot) => slot.id === selectedSlot).start),
-                }}
-              />
-            </Typography>
-          )}
-        </Collapse>
+        <>
+          <Typography fontSize={"lg"}>{offer.meetingDetails}</Typography>
+          <Collapse in={!!selectedSlot}>
+            {selectedSlot && (
+              <Typography fontSize={"lg"} textColor={"text.secondary"}>
+                <Trans
+                  i18nKey="offers.youAreAboutToBookAMeetingOnThe"
+                  values={{
+                    dateTime: tDateTime(
+                      slotsForOffer.find((slot) => slot.id === selectedSlot).start
+                    ),
+                  }}
+                />
+              </Typography>
+            )}
+          </Collapse>
+        </>
       }>
       <List>
         {Object.entries(slotsByDate).map(([date, slots]) => (

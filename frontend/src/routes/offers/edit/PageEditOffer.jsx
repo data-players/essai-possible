@@ -68,6 +68,7 @@ const offerValidationSchema = yup.object({
   location: required,
 
   // Mentor contact
+  meetingDetails: requiredString,
   mentorPhone: requiredPhone,
   mentorEmail: requiredEmail,
 
@@ -330,20 +331,31 @@ export default function PageEditOffer({mode}) {
                 stepNumber={4}
                 showTitle
                 showContent
-                title={"Mentor"}
+                title={"Modalites du rendez-vous"}
                 subtitle={
-                  "Ajoutez le contact du ou de la mentor, maître de stage, qui sera en charge des candidat·es."
+                  "Ajoutez des détails sur le rendez-vous ainsi que le contact du ou de la mentor, maître de stage, qui sera en charge des candidat·es."
                 }>
                 <Stack gap={3}>
                   <FormInput
-                    label="Email"
+                    component={Textarea}
+                    label="Détails sur le rendez-vous"
+                    name={"offer.meetingDetails"}
+                    placeholder="détails"
+                    register={register}
+                    help={
+                      "Combien de temps dure un rendez-vous en moyenne, préférences sur les horaires, déroulé, etc."
+                    }
+                  />
+
+                  <FormInput
+                    label="Email du mentor"
                     name={"offer.mentorEmail"}
                     placeholder="email@mon-entreprise.com"
                     type={"email"}
                     register={register}
                   />
                   <FormInput
-                    label="Numéro de téléphone"
+                    label="Numéro de téléphone du mentor"
                     name={"offer.mentorPhone"}
                     placeholder="+33 6 12 34 56 78"
                     type={"tel"}
