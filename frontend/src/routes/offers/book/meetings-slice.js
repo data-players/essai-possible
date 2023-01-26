@@ -29,7 +29,10 @@ const meetingsSlice = createSlice({
       .addMatcher(matchAny("matchFulfilled", ["fetchMeetings"]), meetingsAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["updateMeeting"]), meetingsAdapter.upsertOne)
       .addMatcher(matchAny("matchFulfilled", ["addMeeting"]), meetingsAdapter.addOne)
-      .addMatcher(matchAny("matchFulfilled", ["deleteMeeting"]), meetingsAdapter.removeOne);
+      .addMatcher(matchAny("matchFulfilled", ["deleteMeeting"]), meetingsAdapter.removeOne)
+
+      // Remove all meetings on logout
+      .addMatcher(matchAny("matchFulfilled", ["deleteUser"]), meetingsAdapter.removeAll);
 
     addStatusForEndpoints(builder, ["fetchMeetings"]);
   },
