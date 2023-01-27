@@ -40,6 +40,7 @@ import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.p
 import PageEdit from "../../../components/PageEdit.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
+import MeetingSlotsGenerator from "./MeetingSlotsGenerator.jsx";
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -53,6 +54,7 @@ export default function PageEditOffer({mode}) {
   const {id, companyId} = useParams();
 
   const [openCompanyForm, setOpenCompanyForm] = useState(null);
+  const [openSlotsGenerator, setOpenSlotsGenerator] = useState(null);
 
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, id) : undefined));
   const company = useSelector((state) =>
@@ -319,6 +321,36 @@ export default function PageEditOffer({mode}) {
 
           <FormStep
             stepNumber={5}
+            currentFormStep={openSlotsGenerator}
+            setCurrentFormStep={setOpenSlotsGenerator}
+            showTitle
+            title={"Créneaux de rendez-vous"}
+            subtitle={
+              <>
+                <Typography fontSize={"lg"}>
+                  Listez tous les créneaux de rendez-vous possibles pour rencontrer vos candidat·es.
+                </Typography>
+                <Typography fontSize={"lg"}>
+                  {t("offers.xMeetingSlotsAvailable", {count: 3})}
+                </Typography>
+              </>
+            }>
+            <Stack gap={3}>
+              <MeetingSlotsGenerator setFieldValue={setFieldValue} register={register} />
+
+              <Button
+                sx={{mt: 2, width: "fit-content"}}
+                variant="soft"
+                size={"sm"}
+                color="neutral"
+                onClick={() => setOpenSlotsGenerator(false)}>
+                Fermer
+              </Button>
+            </Stack>
+          </FormStep>
+
+          <FormStep
+            stepNumber={6}
             currentFormStep={openCompanyForm}
             setCurrentFormStep={setOpenCompanyForm}
             showTitle
