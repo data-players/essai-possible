@@ -1,7 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {isAnyOf} from "@reduxjs/toolkit";
 
-
 /**
  * API OBJECT
  *
