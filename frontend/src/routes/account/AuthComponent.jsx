@@ -4,16 +4,18 @@ import * as React from "react";
 import {useEffect} from "react";
 
 import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
-import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
-import {PageContent} from "../../components/Layout.jsx";
-import {Form, FormInput} from "../../components/atoms.jsx";
+import {Form} from "../../components/atoms.jsx";
 import * as yup from "yup";
-import {password, requiredEmail, requiredPhone, requiredString} from "../../app/fieldValidation.js";
+import {requiredPhone, requiredString} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";
 import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
+import {UserFormElements} from "./UserFormElements.jsx";
 
+/**
+ * @param mode logIn | signUp
+ */
 export const AuthComponent = ({mode, redirect = false}) => {
   const navigate = useNavigate();
 
@@ -51,9 +53,9 @@ export const AuthComponent = ({mode, redirect = false}) => {
   }, [redirect, currentUser, meetingsReady]);
 
   return (
-    <PageContent mb={0}>
-      <Stack gap={3} alignItems={"center"} my={6}>
-        <Typography level={"h2"}>Fausse authentification</Typography>
+    <>
+      <Stack gap={3} alignItems={"center"} mb={6}>
+        <Typography level={"h3"}>Fausse authentification</Typography>
         <Button size={"lg"} onClick={mockConnect(1)}>
           Candidat
         </Button>
@@ -61,86 +63,38 @@ export const AuthComponent = ({mode, redirect = false}) => {
           Professionnel
         </Button>
       </Stack>
+
       <Form
         initialValues={{
-          ...(!isLoginPage && {
-            firstName: "",
-            lastName: "",
-          }),
-          email: "",
-          password: "",
+          firstName: "",
+          lastName: "",
+          phone: "",
         }}
         validationSchema={yup.object({
-          ...(!isLoginPage && {
-            firstName: requiredString,
-            lastName: requiredString,
-          }),
-          email: requiredEmail,
+          firstName: requiredString,
+          lastName: requiredString,
           phone: requiredPhone,
-          password,
         })}
         onSubmit={onSubmit}
         successText={isLoginPage ? "Connexion réussie" : "Compte créé avec succès"}>
         {(register) => (
-          <Grid container columnSpacing={4} rowSpacing={3}>
-            {!isLoginPage && (
-              <>
-                <Grid md={6} xs={12}>
-                  <FormInput
-                    label="Prénom"
-                    name={"firstName"}
-                    placeholder="prénom"
-                    register={register}
-                  />
-                </Grid>
-                <Grid md={6} xs={12}>
-                  <FormInput label="Nom" name={"lastName"} placeholder="nom" register={register} />
-                </Grid>
-              </>
-            )}
-            <Grid md={isLoginPage ? 12 : 6} xs={12}>
-              <FormInput
-                label="Email"
-                name={"email"}
-                placeholder="email@example.com"
-                type={"email"}
-                register={register}
-              />
-            </Grid>
-            {!isLoginPage && (
-              <Grid md={6} xs={12}>
-                <FormInput
-                  label="Numéro de téléphone"
-                  name={"phone"}
-                  placeholder="+33 6 12 34 56 78"
-                  type={"tel"}
-                  register={register}
-                />
-              </Grid>
-            )}
-            <Grid xs={12}>
-              <FormInput
-                label="Mot de passe"
-                name={"password"}
-                placeholder="mot de passe"
-                type={"password"}
-                register={register}
-              />
-            </Grid>
-            <Grid xs={12}>
-              <Stack mt={2}>
-                <Button
-                  loading={isLoginPage ? isLogInLoading : isSignUpLoading}
-                  type="submit"
-                  size="lg"
-                  color="success">
-                  {isLoginPage ? "Se connecter" : "Créer mon compte"}
-                </Button>
-              </Stack>
-            </Grid>
-          </Grid>
+          <Stack gap={3}>
+            <Button size="lg" color="primary">
+              S'identifier avec Les Communs
+            </Button>
+
+            {!isLoginPage && <UserFormElements register={register} />}
+
+            <Button
+              loading={isLoginPage ? isLogInLoading : isSignUpLoading}
+              type="submit"
+              size="lg"
+              color="success">
+              {isLoginPage ? "Se connecter" : "Créer mon compte"}
+            </Button>
+          </Stack>
         )}
       </Form>
-    </PageContent>
+    </>
   );
 };

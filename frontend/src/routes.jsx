@@ -7,7 +7,6 @@ import PageOffer from "./routes/offers/PageOffer.jsx";
 import HomePage from "./routes/HomePage.jsx";
 import PageBook from "./routes/offers/book/PageBook.jsx";
 import PageAccount from "./routes/account/PageAccount.jsx";
-import {AuthComponent} from "./routes/account/AuthComponent.jsx";
 import DefinedOfferProtection from "./components/routingProtections/DefinedOfferProtection.jsx";
 import ConnectedUserProtection from "./components/routingProtections/ConnectedUserProtection.jsx";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
@@ -18,6 +17,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
 import CompanyAccountProtection from "./components/routingProtections/CompanyAccountProtection.jsx";
 import PageEditCompany from "./routes/company/PageEditCompany";
+import PageAuth from "./routes/account/PageAuth.jsx";
 
 export default function Router() {
   const currentUser = useSelector(selectCurrentUser);
@@ -91,9 +91,10 @@ export default function Router() {
           ],
         },
 
-        {path: "login", element: <AuthComponent mode={"logIn"} redirect />},
-        {path: "signup", element: <AuthComponent mode={"signUp"} redirect />},
-
+        {path: "login", element: <PageAuth mode={"logIn"} type={"candidate"} />},
+        {path: "signup", element: <PageAuth mode={"signUp"} type={"candidate"} />},
+        {path: "login/company", element: <PageAuth mode={"logIn"} type={"company"} />},
+        {path: "signup/company", element: <PageAuth mode={"signUp"} type={"company"} />},
         {path: "cgu", element: <PageCGU />},
       ],
     },

@@ -39,7 +39,7 @@ import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 import PageEdit from "../../../components/PageEdit.jsx";
 import Link from "@mui/joy/Link";
-import {CompanyFormComponent} from "../../company/CompanyFormComponent.jsx";
+import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -336,7 +336,7 @@ export default function PageEditOffer({mode}) {
                 </Typography>
               </HelpBox>
 
-              <CompanyFormComponent
+              <CompanyFormElements
                 baseFormPath={"company"}
                 setFieldValue={setFieldValue}
                 register={register}

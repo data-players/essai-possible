@@ -4,7 +4,7 @@ import Box from "@mui/joy/Box";
 import {sectorsOptions} from "../offers/companies-slice-data.js";
 import React from "react";
 
-export function CompanyFormComponent({register, setFieldValue, baseFormPath}) {
+export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
   const base = baseFormPath ? `${baseFormPath}.` : "";
   return (
     <>
