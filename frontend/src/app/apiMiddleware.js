@@ -1,8 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {isAnyOf} from "@reduxjs/toolkit";
 
-console.log("MIDDLEWARE_URL", import.meta.env.VITE_MIDDLEWARE_URL);
-
 /**
  * API OBJECT
  *
@@ -21,7 +19,7 @@ const api = createApi({
       // By default, if we have a token in the store, add it to request headers
       const token = getState().auth.token;
       if (token) headers.set("authorization", `Bearer ${token}`);
-
+      headers.set("accept", "application/ld+json");
       return headers;
     },
   }),

@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/apiMiddleware.js";
 import {meetings} from "./meetings-slice-data.js";
 import {selectSlotsForOffer} from "./slots-slice.js";
 
@@ -70,7 +70,7 @@ const getCounter = () => counter++;
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchMeetings: builder.query({
-      query: () => "breeds?limit=100",
+      query: () => "/timeSlot",
       // query: () => "meetings",
       transformResponse() {
         // Mock data
@@ -80,7 +80,7 @@ api.injectEndpoints({
 
     addMeeting: builder.mutation({
       query: (val) => {
-        return "breeds?limit=100";
+        return "/timeSlot";
       },
       // query: ({slot, comments}) => ({
       //   url: "meetings",
@@ -95,7 +95,7 @@ api.injectEndpoints({
     }),
 
     updateMeeting: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/timeSlot",
       // query: (meetingPatch) => ({
       //   url: "meetings",
       //   method: "PATCH",
@@ -109,7 +109,7 @@ api.injectEndpoints({
     }),
 
     deleteMeeting: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: (id) => "/timeSlot",
       // query: (id) => ({
       //   url: `meeting`,
       //   method: "DELETE",

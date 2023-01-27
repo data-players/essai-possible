@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
 import {users} from "./auth-slice-data.js";
 import jwtDecode from "jwt-decode";
 
@@ -12,37 +12,38 @@ const slice = createSlice({
   initialState: {
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
+    webId: undefined,
     token: localStorage.getItem("token") || null,
   },
   reducers: {
     setToken: (state, {payload}) => {
       state.token = payload;
-      console.log("token", payload);
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
-      console.log("webId", tockenData.webID);
+      state.webId = tockenData.webId;
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
-      state.token = token;
-      localStorage.setItem("token", token); // Also persist token to local storage
+      // state.token = token;
+      // localStorage.setItem("token", token); // Also persist token to local storage
     },
     setUser: (state, {payload: user}) => {
+      console.log("setUser", user);
       state.user = user;
     },
     logOut: (state) => {
       state.user = null;
-      state.token = null;
+      // state.token = null;
       localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
       // LOG IN - SIGN UP : Set user and token after logIn and signup mutations
-      .addMatcher(
-        matchAny("matchFulfilled", ["logIn", "signUp"]),
-        slice.caseReducers.setCredentials
-      )
+      // .addMatcher(
+      //   matchAny("matchFulfilled", ["logIn", "signUp"]),
+      //   slice.caseReducers.setCredentials
+      // )
       // FETCH - UPDATE : Set user after fetch and update query
       .addMatcher(
         matchAny("matchFulfilled", ["fetchUser", "updateUser"]),
@@ -66,7 +67,10 @@ export default slice.reducer;
 export const selectCurrentUserReady = readySelector("auth", "fetchUser");
 
 export const selectCurrentUser = (state) => state.auth.user;
-export const selectAuthTokenExists = (state) => !!state.auth.token;
+export const selectAuthTokenExists = (state) => {
+  // console.log('selectAuthTokenExists',state.auth);
+  return state.auth.token != undefined;
+};
 
 /**
  * AUTHENTICATION API ENDPOINTS
@@ -74,58 +78,61 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 
 api.injectEndpoints({
   endpoints: (builder) => ({
-    logIn: builder.mutation({
-      query: () => "breeds?limit=100",
-      // query: ({email, password}) => ({
-      //   url: "auth",
-      //   method: "POST",
-      //   body: {email, password},
-      // }),
-      transformResponse(a, b, id) {
-        // Mock data
-        const user = users.find((user) => user.id === id);
-        return {
-          token: user.token,
-          user,
-        };
-      },
-    }),
-
-    signUp: builder.mutation({
-      query: () => "breeds?limit=100",
-      // query(initialUser) {
-      //   return {
-      //     url: "user",
-      //     method: "POST",
-      //     body: initialUser,
-      //   };
-      // },
-      transformResponse(a, b, id) {
-        // Mock data
-        const user = users.find((user) => user.id === id);
-        return {
-          token: user.token,
-          user,
-        };
-      },
-    }),
+    // logIn: builder.mutation({
+    //   query: () => "breeds?limit=100",
+    //   // query: () => {
+    //   //   return {
+    //   //   url: "auth",
+    //   //   method: "POST",
+    //   //   body: {email, password},
+    //   //   }
+    //   // },
+    //   transformResponse(a, b, id) {
+    //     // Mock data
+    //     const user = users.find((user) => user.id === id);
+    //     return {
+    //       token: user.token,
+    //       user,
+    //     };
+    //   },
+    // }),
+    //
+    // signUp: builder.mutation({
+    //   query: () => "breeds?limit=100",
+    //   // query(initialUser) {
+    //   //   return {
+    //   //     url: "user",
+    //   //     method: "POST",
+    //   //     body: initialUser,
+    //   //   };
+    //   // },
+    //   transformResponse(a, b, id) {
+    //     // Mock data
+    //     const user = users.find((user) => user.id === id);
+    //     return {
+    //       token: user.token,
+    //       user,
+    //     };
+    //   },
+    // }),
 
     fetchUser: builder.query({
-      query: () => "breeds?limit=100",
-      // query: () => ({
-      //   url: "user",
-      //   method: "GET",
-      // }),
-      transformResponse() {
-        // Mock data
-        const localStorageToken = localStorage.getItem("token");
-        if (!localStorageToken) throw Error("No token in local storage");
-        return users.find((user) => user.token === localStorageToken);
+      query: () => jwtDecode(localStorage.getItem("token")).webId,
+      transformResponse(response) {
+        return {
+          id: response.id,
+          email: response["pair:e-mail"],
+          firstName: response["pair:firstName"],
+          lastName: response["pair:lastName"],
+          companies: Array.isArray(response["pair:affiliatedBy"])
+            ? response["pair:affiliatedBy"]
+            : [response["pair:affiliatedBy"]],
+        };
       },
     }),
 
     updateUser: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/users",
       // query: (userPatch) => ({
       //   url: `user`,
       //   method: "PATCH",
@@ -139,7 +146,7 @@ api.injectEndpoints({
     }),
 
     deleteUser: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/users",
       // query: () => ({
       //   url: `user`,
       //   method: "DELETE",

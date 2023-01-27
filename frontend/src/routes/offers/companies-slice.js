@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/apiMiddleware.js";
 import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 import * as yup from "yup";
 import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
@@ -53,7 +53,7 @@ api.injectEndpoints({
     // Fetch the list of all companies
     fetchCompanies: builder.query({
       query() {
-        return `/breeds?limit=1`;
+        return `/organizations`;
       },
       transformResponse() {
         // Mock data with companies
@@ -65,7 +65,7 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       query(id) {
-        return `/breeds?limit=10`;
+        return `/organizations`;
       },
       transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data with companies
@@ -76,7 +76,7 @@ api.injectEndpoints({
 
     addCompany: builder.mutation({
       query: (company) => {
-        return "breeds?limit=100";
+        return "/organizations";
       },
       // query: ({slot, comments}) => ({
       //   url: "companies",
@@ -91,7 +91,7 @@ api.injectEndpoints({
     }),
 
     updateCompany: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/organizations",
       // query: (companyPatch) => ({
       //   url: "companies",
       //   method: "PATCH",
@@ -105,7 +105,7 @@ api.injectEndpoints({
     }),
 
     deleteCompany: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: (id) => "/organizations",
       // query: (id) => ({
       //   url: `company`,
       //   method: "DELETE",

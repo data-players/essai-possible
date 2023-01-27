@@ -28,7 +28,7 @@ export default function Root() {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [semaphore, setSemaphore] = useState(false);
+  const [forcedNavigation, setForcedNavigation] = useState(false);
 
   // When we land on the website, prepare the data:
 
@@ -55,18 +55,23 @@ export default function Root() {
           dispatch(authActions.setToken(values.token));
         } catch (e) {
           console.error(e);
-        } finally {
         }
       } else if (authTokenExists) {
         navigate(path);
+        setForcedNavigation(true);
+      }
+    } else {
+      if (authTokenExists) {
+        launchFetchUserQuery();
       }
     }
-  }, [authTokenExists]);
+  }, [authTokenExists, launchFetchUserQuery, forcedNavigation]);
 
   const currentUser = useSelector(selectCurrentUser);
 
   // - prefetch the user meetings as soon as the user is available
   const currentUserReady = useSelector(selectCurrentUserReady);
+
   const [launchFetchMeetingsQuery] = useLazyFetchMeetingsQuery();
   useEffect(() => {
     if (currentUserReady) launchFetchMeetingsQuery();

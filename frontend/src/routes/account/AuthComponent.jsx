@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import * as React from "react";
 import {useEffect} from "react";
 
-import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
+import {selectCurrentUser} from "../../app/auth-slice.js";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {Form} from "../../components/forms.jsx";
@@ -26,12 +26,15 @@ export const AuthComponent = ({mode, redirect = false}) => {
   const meetingsReady = useSelector(selectMeetingsReady);
 
   // Log in and sign up actions
-  const [logIn, {isLoading: isLogInLoading}] = useLogInMutation();
-  const [signUp, {isLoading: isSignUpLoading}] = useSignUpMutation();
+  // const [logIn, {isLoading: isLogInLoading}] = useLogInMutation();
+  // const [signUp, {isLoading: isSignUpLoading}] = useSignUpMutation();
 
   async function onSubmit(values) {
-    const mutation = isLoginPage ? logIn : signUp;
-    await mutation(values).unwrap();
+    // const mutation = isLoginPage ? logIn : signUp;
+    // await mutation(values).unwrap();
+    window.location.assign(
+      import.meta.env.VITE_MIDDLEWARE_URL + "/auth?redirectUrl=" + window.location.href
+    );
   }
 
   const mockConnect = (id) => async () => {
@@ -85,11 +88,7 @@ export const AuthComponent = ({mode, redirect = false}) => {
 
             {!isLoginPage && <UserFormElements register={register} />}
 
-            <Button
-              loading={isLoginPage ? isLogInLoading : isSignUpLoading}
-              type="submit"
-              size="lg"
-              color="success">
+            <Button loading={false} type="submit" size="lg" color="success">
               {isLoginPage ? "Se connecter" : "Créer mon compte"}
             </Button>
           </Stack>
