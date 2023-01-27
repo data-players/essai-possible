@@ -131,7 +131,7 @@ export default function PageEditOffer({mode}) {
       deleteAreYouSureText={
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
       }>
-      {(register, {values, setFieldValue}) => (
+      {(register, {values, setFieldValue, errors, showingErrors}) => (
         <>
           <FormStep
             stepNumber={1}
@@ -316,6 +316,7 @@ export default function PageEditOffer({mode}) {
             currentFormStep={openCompanyForm}
             setCurrentFormStep={setOpenCompanyForm}
             showTitle
+            showContent={showingErrors && errors?.company}
             title={"Entreprise"}
             subtitle={
               "Vérifiez que les informations de votre entreprise sont bien à jour, et modifiez-les si nécéssaire."

@@ -25,7 +25,7 @@ export default function PageEdit({
 }) {
   const [openSnackbar] = useSnackbar();
 
-  const [showErrors, setShowErrors] = useState(false);
+  const [showingErrors, setShowingErrors] = useState(false);
 
   async function handleDelete() {
     await onDelete();
@@ -52,9 +52,9 @@ export default function PageEdit({
               </>
             )}
 
-            {children(register, {values, setFieldValue, errors, dirty})}
+            {children(register, {values, setFieldValue, errors, dirty, showingErrors})}
 
-            <Collapse in={showErrors && Object.keys(errors).length > 0} sx={{mb: -2}}>
+            <Collapse in={showingErrors && Object.keys(errors).length > 0} sx={{mb: -2}}>
               <Card variant="soft" color="danger" sx={{mb: 3}}>
                 Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
                 informations.
@@ -67,7 +67,7 @@ export default function PageEdit({
               color="success"
               disabled={!dirty}
               loading={updateLoading}
-              onClick={() => setShowErrors(true)}
+              onClick={() => setShowingErrors(true)}
               startDecorator={<CheckIcon />}>
               {isEditMode ? "Valider les modifications" : "Valider la création"}
             </Button>
