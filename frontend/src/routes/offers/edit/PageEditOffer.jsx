@@ -32,7 +32,6 @@ import {
   selectCompanyById,
   selectCompanyReady,
 } from "../companies-slice";
-import {sectorsOptions} from "../companies-slice-data.js";
 import {goalOptions, softSkillsOptions, statusOptions} from "../offers-slice-data.js";
 import Box from "@mui/joy/Box";
 import * as yup from "yup";
@@ -40,6 +39,7 @@ import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 import PageEdit from "../../../components/PageEdit.jsx";
 import Link from "@mui/joy/Link";
+import {CompanyFormComponent} from "../../company/CompanyFormComponent.jsx";
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -335,36 +335,12 @@ export default function PageEditOffer({mode}) {
                 </Typography>
               </HelpBox>
 
-              <FormInput
-                label={"Nom de l'entreprise"}
-                placeholder={"nom"}
+              <CompanyFormComponent
+                baseFormPath={"company"}
+                setFieldValue={setFieldValue}
                 register={register}
-                name={"company.name"}
               />
 
-              <FormInput
-                component={Textarea}
-                label={"Description de l'entreprise"}
-                placeholder={"description"}
-                register={register}
-                name={"company.description"}
-              />
-              <FormInput
-                label={"Site internet de l'entreprise"}
-                placeholder={"https://mon-entreprise.com"}
-                register={register}
-                type={"url"}
-                name={"company.website"}
-              />
-              <FormInput
-                component={CheckboxGroup}
-                wrapperComponent={Box}
-                label={"Secteurs"}
-                name={"company.sectors"}
-                register={register}
-                onChange={(value) => setFieldValue("company.sectors", value)}
-                options={sectorsOptions}
-              />
               <Button
                 sx={{mt: 2, width: "fit-content"}}
                 variant="soft"

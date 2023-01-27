@@ -1,7 +1,6 @@
 import React from "react";
 import Stack from "@mui/joy/Stack";
-import {CheckboxGroup, FormInput, SimpleBanner} from "../../components/atoms.jsx";
-import Textarea from "@mui/joy/Textarea";
+import {SimpleBanner} from "../../components/atoms.jsx";
 import {
   companyValidationSchema,
   selectCompanyById,
@@ -12,11 +11,10 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../app/i18n.js";
 import {useSelector} from "react-redux";
-import {sectorsOptions} from "../offers/companies-slice-data.js";
-import Box from "@mui/joy/Box";
 import PageEdit from "../../components/PageEdit.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
+import {CompanyFormComponent} from "./CompanyFormComponent";
 
 export default function PageEditCompany({mode}) {
   const isEditMode = mode === "edit";
@@ -37,6 +35,7 @@ export default function PageEditCompany({mode}) {
 
   async function onSubmit(values) {
     const method = isEditMode ? updateCompany : addCompany;
+    console.log(values);
     const newCompany = await method({...values, id: company?.id}).unwrap();
     navigate("/company/" + newCompany.id);
   }
@@ -69,36 +68,7 @@ export default function PageEditCompany({mode}) {
       updateLoading={isAddingCompany || isUpdatingCompany}>
       {(register, {setFieldValue}) => (
         <Stack gap={3}>
-          <FormInput
-            label={"Nom de l'entreprise"}
-            placeholder={"nom"}
-            register={register}
-            name={"name"}
-          />
-
-          <FormInput
-            component={Textarea}
-            label={"Description de l'entreprise"}
-            placeholder={"description"}
-            register={register}
-            name={"description"}
-          />
-          <FormInput
-            label={"Site internet de l'entreprise"}
-            placeholder={"https://mon-entreprise.com"}
-            register={register}
-            type={"url"}
-            name={"website"}
-          />
-          <FormInput
-            component={CheckboxGroup}
-            wrapperComponent={Box}
-            label={"Secteurs"}
-            name={"sectors"}
-            register={register}
-            onChange={(value) => setFieldValue("sectors", value)}
-            options={sectorsOptions}
-          />
+          <CompanyFormComponent setFieldValue={setFieldValue} register={register} />
 
           <Divider sx={{my: 1}} />
         </Stack>
