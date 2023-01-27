@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
 import {users} from "./auth-slice-data.js";
-import jwtDecode from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
 /**
  * AUTHENTICATION SLICE
@@ -12,27 +12,28 @@ const slice = createSlice({
   initialState: {
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
+    webId: undefined,
     token: localStorage.getItem("token") || null,
   },
   reducers: {
-    setToken : (state, {payload}) => {
+    setToken: (state, {payload}) => {
       state.token = payload;
-      // console.log('token',payload);
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
-      console.log('webId',tockenData.webID);
+      state.webId = tockenData.webId;
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
-      state.token = token;
-      localStorage.setItem("token", token); // Also persist token to local storage
+      // state.token = token;
+      // localStorage.setItem("token", token); // Also persist token to local storage
     },
     setUser: (state, {payload: user}) => {
+      console.log("setUser", user);
       state.user = user;
     },
     logOut: (state) => {
       state.user = null;
-      state.token = null;
+      // state.token = null;
       localStorage.removeItem("token");
     },
   },
@@ -66,7 +67,10 @@ export default slice.reducer;
 export const selectCurrentUserReady = readySelector("auth", "fetchUser");
 
 export const selectCurrentUser = (state) => state.auth.user;
-export const selectAuthTokenExists = (state) => !!state.auth.token;
+export const selectAuthTokenExists = (state) => {
+  // console.log('selectAuthTokenExists',state.auth);
+  return state.auth.token != undefined;
+};
 
 /**
  * AUTHENTICATION API ENDPOINTS
@@ -113,24 +117,22 @@ api.injectEndpoints({
     // }),
 
     fetchUser: builder.query({
-      query: () => "/",
-      // query: () => {
-      // const token =   localStorage.getItem("token")
-      // const {webID} = jwtDecode(token);
-      //   return {
-      //     url: "users/"+encodeURI(webID),
-      //   }
-      // },
-      transformResponse() {
-        // Mock data
-        const localStorageToken = localStorage.getItem("token");
-        if (!localStorageToken) throw Error("No token in local storage");
-        return users.find((user) => user.token === localStorageToken);
+      query: () => jwtDecode(localStorage.getItem("token")).webId,
+      transformResponse(response) {
+        return {
+          id: response.id,
+          email: response["pair:e-mail"],
+          firstName: response["pair:firstName"],
+          lastName: response["pair:lastName"],
+          companies: Array.isArray(response["pair:affiliatedBy"])
+            ? response["pair:affiliatedBy"]
+            : [response["pair:affiliatedBy"]],
+        };
       },
     }),
 
     updateUser: builder.mutation({
-      query: () => "/",
+      query: () => "/users",
       // query: (userPatch) => ({
       //   url: `user`,
       //   method: "PATCH",
@@ -144,7 +146,7 @@ api.injectEndpoints({
     }),
 
     deleteUser: builder.mutation({
-      query: () => "/",
+      query: () => "/users",
       // query: () => ({
       //   url: `user`,
       //   method: "DELETE",

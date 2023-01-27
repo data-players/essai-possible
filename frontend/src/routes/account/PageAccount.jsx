@@ -8,13 +8,8 @@ import {
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
-import {
-  ButtonWithConfirmation,
-  Form,
-  FormInput,
-  FormStep,
-  SimpleBanner,
-} from "../../components/atoms";
+import {ButtonWithConfirmation, SimpleBanner} from "../../components/atoms";
+import {Form, FormInput, FormStep} from "../../components/forms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
@@ -22,16 +17,11 @@ import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import {useSnackbar} from "../../components/snackbar.jsx";
 import * as yup from "yup";
-import {
-  confirmNewPassword,
-  newPassword,
-  requiredEmail,
-  requiredPhone,
-  requiredString,
-} from "../../app/fieldValidation.js";
+import {confirmNewPassword, requiredPhone, requiredString} from "../../app/fieldValidation.js";
 import {t} from "i18next";
 import {AuthButton} from "../../components/Layout.jsx";
 import Divider from "@mui/joy/Divider";
+import {UserFormElements} from "./UserFormElements.jsx";
 
 export default function PageAccount() {
   const dispatch = useDispatch();
@@ -58,29 +48,15 @@ export default function PageAccount() {
                 validationSchema={yup.object({
                   firstName: requiredString,
                   lastName: requiredString,
-                  email: requiredEmail,
                   phone: requiredPhone,
-                  newPassword,
-                  confirmNewPassword,
                 })}
                 initialValues={currentUser}
                 onSubmit={onSubmit}
                 successText={"Modifications enregistrées"}>
                 {(register) => (
                   <Stack gap={3}>
-                    <FormInput
-                      label="Prénom"
-                      name={"firstName"}
-                      placeholder="prénom"
-                      register={register}
-                    />
+                    <UserFormElements register={register} />
 
-                    <FormInput
-                      label="Nom"
-                      name={"lastName"}
-                      placeholder="nom"
-                      register={register}
-                    />
                     <FormInput
                       label="Email"
                       name={"email"}
@@ -88,13 +64,7 @@ export default function PageAccount() {
                       type={"email"}
                       register={register}
                     />
-                    <FormInput
-                      label="Numéro de téléphone"
-                      name={"phone"}
-                      placeholder="+33 6 12 34 56 78"
-                      type={"tel"}
-                      register={register}
-                    />
+
                     <FormInput
                       label="Nouveau mot de passe"
                       name={"newPassword"}
@@ -102,6 +72,7 @@ export default function PageAccount() {
                       type={"password"}
                       register={register}
                     />
+
                     <FormInput
                       label="Confirmez le nouveau mot de passe"
                       name={"confirmNewPassword"}

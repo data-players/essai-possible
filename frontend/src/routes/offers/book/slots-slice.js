@@ -57,17 +57,17 @@ const getCounter = () => counter++;
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchSlots: builder.query({
-      query: ({offer} = {}) => "breeds?limit=100",
+      query: ({offer} = {}) => "/timeSlot",
       // query: ({offer}) => "slots",
       transformResponse(baseQueryReturnValue, meta, {offer} = {}) {
         // Mock data
-        return offer ? slots.filter((slot) => slot.offer == offer) : slots;
+        return offer ? slots.filter((slot) => slot.offer === offer) : slots;
       },
     }),
 
     addSlot: builder.mutation({
       query: (val) => {
-        return "breeds?limit=100";
+        return "/timeSlot";
       },
       // query: ({slot, comments}) => ({
       //   url: "slots",
@@ -82,7 +82,7 @@ api.injectEndpoints({
     }),
 
     deleteSlot: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: (id) => "/timeSlot",
       // query: (id) => ({
       //   url: `slot`,
       //   method: "DELETE",

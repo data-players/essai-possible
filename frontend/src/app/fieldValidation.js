@@ -19,7 +19,6 @@ export const requiredNumber = yup
 export const requiredArray = yup.array().min(1, "Donnez au moins une réponse.");
 
 export const password = yup.string().min(8, "Le mot de passe doit faire au moins 8 caractères");
-export const newPassword = password.optional();
 export const confirmNewPassword = yup
   .string()
-  .oneOf([yup.ref("newPassword"), null], "Les mots de passe doivent correspondre");
+  .oneOf([yup.ref("password"), null], "Les mots de passe doivent correspondre");

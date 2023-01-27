@@ -138,7 +138,7 @@ api.injectEndpoints({
 
     // Fetch one offer by id
     fetchOffer: builder.query({
-      query: () => `/breeds?limit=1`,
+      query: () => `/jobs`,
       // query: (id) => `offers/${id}`,
       transformResponse(baseQueryReturnValue, meta, id) {
         // Mock data with offers
@@ -149,7 +149,7 @@ api.injectEndpoints({
 
     addOffer: builder.mutation({
       query: (offer) => {
-        return "breeds?limit=100";
+        return "/jobs";
       },
       // query: ({slot, comments}) => ({
       //   url: "offers",
@@ -164,7 +164,7 @@ api.injectEndpoints({
     }),
 
     updateOffer: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/jobs",
       // query: (offerPatch) => ({
       //   url: "offers",
       //   method: "PATCH",
@@ -178,7 +178,7 @@ api.injectEndpoints({
     }),
 
     deleteOffer: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: (id) => "/jobs",
       // query: (id) => ({
       //   url: `offer`,
       //   method: "DELETE",

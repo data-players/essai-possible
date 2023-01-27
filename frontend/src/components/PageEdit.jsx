@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import Button from "@mui/joy/Button";
-import {ButtonWithConfirmation, Form, HelpBox, LoadingSpinner} from "./atoms.jsx";
+import {ButtonWithConfirmation, HelpBox, LoadingSpinner} from "./atoms.jsx";
+import {Form} from "./forms.jsx";
 import CheckIcon from "@mui/icons-material/Check";
 import {PageContent} from "./Layout.jsx";
 import Collapse from "@mui/material/Collapse";

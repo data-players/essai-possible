@@ -8,8 +8,6 @@ import meetingsReducer from "../routes/offers/book/meetings-slice.js";
 import slotsReducer from "../routes/offers/book/slots-slice.js";
 import authReducer from "./auth-slice.js";
 
-console.log('apiMiddleware',apiMiddleware);
-console.log('api',api);
 export const store = configureStore({
   reducer: {
     [geocodingApi.reducerPath]: geocodingApi.reducer,

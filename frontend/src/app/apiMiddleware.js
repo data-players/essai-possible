@@ -1,7 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {isAnyOf} from "@reduxjs/toolkit";
 
-
 /**
  * API OBJECT
  *
@@ -15,12 +14,12 @@ import {isAnyOf} from "@reduxjs/toolkit";
 const api = createApi({
   baseQuery: fetchBaseQuery({
     // baseUrl: "https://api.thedogapi.com/v1",
-    baseUrl : import.meta.env.VITE_MIDDLEWARE_URL,
+    baseUrl: import.meta.env.VITE_MIDDLEWARE_URL,
     prepareHeaders: (headers, {getState}) => {
       // By default, if we have a token in the store, add it to request headers
       const token = getState().auth.token;
       if (token) headers.set("authorization", `Bearer ${token}`);
-
+      headers.set("accept", "application/ld+json");
       return headers;
     },
   }),
@@ -50,9 +49,6 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
     state.status[endpoint] = status;
   };
   for (const endpoint of endpoints) {
-    // console.log('endpoint',endpoint);
-    // console.log('endpoints',api.endpoints);
-    // console.log('api.endpoints[endpoint]',api.endpoints[endpoint]);
     builder
       .addMatcher(api.endpoints[endpoint].matchPending, setStatusReducer("pending", endpoint))
       .addMatcher(api.endpoints[endpoint].matchRejected, setStatusReducer(undefined, endpoint))

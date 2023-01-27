@@ -386,6 +386,17 @@ export const AuthButton = {
   ),
   LogIn: ({sx}) => {
     const location = useLocation();
+<<<<<<< HEAD
+  return (
+    <Button
+      sx={sx}
+      onClick={() => {window.location.assign(import.meta.env.VITE_MIDDLEWARE_URL+'/auth?redirectUrl='+window.location.href)}}
+      variant={"solid"}
+      startDecorator={<PersonRoundedIcon />}>
+      {t("nav.logIn")}
+    </Button>
+  )},
+=======
     return (
       <Button
         sx={sx}
@@ -400,6 +411,7 @@ export const AuthButton = {
       </Button>
     );
   },
+>>>>>>> 2ab1fc6328e97a3e44505fe87e01b6a8613ea938
   LogInShort: ({sx, currentUser}) => {
     const isCompanyAccount = currentUser?.companies?.length > 0;
     return (

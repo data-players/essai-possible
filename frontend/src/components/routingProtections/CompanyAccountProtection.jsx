@@ -22,7 +22,6 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 
   // User not belonging to the company bump out
   useEffect(() => {
-    console.log(finalCompanyId);
     if (!currentUser?.companies.includes(finalCompanyId)) navigate(redirectTo);
   }, [finalCompanyId, currentUser?.companies]);
 

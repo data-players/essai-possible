@@ -1,10 +1,11 @@
-import {CheckboxGroup, FormInput} from "../../components/atoms.jsx";
+import {CheckboxGroup} from "../../components/atoms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import Box from "@mui/joy/Box";
 import {sectorsOptions} from "../offers/companies-slice-data.js";
 import React from "react";
+import {FormInput} from "../../components/forms.jsx";
 
-export function CompanyFormComponent({register, setFieldValue, baseFormPath}) {
+export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
   const base = baseFormPath ? `${baseFormPath}.` : "";
   return (
     <>

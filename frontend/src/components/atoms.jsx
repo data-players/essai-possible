@@ -11,11 +11,9 @@ import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
 import "./spinner.css";
 import React, {useCallback, useEffect, useState} from "react";
-import {useFormik} from "formik";
 import {useTranslation} from "react-i18next";
 import Input from "@mui/joy/Input";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded.js";
-import {useSnackbar} from "./snackbar.jsx";
 import ListItem from "@mui/joy/ListItem";
 import List from "@mui/joy/List";
 import Card from "@mui/joy/Card";
@@ -26,14 +24,9 @@ import Autocomplete from "@mui/joy/Autocomplete";
 import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
 import debounce from "@mui/utils/debounce.js";
 import Pagination from "@mui/material/Pagination";
-import {getDeepValue, getUrlParam, setURLParam} from "../app/utils.js";
-import FormLabel from "@mui/joy/FormLabel";
-import FormControl from "@mui/joy/FormControl";
-import FormHelperText from "@mui/joy/FormHelperText";
+import {getUrlParam, setURLParam} from "../app/utils.js";
 import Radio from "@mui/joy/Radio";
 import MuiRadioGroup from "@mui/joy/RadioGroup";
-import Collapse from "@mui/material/Collapse";
-import Divider from "@mui/joy/Divider";
 import Link from "@mui/joy/Link";
 import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded.js";
 import Grid from "@mui/joy/Grid";
@@ -182,78 +175,8 @@ export function LocationSearchBar({sx, ...props}) {
   );
 }
 
-export function FormInput({
-  name,
-  component: InputComponent = Input,
-  wrapperComponent: WrapperComponent = FormControl,
-  label,
-  placeholder,
-  help,
-  register,
-  ...props
-}) {
-  const registration = register?.(name);
-  return (
-    <WrapperComponent>
-      <FormLabel>{label}</FormLabel>
-      <InputComponent placeholder={placeholder} {...registration} {...props} />
-      <FormHelperText sx={registration?.errors && {color: "red", fontWeight: "lg"}}>
-        {registration?.errors || help}
-      </FormHelperText>
-    </WrapperComponent>
-  );
-}
-
-export function Form({onSubmit, initialValues, children, successText, validationSchema}) {
-  const [openSnackbar] = useSnackbar();
-
-  // https://formik.org/docs/examples/with-material-ui
-  const {
-    handleSubmit,
-    handleChange: onChange,
-    setFieldValue,
-    values,
-    errors,
-    dirty,
-    touched,
-  } = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: async (values) => {
-      try {
-        await onSubmit(values);
-        successText && openSnackbar(successText, {color: "success"});
-      } catch (err) {
-        console.error(err);
-        openSnackbar(`Oh oh... Il y a eu une erreur: ${err.message}`);
-      }
-    },
-  });
-
-  // A function to register easily fields by putting {...register("fieldName") inside field components
-  function register(name) {
-    const splitName = name.split(".");
-
-    const error = getDeepValue(touched, splitName) && getDeepValue(errors, splitName);
-    return {
-      name,
-      value: getDeepValue(values, splitName),
-      onChange,
-      errors: error,
-      color: error && "danger",
-    };
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      {children(register, {values, setFieldValue, onChange, errors, dirty})}
-    </form>
-  );
-}
-
 export const CheckboxGroup = React.memo(
   function ({options, value, onChange, color}) {
-    console.log("col", color);
     const [val, setVal] = useState(value);
     return (
       <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1}}>
@@ -389,45 +312,6 @@ export function ParagraphWithTitle({title, children, sx}) {
         {title}
       </Typography>
       {children}
-    </Stack>
-  );
-}
-
-export function FormStep({
-  stepNumber,
-  setCurrentFormStep,
-  currentFormStep,
-  children,
-  title,
-  subtitle,
-  showTitle = false,
-  showContent = false,
-  noDivider = false,
-}) {
-  showTitle = !!(currentFormStep >= stepNumber || showTitle);
-  showContent = currentFormStep === stepNumber || showContent;
-  const onClickProps = showTitle &&
-    !showContent && {
-      onClick: () => setCurrentFormStep(stepNumber),
-      sx: {cursor: "pointer"},
-    };
-  return (
-    <Stack {...onClickProps}>
-      <Collapse in={showTitle} sx={{mb: 1}}>
-        <ParagraphWithTitle title={stepNumber ? `${stepNumber}. ${title}` : title}>
-          {subtitle}
-        </ParagraphWithTitle>
-      </Collapse>
-      <Collapse in={showContent}>
-        <Box mt={2}>{children}</Box>
-      </Collapse>
-      <Collapse in={showTitle && !showContent}>
-        <Button sx={{mt: 2}} variant="soft" size={"sm"} color="neutral">
-          Modifier
-        </Button>
-        {(noDivider || showContent) && <Divider sx={{mt: 5, mb: 2}} />}
-      </Collapse>
-      {!noDivider && <Divider sx={{mt: 5, mb: 2}} />}
     </Stack>
   );
 }

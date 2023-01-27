@@ -14,7 +14,7 @@ import {useSelector} from "react-redux";
 import PageEdit from "../../components/PageEdit.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
-import {CompanyFormComponent} from "./CompanyFormComponent";
+import {CompanyFormElements} from "./CompanyFormElements.jsx";
 
 export default function PageEditCompany({mode}) {
   const isEditMode = mode === "edit";
@@ -35,7 +35,6 @@ export default function PageEditCompany({mode}) {
 
   async function onSubmit(values) {
     const method = isEditMode ? updateCompany : addCompany;
-    console.log(values);
     const newCompany = await method({...values, id: company?.id}).unwrap();
     navigate("/company/" + newCompany.id);
   }
@@ -68,7 +67,7 @@ export default function PageEditCompany({mode}) {
       updateLoading={isAddingCompany || isUpdatingCompany}>
       {(register, {setFieldValue}) => (
         <Stack gap={3}>
-          <CompanyFormComponent setFieldValue={setFieldValue} register={register} />
+          <CompanyFormElements setFieldValue={setFieldValue} register={register} />
 
           <Divider sx={{my: 1}} />
         </Stack>
