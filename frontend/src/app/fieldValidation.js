@@ -12,8 +12,9 @@ export const requiredPhone = requiredString.matches(
   "Entrez un numéro de téléphone valide"
 );
 
-export const requiredNumber = yup
+export const requiredPositiveNumber = yup
   .number("Ce champ n'est pas valide.")
+  .positive("Ce nombre doit être positif.")
   .required("Ce champ est requis");
 
 export const requiredArray = yup.array().min(1, "Donnez au moins une réponse.");

@@ -55,11 +55,19 @@ export default function PageEdit({
 
             {children(register, {values, setFieldValue, errors, dirty, showingErrors})}
 
-            <Collapse in={showingErrors && Object.keys(errors).length > 0} sx={{mb: -2}}>
-              <Card variant="soft" color="danger" sx={{mb: 3}}>
-                Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
-                informations.
-              </Card>
+            <Collapse in={showingErrors} sx={{mb: -2}}>
+              {Object.keys(errors).length > 0 ? (
+                <Card variant="soft" color="danger" sx={{mb: 3}}>
+                  Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
+                  informations.
+                </Card>
+              ) : (
+                dirty && (
+                  <Card variant="soft" color="success" sx={{mb: 3}}>
+                    C'est tout bon !
+                  </Card>
+                )
+              )}
             </Collapse>
 
             <Button
@@ -68,7 +76,7 @@ export default function PageEdit({
               color="success"
               disabled={!dirty}
               loading={updateLoading}
-              onClick={() => setShowingErrors(true)}
+              onClick={() => Object.keys(errors).length > 0 && setShowingErrors(true)}
               startDecorator={<CheckIcon />}>
               {isEditMode ? "Valider les modifications" : "Valider la création"}
             </Button>

@@ -30,6 +30,7 @@ import {
   companyValidationSchema,
   selectCompanyById,
   selectCompanyReady,
+  useUpdateCompanyMutation,
 } from "../companies-slice";
 import {goalOptions, softSkillsOptions, statusOptions} from "../offers-slice-data.js";
 import Box from "@mui/joy/Box";
@@ -63,12 +64,17 @@ export default function PageEditOffer({mode}) {
 
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
+  const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
   const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
 
   async function onSubmit(values) {
     const method = isEditMode ? updateOffer : addOffer;
+
+    const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
+    if (shouldUpdateCompany) updateCompany(values.company);
+
     const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
     navigate("/offers/" + newOffer.id);
   }
@@ -126,7 +132,7 @@ export default function PageEditOffer({mode}) {
         </>
       }
       deleteLoading={isDeletingOffer}
-      updateLoading={isAddingOffer || isUpdatingOffer}
+      updateLoading={isAddingOffer || isUpdatingOffer || isUpdatingCompany}
       deleteAreYouSureText={
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
       }>
@@ -202,13 +208,14 @@ export default function PageEditOffer({mode}) {
             stepNumber={2}
             showTitle
             showContent
-            title={"Modalités"}
+            title={"Modalités de l'offre"}
             subtitle={"Décrivez comment l'immersion va se dérouler."}>
             <Stack gap={3}>
               <FormInput
                 sx={{width: "fit-content"}}
                 label={"Durée de l'immersion"}
                 endDecorator={"jours ouvrés"}
+                slotProps={{input: {min: 1}}}
                 type={"number"}
                 placeholder={"durée"}
                 register={register}
@@ -251,7 +258,7 @@ export default function PageEditOffer({mode}) {
             stepNumber={3}
             showTitle
             showContent
-            title={"Modalites du rendez-vous"}
+            title={"Modalités du rendez-vous"}
             subtitle={
               "Ajoutez des détails sur le rendez-vous ainsi que le contact du ou de la mentor, maître de stage, qui sera en charge des candidat·es."
             }>
@@ -327,7 +334,7 @@ export default function PageEditOffer({mode}) {
                   liste des offres et dans le détail des offres.
                 </Typography>
                 <Typography>
-                  Vous pouvez également mdifier votre entreprise sur{" "}
+                  Vous pouvez également modifier votre entreprise sur{" "}
                   <Link to={`/company/${company.id}/edit`} component={ReactRouterLink}>
                     cette page dédiée
                   </Link>

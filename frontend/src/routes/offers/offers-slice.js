@@ -8,7 +8,7 @@ import {
   required,
   requiredArray,
   requiredEmail,
-  requiredNumber,
+  requiredPositiveNumber,
   requiredPhone,
   requiredString,
 } from "../../app/fieldValidation.js";
@@ -213,12 +213,13 @@ export const offerValidationSchema = yup.object({
   softSkills: requiredArray,
   workEnvironment: requiredString,
 
-  //Modalities
-  duration: requiredNumber,
+  // Offer modalities
+  duration: requiredPositiveNumber,
   timeSchedule: requiredString,
   location: required,
 
-  // Mentor contact
+  // Meeting modalities
+  meetingDuration: requiredPositiveNumber,
   meetingDetails: requiredString,
   mentorPhone: requiredPhone,
   mentorEmail: requiredEmail,
@@ -237,14 +238,16 @@ export const offerDefaultValues = {
   softSkills: [],
   workEnvironment: "",
 
-  //Modalities
+  // Offer modalities
   duration: undefined,
   timeSchedule: "",
   location: null,
   particularConditions: "",
   possibleArrangements: "",
 
-  // Mentor contact
+  // Meeting modalities
+  meetingDuration: 30,
+  meetingDetails: "",
   mentorPhone: "",
   mentorEmail: "",
 
