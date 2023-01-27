@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/apiMiddleware.js";
 import {meetings} from "./meetings-slice-data.js";
 import {selectSlotsForOffer} from "./slots-slice.js";
 
@@ -70,7 +70,7 @@ const getCounter = () => counter++;
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchMeetings: builder.query({
-      query: () => "breeds?limit=100",
+      query: () => "/TimeSlots",
       // query: () => "meetings",
       transformResponse() {
         // Mock data

@@ -389,8 +389,6 @@ export const AuthButton = {
   ),
   LogIn: ({sx}) => {
     const location = useLocation();
-    console.log(import.meta.env.VITE_MIDDLEWARE_URL)
-    console.log(window.location.href);
   return (
     <Button
       sx={sx}

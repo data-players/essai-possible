@@ -50,6 +50,9 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
     state.status[endpoint] = status;
   };
   for (const endpoint of endpoints) {
+    // console.log('endpoint',endpoint);
+    // console.log('endpoints',api.endpoints);
+    // console.log('api.endpoints[endpoint]',api.endpoints[endpoint]);
     builder
       .addMatcher(api.endpoints[endpoint].matchPending, setStatusReducer("pending", endpoint))
       .addMatcher(api.endpoints[endpoint].matchRejected, setStatusReducer(undefined, endpoint))

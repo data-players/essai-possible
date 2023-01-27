@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/apiMiddleware.js";
 import {sorter} from "../../../app/utils.js";
 import {slots} from "./slots-slice-data.js";
 

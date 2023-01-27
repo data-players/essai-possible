@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
 import {users} from "./auth-slice-data.js";
 import jwtDecode from 'jwt-decode';
 
@@ -17,7 +17,7 @@ const slice = createSlice({
   reducers: {
     setToken : (state, {payload}) => {
       state.token = payload;
-      console.log('token',payload);
+      // console.log('token',payload);
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
       console.log('webId',tockenData.webID);
@@ -39,10 +39,10 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder
       // LOG IN - SIGN UP : Set user and token after logIn and signup mutations
-      .addMatcher(
-        matchAny("matchFulfilled", ["logIn", "signUp"]),
-        slice.caseReducers.setCredentials
-      )
+      // .addMatcher(
+      //   matchAny("matchFulfilled", ["logIn", "signUp"]),
+      //   slice.caseReducers.setCredentials
+      // )
       // FETCH - UPDATE : Set user after fetch and update query
       .addMatcher(
         matchAny("matchFulfilled", ["fetchUser", "updateUser"]),
@@ -74,48 +74,53 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 
 api.injectEndpoints({
   endpoints: (builder) => ({
-    logIn: builder.mutation({
-      query: () => "breeds?limit=100",
-      // query: ({email, password}) => ({
-      //   url: "auth",
-      //   method: "POST",
-      //   body: {email, password},
-      // }),
-      transformResponse(a, b, id) {
-        // Mock data
-        const user = users.find((user) => user.id === id);
-        return {
-          token: user.token,
-          user,
-        };
-      },
-    }),
-
-    signUp: builder.mutation({
-      query: () => "breeds?limit=100",
-      // query(initialUser) {
-      //   return {
-      //     url: "user",
-      //     method: "POST",
-      //     body: initialUser,
-      //   };
-      // },
-      transformResponse(a, b, id) {
-        // Mock data
-        const user = users.find((user) => user.id === id);
-        return {
-          token: user.token,
-          user,
-        };
-      },
-    }),
+    // logIn: builder.mutation({
+    //   query: () => "breeds?limit=100",
+    //   // query: () => {
+    //   //   return {
+    //   //   url: "auth",
+    //   //   method: "POST",
+    //   //   body: {email, password},
+    //   //   }
+    //   // },
+    //   transformResponse(a, b, id) {
+    //     // Mock data
+    //     const user = users.find((user) => user.id === id);
+    //     return {
+    //       token: user.token,
+    //       user,
+    //     };
+    //   },
+    // }),
+    //
+    // signUp: builder.mutation({
+    //   query: () => "breeds?limit=100",
+    //   // query(initialUser) {
+    //   //   return {
+    //   //     url: "user",
+    //   //     method: "POST",
+    //   //     body: initialUser,
+    //   //   };
+    //   // },
+    //   transformResponse(a, b, id) {
+    //     // Mock data
+    //     const user = users.find((user) => user.id === id);
+    //     return {
+    //       token: user.token,
+    //       user,
+    //     };
+    //   },
+    // }),
 
     fetchUser: builder.query({
-      query: () => "breeds?limit=100",
-      // query: () => ({
-      //   url: "user",
-      //   method: "GET",
-      // }),
+      query: () => "/",
+      // query: () => {
+      // const token =   localStorage.getItem("token")
+      // const {webID} = jwtDecode(token);
+      //   return {
+      //     url: "users/"+encodeURI(webID),
+      //   }
+      // },
       transformResponse() {
         // Mock data
         const localStorageToken = localStorage.getItem("token");
@@ -125,7 +130,7 @@ api.injectEndpoints({
     }),
 
     updateUser: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/",
       // query: (userPatch) => ({
       //   url: `user`,
       //   method: "PATCH",
@@ -139,7 +144,7 @@ api.injectEndpoints({
     }),
 
     deleteUser: builder.mutation({
-      query: () => "breeds?limit=100",
+      query: () => "/",
       // query: () => ({
       //   url: `user`,
       //   method: "DELETE",
