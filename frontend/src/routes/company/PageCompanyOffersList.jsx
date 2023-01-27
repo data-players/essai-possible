@@ -6,31 +6,24 @@ import {useTranslation} from "react-i18next";
 import Grid from "@mui/joy/Grid";
 import Container from "@mui/joy/Container";
 import {selectOfferIdsForCompany, selectOffersReady} from "../offers/offers-slice.js";
-import OfferListItem from "../offers/OfferListItem.jsx";
+import {OfferListItemForCompany} from "../offers/OfferListItem.jsx";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {ListPageContent, LoadingSpinner} from "../../components/atoms.jsx";
 import {Link as ReactRouterLink, useParams} from "react-router-dom";
-import {
-  selectCompanyById,
-  selectCompanyReady,
-  useFetchCompanyQuery,
-} from "../offers/companies-slice.js";
+import {selectCompanyById, useFetchCompanyQuery} from "../offers/companies-slice.js";
 import Card from "@mui/joy/Card";
 import AddRoundedIcon from "@mui/icons-material/AddRounded.js";
 
-export default function PageCompanyOffers() {
+export default function PageCompanyOffersList() {
   const {t} = useTranslation();
   const {companyId} = useParams();
   useFetchCompanyQuery(companyId);
   const offersForCompany = useSelector((state) => selectOfferIdsForCompany(state, companyId));
   const company = useSelector((state) => selectCompanyById(state, companyId));
   const offersReady = useSelector(selectOffersReady);
-  const companiesReady = useSelector(selectCompanyReady);
 
   if (!company?.id) return <LoadingSpinner />;
-
-  console.log(offersReady, offersForCompany);
 
   return (
     <>
@@ -48,10 +41,15 @@ export default function PageCompanyOffers() {
                   <Typography>
                     Bienvenue sur la page de votre entreprise. Consultez vos offres en cours.
                   </Typography>
-                  <Stack direction={"row"} gap={3} justifyContent={"center"}>
+                  <Stack
+                    direction={{xs: "column", sm: "row"}}
+                    gap={3}
+                    justifyContent={"center"}
+                    alignItems={"stretch"}
+                    flexWrap={"wrap"}>
                     <Button
                       component={ReactRouterLink}
-                      to={"/offers/new?company=" + companyId}
+                      to={"new-offer"}
                       size={"lg"}
                       startDecorator={<AddRoundedIcon />}>
                       {t("offers.proposeAnOffer")}
@@ -68,18 +66,10 @@ export default function PageCompanyOffers() {
       </HeroBanner>
 
       <ListPageContent
-        ready={offersReady && companiesReady}
-        noResultsText={"Vous n'avez pas encore créé d'offres pour votre entreprise."}
+        ready={offersReady && company}
+        noResultsContent={"Vous n'avez pas encore créé d'offres pour votre entreprise."}
         values={offersForCompany}
-        item={({value, key}) => (
-          <OfferListItem
-            offerId={value}
-            key={key}
-            companyMode
-            // sideElement={() => <Button>truc</Button>}
-          />
-        )}
-        getKey={(value) => value.id}
+        item={OfferListItemForCompany}
       />
     </>
   );

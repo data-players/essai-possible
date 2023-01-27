@@ -66,9 +66,9 @@ services:
       - '4000:4000'
 
   frontend:
-    command: bash -c "yarn install && yarn start"
+    command: bash -c "yarn install && yarn dev"
     environment:
-      - 'VITE_MIDDLEWARE_URL=http://localhost:3000/'
+      - 'VITE_MIDDLEWARE_URL=http://localhost:3000'
     volumes:
       - ./frontend:/app/
     build:

@@ -5,9 +5,9 @@ import {useSelector} from "react-redux";
 import {selectCompanyById, useLazyFetchCompanyQuery} from "./companies-slice.js";
 import {useEffect} from "react";
 import {LoadingSpinner} from "../../components/atoms.jsx";
-import {selectSlotsReady, useFetchSlotsQuery} from "./book/slots-slice.js";
+import {useFetchSlotsQuery} from "./book/slots-slice.js";
 
-export default function PageOfferRoot() {
+export default function PageOfferProtection() {
   const {id} = useParams();
 
   // Fetch the full offer
@@ -16,7 +16,6 @@ export default function PageOfferRoot() {
 
   // Fetch the offer slots
   useFetchSlotsQuery({offer: id});
-  const slotsReady = useSelector(selectSlotsReady);
 
   // Fetch the full company when we have its id from the offer
   const [launchFetchCompanyQuery] = useLazyFetchCompanyQuery();
@@ -27,7 +26,7 @@ export default function PageOfferRoot() {
 
   // Don't use the ready status because sometimes the objects are partially loaded and can be displayed already.
   // Instead, if the id is present is a good test to see if we can display stuff.
-  if (!offer.id || !company.id || !slotsReady) return <LoadingSpinner />;
+  if (!(offer.id && company.id)) return <LoadingSpinner />;
 
   return <Outlet />;
 }

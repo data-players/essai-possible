@@ -14,7 +14,7 @@ import {MeetingCardContent} from "../account/PageMyMeetings.jsx";
 import {selectMeetingForOffer} from "./book/meetings-slice.js";
 import Card from "@mui/joy/Card";
 import React from "react";
-import CompanyPrivatePreviewContainer from "./CompanyPrivatePreviewContainer.jsx";
+import CompanyOfferPreview from "./CompanyOfferPreview.jsx";
 import OfferSider from "./OfferSider.jsx";
 
 export default function PageOffer() {
@@ -33,7 +33,7 @@ export default function PageOffer() {
           {t("offers.howToApply")}
         </Typography>
         <Typography fontSize="xl" textColor={"neutral.800"}>
-          {t("offers.theCompanyProposesBookingAMeetingSlot")}
+          {t("offers.chooseASlotToExchangeWithTheCompany")}
         </Typography>
         <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
@@ -54,7 +54,7 @@ export default function PageOffer() {
   }
 
   return (
-    <CompanyPrivatePreviewContainer offer={offer}>
+    <CompanyOfferPreview offer={offer}>
       <OfferBanner
         offer={offer}
         breadcrumbs={[
@@ -105,6 +105,6 @@ export default function PageOffer() {
           </Grid>
         </Grid>
       </PageContent>
-    </CompanyPrivatePreviewContainer>
+    </CompanyOfferPreview>
   );
 }

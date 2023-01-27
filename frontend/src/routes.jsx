@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
 import PageOffersList from "./routes/offers/PageOffersList.jsx";
 import Root from "./Root.jsx";
@@ -8,55 +8,101 @@ import HomePage from "./routes/HomePage.jsx";
 import PageBook from "./routes/offers/book/PageBook.jsx";
 import PageAccount from "./routes/account/PageAccount.jsx";
 import {AuthComponent} from "./routes/account/AuthComponent.jsx";
-import PageOfferRoot from "./routes/offers/PageOfferRoot.jsx";
-import PageAccountRoot from "./routes/account/PageAccountRoot";
+import PageOfferProtection from "./routes/offers/PageOfferProtection.jsx";
+import ConnectedUserProtection from "./routes/account/ConnectedUserProtection.jsx";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 import PageCGU from "./routes/PageCGU";
 import PageEditOffer from "./routes/offers/edit/PageEditOffer";
-import PageCompanyOffers from "./routes/company/PageCompanyOffers.jsx";
+import PageCompanyOffersList from "./routes/company/PageCompanyOffersList.jsx";
+import {useSelector} from "react-redux";
+import {selectCurrentUser} from "./app/auth-slice.js";
+import CompanyAccountProtection from "./routes/company/CompanyAccountProtection.jsx";
 
-export default createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: (
-      <Root>
-        <PageError />
-      </Root>
-    ),
-    children: [
-      {index: true, element: <HomePage />},
+export default function Router() {
+  const currentUser = useSelector(selectCurrentUser);
 
-      {
-        path: "offers",
-        children: [
-          {index: true, element: <PageOffersList />},
-          {path: "new", element: <PageEditOffer mode={"new"} />},
-          {
-            path: ":id",
-            element: <PageOfferRoot />,
-            children: [
-              {index: true, element: <PageOffer />},
-              {path: "book", element: <PageBook />},
-              {path: "edit", element: <PageEditOffer mode={"edit"} />},
-            ],
-          },
-        ],
-      },
+  const isACompanyAccount = currentUser?.companies?.length > 0;
 
-      {path: "company/:companyId", element: <PageCompanyOffers />},
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Root />,
+      errorElement: (
+        <Root>
+          <PageError />
+        </Root>
+      ),
+      children: [
+        {index: true, element: <HomePage />},
 
-      {
-        path: "account",
-        element: <PageAccountRoot />,
-        children: [{index: true, element: <PageAccount />}],
-      },
-      {path: "my-meetings", element: <PageMyMeetings />},
+        {
+          path: "offers",
+          children: [
+            {index: true, element: <PageOffersList />},
+            {
+              path: ":id",
+              element: <PageOfferProtection />,
+              children: [
+                {index: true, element: <PageOffer />},
+                {path: "book", element: <PageBook />},
+                {
+                  path: "edit",
+                  element: (
+                    <CompanyAccountProtection redirectTo={".."}>
+                      <PageEditOffer mode={"edit"} />
+                    </CompanyAccountProtection>
+                  ),
+                },
+              ],
+            },
+          ],
+        },
 
-      {path: "login", element: <AuthComponent mode={"logIn"} redirect />},
-      {path: "signup", element: <AuthComponent mode={"signUp"} redirect />},
+        {
+          path: "company/:companyId",
+          children: [
+            {
+              index: true,
+              element: (
+                <CompanyAccountProtection>
+                  <PageCompanyOffersList />
+                </CompanyAccountProtection>
+              ),
+            },
+            {
+              path: "new-offer",
+              element: (
+                <CompanyAccountProtection>
+                  <PageEditOffer mode={"new"} />
+                </CompanyAccountProtection>
+              ),
+            },
+          ],
+        },
+        {
+          path: "account",
+          element: (
+            <ConnectedUserProtection>
+              <PageAccount />
+            </ConnectedUserProtection>
+          ),
+        },
 
-      {path: "cgu", element: <PageCGU />},
-    ],
-  },
-]);
+        !isACompanyAccount && {
+          path: "my-meetings",
+          element: (
+            <ConnectedUserProtection>
+              <PageMyMeetings />
+            </ConnectedUserProtection>
+          ),
+        },
+
+        {path: "login", element: <AuthComponent mode={"logIn"} redirect />},
+        {path: "signup", element: <AuthComponent mode={"signUp"} redirect />},
+
+        {path: "cgu", element: <PageCGU />},
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
+}

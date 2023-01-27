@@ -87,7 +87,7 @@ export default function PageMyMeetings() {
     const offer = useSelector((state) => selectOfferById(state, slot.offer));
     return (
       <OfferListItem
-        offerId={offer.id}
+        value={offer.id}
         sideElement={() => <MeetingCardContent offer={offer} meeting={meeting} />}
       />
     );
@@ -109,7 +109,7 @@ export default function PageMyMeetings() {
 
       <ListPageContent
         ready={offersReady && meetingsReady}
-        noResultsText={t("account.youDontHaveMeetingsYet")}
+        noResultsContent={t("account.youDontHaveMeetingsYet")}
         values={meetings}
         item={OfferListItemWithMeetingInfo}
         getKey={(value) => value.id}

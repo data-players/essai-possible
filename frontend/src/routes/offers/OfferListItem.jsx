@@ -13,6 +13,11 @@ import Chip from "@mui/joy/Chip";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded.js";
 import React from "react";
 import {useTranslationWithDates} from "../../app/i18n.js";
+import {statusOptions} from "./offers-slice-data.js";
+import CheckIcon from "@mui/icons-material/Check.js";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+import {StatusChip} from "../../components/atoms.jsx";
 
 function OfferDescriptionSideElement({offer}) {
   return (
@@ -29,21 +34,12 @@ function OfferDescriptionSideElement({offer}) {
   );
 }
 
-export default function OfferListItem({
-  offerId,
-  companyMode = false,
-  sideElement: SideElement = OfferDescriptionSideElement,
-  sx,
-}) {
+function OfferListItemRoot({offer, children}) {
   const navigate = useNavigate();
-  const {t, tDate} = useTranslationWithDates();
 
   const launchOfferPrefetch = usePrefetch("fetchOffer");
   const launchCompanyPrefetch = usePrefetch("fetchCompany");
   const launchSlotsPrefetch = usePrefetch("fetchSlots");
-
-  const offer = useSelector((state) => selectOfferById(state, offerId));
-  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
   return (
     <ListItem
@@ -53,7 +49,7 @@ export default function OfferListItem({
         launchCompanyPrefetch(offer.company);
       }}>
       <Card
-        onClick={() => navigate(`/offers/${offerId}`)}
+        onClick={() => navigate(`/offers/${offer.id}`)}
         variant={"soft"}
         size={"lg"}
         sx={{
@@ -61,56 +57,129 @@ export default function OfferListItem({
           width: "100%",
           my: 1,
           ":hover": {boxShadow: "lg"},
-          ...sx,
         }}>
-        <Grid container columnSpacing={4} rowSpacing={2}>
-          <Grid xs={12} md={8}>
-            <Stack gap={2}>
-              <Typography level="h3" component="h2" fontWeight={"lg"}>
-                {offer.title}
-              </Typography>
-
-              {!companyMode && <Typography level="h4">{company.name}</Typography>}
-
-              <OfferInfoPills company={company} offer={offer} companyMode={companyMode} />
-
-              <Stack
-                gap={2}
-                direction={"row"}
-                flexWrap={"wrap"}
-                alignItems={"center"}
-                justifyContent={"space-between"}>
-                <Typography textColor={"text.tertiary"}>
-                  {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
-                </Typography>
-
-                {!companyMode && (
-                  <Chip
-                    color={"neutral.tertiary"}
-                    variant={"plain"}
-                    startDecorator={<PlaceRoundedIcon />}
-                    sx={{p: 0, opacity: 0.6}}>
-                    {offer.location.city}
-                  </Chip>
-                )}
-              </Stack>
-              <Typography
-                textColor={"text.tertiary"}
-                fontSize={"sm"}
-                sx={{opacity: 0.6}}
-                fontStyle={"italic"}>
-                Publiée le {tDate(offer.publishedAt)}
-              </Typography>
-            </Stack>
-          </Grid>
-
-          <Grid xs={12} md={4}>
-            <Card sx={{height: "100%"}}>
-              <SideElement offer={offer} />
-            </Card>
-          </Grid>
-        </Grid>
+        {children}
       </Card>
     </ListItem>
+  );
+}
+
+/**
+ * The list item in the list of offers, show to users
+ */
+export default function OfferListItem({
+  value: offerId,
+  sideElement: SideElement = OfferDescriptionSideElement,
+}) {
+  const {t, tDate} = useTranslationWithDates();
+
+  const offer = useSelector((state) => selectOfferById(state, offerId));
+  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
+
+  return (
+    <OfferListItemRoot offer={offer}>
+      <Grid container columnSpacing={4} rowSpacing={2}>
+        <Grid xs={12} md={8}>
+          <Stack gap={2}>
+            <Typography level="h3" component="h2" fontWeight={"lg"}>
+              {offer.title}
+            </Typography>
+
+            <Typography level="h4">{company.name}</Typography>
+
+            <OfferInfoPills company={company} offer={offer} />
+
+            <Stack
+              gap={2}
+              direction={"row"}
+              flexWrap={"wrap"}
+              alignItems={"center"}
+              justifyContent={"space-between"}>
+              <Typography textColor={"text.tertiary"}>
+                {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+              </Typography>
+
+              <Chip
+                color={"neutral.tertiary"}
+                variant={"plain"}
+                startDecorator={<PlaceRoundedIcon />}
+                sx={{p: 0, opacity: 0.6}}>
+                {offer.location.city}
+              </Chip>
+            </Stack>
+            <Typography
+              textColor={"text.tertiary"}
+              fontSize={"sm"}
+              sx={{opacity: 0.6}}
+              fontStyle={"italic"}>
+              Publiée le {tDate(offer.publishedAt)}
+            </Typography>
+          </Stack>
+        </Grid>
+
+        <Grid xs={12} md={4}>
+          <Card sx={{height: "100%"}}>
+            <SideElement offer={offer} />
+          </Card>
+        </Grid>
+      </Grid>
+    </OfferListItemRoot>
+  );
+}
+
+/**
+ * The list item in the list of COMPANY offers, shown to company members only for admin tasks
+ */
+export function OfferListItemForCompany({value: offerId}) {
+  const {t, tDate} = useTranslationWithDates();
+
+  const offer = useSelector((state) => selectOfferById(state, offerId));
+
+  return (
+    <OfferListItemRoot offer={offer}>
+      <Stack gap={2}>
+        <Typography level="h4" component="h2" fontWeight={"lg"}>
+          {offer.title}
+        </Typography>
+
+        <Grid container spacing={3}>
+          <Grid md={6} xs={12}>
+            <Typography textColor={"text.tertiary"}>
+              {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+            </Typography>
+          </Grid>
+          <Grid md={6} xs={12}>
+            <StatusChip
+              status={offer.status}
+              options={{
+                [statusOptions[0]]: {
+                  label: statusOptions[0],
+                  icon: <VisibilityOffRoundedIcon />,
+                  color: "warning",
+                },
+                [statusOptions[1]]: {
+                  label: statusOptions[1],
+                  icon: <VisibilityRoundedIcon />,
+                  color: "neutral",
+                },
+                [statusOptions[2]]: {
+                  label: statusOptions[2],
+                  icon: <CheckIcon />,
+                  color: "success",
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        <Typography
+          textColor={"text.tertiary"}
+          fontSize={"sm"}
+          sx={{opacity: 0.6}}
+          fontStyle={"italic"}>
+          Publiée le {tDate(offer.publishedAt)}
+        </Typography>
+      </Stack>
+    </OfferListItemRoot>
   );
 }

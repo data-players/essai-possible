@@ -216,7 +216,6 @@ export function Form({onSubmit, initialValues, children, successText, validation
   } = useFormik({
     initialValues,
     validationSchema,
-    enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         await onSubmit(values);
@@ -232,12 +231,13 @@ export function Form({onSubmit, initialValues, children, successText, validation
   function register(name) {
     const splitName = name.split(".");
 
+    const error = getDeepValue(touched, splitName) && getDeepValue(errors, splitName);
     return {
       name,
       value: getDeepValue(values, splitName),
       onChange,
-      errors: getDeepValue(errors, splitName),
-      color: getDeepValue(touched, splitName) && getDeepValue(errors, splitName) && "danger",
+      errors: error,
+      color: error && "danger",
     };
   }
 
@@ -249,11 +249,11 @@ export function Form({onSubmit, initialValues, children, successText, validation
 }
 
 export const CheckboxGroup = React.memo(
-  function ({options, value, setFieldValue}) {
+  function ({options, value, onChange, color}) {
+    console.log("col", color);
     const [val, setVal] = useState(value);
-    console.log("render");
     return (
-      <Card variant={"soft"} size={"sm"} sx={{my: 1}}>
+      <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1}}>
         <List size="sm">
           {options.map((option, index) => {
             const checked = val.includes(option);
@@ -267,7 +267,7 @@ export const CheckboxGroup = React.memo(
                       ? [...val, option]
                       : val.filter((checkedOption) => option !== checkedOption);
                     setVal(newVal);
-                    setFieldValue(newVal);
+                    onChange(newVal);
                   }}
                 />
               </ListItem>
@@ -277,12 +277,12 @@ export const CheckboxGroup = React.memo(
       </Card>
     );
   },
-  (pp, np) => true
+  (pp, np) => pp.color === np.color
 );
 
-export function RadioGroup({options, ...props}) {
+export function RadioGroup({options, color, ...props}) {
   return (
-    <Card variant={"soft"} size={"sm"} sx={{mt: 1, p: 2}}>
+    <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2}}>
       <MuiRadioGroup {...props}>
         {options.map((option) => (
           <Radio value={option} key={option} label={option} />
@@ -295,7 +295,6 @@ export function RadioGroup({options, ...props}) {
 export function ButtonWithConfirmation({
   children,
   color,
-  cardColor = color,
   loading,
   areYouSureText,
   onClick,
@@ -308,13 +307,13 @@ export function ButtonWithConfirmation({
       {children}
     </Button>
   ) : (
-    <Card color={cardColor} variant={"solid"} invertedColors>
+    <Card color={color} variant={"solid"} invertedColors>
       <Stack gap={2}>
         <Typography>{areYouSureText}</Typography>
         <Button loading={loading} onClick={onClick} {...props}>
           {children}
         </Button>
-        <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)} {...props}>
+        <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)}>
           Annuler
         </Button>
       </Stack>
@@ -324,7 +323,7 @@ export function ButtonWithConfirmation({
 
 export function ListPageContent({
   ready,
-  noResultsText,
+  noResultsContent,
   values,
   item: Item,
   getKey,
@@ -344,7 +343,7 @@ export function ListPageContent({
   }, [values.length, page, itemsPerPage]);
 
   return (
-    <PageContent mt={6} alignItems={"center"}>
+    <PageContent mt={4} alignItems={"center"}>
       {ready ? (
         values.length > 0 ? (
           <>
@@ -352,11 +351,13 @@ export function ListPageContent({
               Résultats {itemsPerPage * (page - 1) + 1} à{" "}
               {Math.min(itemsPerPage * page, values.length)} sur {values.length}{" "}
             </Typography>
-            <List>
+
+            <List sx={{alignSelf: "stretch"}}>
               {values.slice(itemsPerPage * (page - 1), itemsPerPage * page).map((value, index) => (
                 <Item value={value} key={getKey ? getKey(value) : value} />
               ))}
             </List>
+
             {values.length > itemsPerPage && (
               <Pagination
                 count={numberOfPages}
@@ -367,7 +368,7 @@ export function ListPageContent({
             )}
           </>
         ) : (
-          noResultsText
+          <Box mt={2}>{noResultsContent}</Box>
         )
       ) : (
         <Stack justifyContent={"center"} alignItems={"center"} minHeight={300}>
@@ -409,7 +410,9 @@ export const FormStep = ({
   return (
     <Stack {...onClickProps}>
       <Collapse in={showTitle}>
-        <ParagraphWithTitle title={`${stepNumber + 1}. ${title}`}>{subtitle}</ParagraphWithTitle>
+        <ParagraphWithTitle title={stepNumber ? `${stepNumber}. ${title}` : title}>
+          {subtitle}
+        </ParagraphWithTitle>
       </Collapse>
       <Collapse in={showContent}>
         <Box mt={2}>{children}</Box>
@@ -423,3 +426,11 @@ export const FormStep = ({
     </Stack>
   );
 };
+
+export function StatusChip({status, options}) {
+  return (
+    <Chip color={options[status].color} startDecorator={options[status].icon}>
+      {options[status].label}
+    </Chip>
+  );
+}

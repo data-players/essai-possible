@@ -39,18 +39,18 @@ import {
 import Box from "@mui/joy/Box";
 import Divider from "@mui/joy/Divider";
 import {
-  email,
-  location,
-  phone,
+  required,
   requiredArray,
+  requiredEmail,
   requiredNumber,
+  requiredPhone,
   requiredString,
   requiredUrl,
 } from "../../../app/fieldValidation.js";
 import * as yup from "yup";
 import Card from "@mui/joy/Card";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
-import {selectCurrentUser} from "../../../app/auth-slice.js";
+import {useSnackbar} from "../../../components/snackbar.jsx";
 
 const offerValidationSchema = yup.object({
   // Job description
@@ -65,11 +65,12 @@ const offerValidationSchema = yup.object({
   //Modalities
   duration: requiredNumber,
   timeSchedule: requiredString,
-  location: location,
+  location: required,
 
   // Mentor contact
-  mentorPhone: phone,
-  mentorEmail: email,
+  meetingDetails: requiredString,
+  mentorPhone: requiredPhone,
+  mentorEmail: requiredEmail,
 
   // Status
   status: requiredString,
@@ -78,47 +79,54 @@ const offerValidationSchema = yup.object({
 const companyValidationSchema = yup.object({
   // Job description
   name: requiredString,
-  decription: requiredString,
+  description: requiredString,
   sectors: requiredArray,
   website: requiredUrl,
 });
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
+  company: companyValidationSchema,
 });
 
 export default function PageEditOffer({mode}) {
+  const [openSnackbar] = useSnackbar();
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
-  const {id} = useParams();
-  const companyId = !isEditMode && new URLSearchParams(window.location.search).get("company");
+  const {id, companyId} = useParams();
 
-  const currentUser = useSelector(selectCurrentUser);
+  const [showErrors, setShowErrors] = useState(false);
 
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, id) : undefined));
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : companyId)
   );
+
   const companyReady = useSelector(selectCompanyReady);
   const offerReady = useSelector(selectOfferReady);
+
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
-  async function handleDeleteOffer() {
-    await deleteOffer(id).unwrap();
+  const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
+
+  async function onSubmit(values) {
+    const method = isEditMode ? updateOffer : addOffer;
+    const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
+    navigate("/offers/" + newOffer.id);
   }
 
-  const [showErrors, setShowErrors] = useState(false);
-
-  const [currentFormStep, setCurrentFormStep] = useState(0);
-
-  const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
+  async function handleDeleteOffer() {
+    await deleteOffer(id).unwrap();
+    openSnackbar("Suppression réussie");
+    navigate("/company/" + company.id);
+  }
 
   return (
     companyReady &&
-    offerReady && (
+    (offerReady || !isEditMode) && (
       <>
         {isEditMode ? (
           <OfferBanner
@@ -155,21 +163,14 @@ export default function PageEditOffer({mode}) {
                 }
           }
           validationSchema={validationSchema}
-          successText={"Rendez-vous réservé avec succès"}
-          onSubmit={async (values) => {
-            const method = isEditMode ? updateOffer : addOffer;
-            const newOffer = await method({...values.offer, id: offer.id}).unwrap();
-            console.log(method, values.offer, newOffer);
-            navigate("/offers/" + offer.id);
-          }}>
+          successText={isEditMode ? "Modifications réussies" : "Création réussie"}
+          onSubmit={onSubmit}>
           {(register, {values, setFieldValue, errors, dirty}) => (
             <PageContent gap={3} mt={6}>
               <FormStep
-                stepNumber={0}
+                stepNumber={1}
                 showTitle
                 showContent
-                currentFormStep={currentFormStep}
-                setCurrentFormStep={setCurrentFormStep}
                 title={"Entreprise"}
                 subtitle={
                   "Attention, lorsque vous modifiez les informations de l'entreprise, elles seront automatiquement modifiées sur toutes vos offres."
@@ -202,7 +203,7 @@ export default function PageEditOffer({mode}) {
                     label={"Secteurs"}
                     name={"company.sectors"}
                     register={register}
-                    setFieldValue={(val) => setFieldValue("company.sectors", val)}
+                    onChange={(value) => setFieldValue("company.sectors", value)}
                     options={sectorsOptions}
                   />
                 </Stack>
@@ -210,11 +211,9 @@ export default function PageEditOffer({mode}) {
               <Divider sx={{my: 2}} />
 
               <FormStep
-                stepNumber={1}
+                stepNumber={2}
                 showTitle
                 showContent
-                currentFormStep={currentFormStep}
-                setCurrentFormStep={setCurrentFormStep}
                 title={"Poste"}
                 subtitle={"Les informations à propos du poste proposé."}>
                 <Stack gap={3}>
@@ -261,7 +260,7 @@ export default function PageEditOffer({mode}) {
                     label={"Savoir-être"}
                     name={"offer.softSkills"}
                     register={register}
-                    setFieldValue={(val) => setFieldValue("offer.softSkills", val)}
+                    onChange={(value) => setFieldValue("offer.softSkills", value)}
                     options={softSkillsOptions}
                     help={"3 recommandées"}
                   />
@@ -279,11 +278,9 @@ export default function PageEditOffer({mode}) {
               <Divider sx={{my: 2}} />
 
               <FormStep
-                stepNumber={2}
+                stepNumber={3}
                 showTitle
                 showContent
-                currentFormStep={currentFormStep}
-                setCurrentFormStep={setCurrentFormStep}
                 title={"Modalités"}
                 subtitle={"Décrivez comment l'immersion va se dérouler."}>
                 <Stack gap={3}>
@@ -309,6 +306,7 @@ export default function PageEditOffer({mode}) {
                     component={LocationSearchBar}
                     placeholder={"lieu de l'offre"}
                     register={register}
+                    onChange={(event, value) => setFieldValue("offer.location", value)}
                     name={"offer.location"}
                   />
 
@@ -330,25 +328,34 @@ export default function PageEditOffer({mode}) {
               <Divider sx={{my: 2}} />
 
               <FormStep
-                stepNumber={3}
+                stepNumber={4}
                 showTitle
                 showContent
-                currentFormStep={currentFormStep}
-                setCurrentFormStep={setCurrentFormStep}
-                title={"Mentor"}
+                title={"Modalites du rendez-vous"}
                 subtitle={
-                  "Ajoutez le contact du mentor, maître de stage, qui sera en charge du candidat."
+                  "Ajoutez des détails sur le rendez-vous ainsi que le contact du ou de la mentor, maître de stage, qui sera en charge des candidat·es."
                 }>
                 <Stack gap={3}>
                   <FormInput
-                    label="Email"
+                    component={Textarea}
+                    label="Détails sur le rendez-vous"
+                    name={"offer.meetingDetails"}
+                    placeholder="détails"
+                    register={register}
+                    help={
+                      "Combien de temps dure un rendez-vous en moyenne, préférences sur les horaires, déroulé, etc."
+                    }
+                  />
+
+                  <FormInput
+                    label="Email du mentor"
                     name={"offer.mentorEmail"}
-                    placeholder="email@example.com"
+                    placeholder="email@mon-entreprise.com"
                     type={"email"}
                     register={register}
                   />
                   <FormInput
-                    label="Numéro de téléphone"
+                    label="Numéro de téléphone du mentor"
                     name={"offer.mentorPhone"}
                     placeholder="+33 6 12 34 56 78"
                     type={"tel"}
@@ -360,31 +367,28 @@ export default function PageEditOffer({mode}) {
               <Divider sx={{my: 2}} />
 
               <FormStep
-                stepNumber={4}
+                stepNumber={5}
+                subtitle={
+                  <Typography>
+                    Par défaut, votre offre est enregistrée en statut de <strong>Brouillon</strong>.
+                    Vous pouvez la publier plus tard.
+                    <br />
+                    Pour la publier directement, sélectionnez <strong>Publiée</strong>.
+                    <br />
+                    Pour indiquer que l'offre est désormais pourvue et la retirer des offres
+                    disponibles du site et par de nouvelleaux candidat·es, sélectionnez{" "}
+                    <strong>Pourvue</strong>.
+                  </Typography>
+                }
                 showTitle
                 showContent
-                currentFormStep={currentFormStep}
-                setCurrentFormStep={setCurrentFormStep}
                 title={"Statut de l'offre"}>
                 <Stack gap={3}>
                   <FormInput
-                    label="Statut de l'offre"
                     name={"offer.status"}
                     component={RadioGroup}
                     options={statusOptions}
                     register={register}
-                    help={
-                      <span>
-                        Par défaut, votre offre est enregistrée en statut de{" "}
-                        <strong>Brouillon</strong>. Vous pouvez la publier plus tard.
-                        <br />
-                        Pour la publier directement, sélectionner <strong>Publiée</strong>.
-                        <br />
-                        Pour indiquer que l'offre est désormais pourvue et la retirer des offres
-                        disponibles du site et par de nouvelleaux candidat·es, sélectionnez{" "}
-                        <strong>Pourvue</strong>.
-                      </span>
-                    }
                   />
                 </Stack>
               </FormStep>
@@ -395,7 +399,6 @@ export default function PageEditOffer({mode}) {
                 <Card variant="soft" color="danger">
                   Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos
                   informations.
-                  {errors?.offer && Object.entries(errors?.offer)?.join("\n")}
                 </Card>
               </Collapse>
 
@@ -410,16 +413,18 @@ export default function PageEditOffer({mode}) {
                 {isEditMode ? "Valider les modifications" : "Valider la création"}
               </Button>
 
-              <ButtonWithConfirmation
-                areYouSureText={
-                  "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
-                }
-                loading={isDeletingOffer}
-                onClick={handleDeleteOffer}
-                color="danger"
-                startDecorator={<DeleteOutlineRoundedIcon />}>
-                Supprimer l'offre
-              </ButtonWithConfirmation>
+              {isEditMode && (
+                <ButtonWithConfirmation
+                  areYouSureText={
+                    "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
+                  }
+                  loading={isDeletingOffer}
+                  onClick={handleDeleteOffer}
+                  color="danger"
+                  startDecorator={<DeleteOutlineRoundedIcon />}>
+                  Supprimer l'offre
+                </ButtonWithConfirmation>
+              )}
             </PageContent>
           )}
         </Form>

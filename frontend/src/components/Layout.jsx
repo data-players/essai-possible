@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
 import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
-import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
+import {Link as ReactRouterLink, useNavigate, useParams,useLocation} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import Fade from "@mui/material/Fade";
 import Container from "@mui/joy/Container";
@@ -19,6 +19,19 @@ import Button from "@mui/joy/Button";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded.js";
 import {t} from "i18next";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
+import Menu from "@mui/joy/Menu";
+import MenuItem from "@mui/joy/MenuItem";
+import {useSelector} from "react-redux";
+import {selectCompanyById} from "../routes/offers/companies-slice.js";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Collapse from "@mui/material/Collapse";
+import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
+import Divider from "@mui/joy/Divider";
+import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
+import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
+import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded";
+
+
 
 function Root(props) {
   return (
@@ -29,8 +42,18 @@ function Root(props) {
   );
 }
 
-function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
+function Navigation({mobileDrawerContent, isCompanyAccount, ...props}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const ExternalLink = (props) => (
+    <Link
+      startDecorator={<FileOpenRoundedIcon />}
+      textColor={"primary.700"}
+      fontSize={"sm"}
+      target="_blank"
+      {...props}
+    />
+  );
 
   const navigate = useNavigate();
   return (
@@ -47,7 +70,16 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
               height: "100%",
               p: 2,
             }}>
-            <MobileDrawerContent />
+            <Stack gap={3}>
+              <Box
+                onClick={() => navigate("/")}
+                component={"img"}
+                src={EssaiPossibleLogo}
+                height={40}
+                alignSelf={"start"}
+              />
+              {mobileDrawerContent}
+            </Stack>
           </Sheet>
         </Box>
       </Slide>
@@ -64,25 +96,40 @@ function Navigation({mobileDrawerContent: MobileDrawerContent, ...props}) {
           }}
         />
       </Fade>
-
-      {/* Mobile side drawer */}
-
+      <Collapse in={isCompanyAccount}>
+        <Sheet
+          variant={"soft"}
+          invertedColors
+          sx={{
+            py: 1,
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            rowGap: 1,
+            columnGap: 5,
+            alignItems: "center",
+            justifyContent: "center",
+            px: 2,
+          }}>
+          <Typography fontWeight={"lg"} textAlign={"center"}>
+            Vous êtes connecté·e avec un compte entreprise.
+          </Typography>
+          <ExternalLink href={HelpPdf1}>Comment analyser les besoins d'un poste ?</ExternalLink>
+          <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
+        </Sheet>
+      </Collapse>
       <Container
         {...props}
         component={"header"}
-        sx={[
-          {
-            py: 3,
-            gap: {xs: 2, md: 3},
-            bgcolor: "background.surface",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          },
-          ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-        ]}>
-        {/* Website logo and menu button */}
+        sx={{
+          py: 3,
+          gap: {xs: 2, md: 3},
+          bgcolor: "background.surface",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
         <Box
           sx={{
             display: "flex",
@@ -128,7 +175,7 @@ function Footer(props) {
                 <Box component={"img"} src={TousTesPossiblesLogoWhite} width={"100%"} />
                 <Typography fontSize={"lg"}>
                   {t("footer.projectFundedBy")}{" "}
-                  <Link href={"https://toustespossibles.fr"} target="_blank">
+                  <Link href={"https://www.toustespossibles.fr"} target="_blank">
                     toustespossibles.fr
                   </Link>
                 </Typography>
@@ -207,7 +254,7 @@ export function HeroBanner({
               zIndex: 0,
               top: 0,
               right: 0,
-              opacity: props.opacity || 0.35,
+              opacity: props.opacity || 0.27,
               backgroundImage: `url("${HeroHomeImage}")`,
               backgroundPositionY: "30%",
               backgroundPositionX: "70%",
@@ -223,7 +270,7 @@ export function HeroBanner({
               top: 0,
               right: 0,
               opacity: 0.5,
-              backgroundImage: `linear-gradient(to right, ${theme.vars.palette.neutral.solidBg}, 75%,  transparent)`,
+              backgroundImage: `linear-gradient(to right, ${theme.vars.palette.neutral.solidBg}, 60%,  transparent)`,
               backgroundPositionY: "30%",
               backgroundPositionX: "70%",
             })}
@@ -245,26 +292,137 @@ export function PageContent({maxWidth, ...props}) {
 
 export const AuthButton = {
   MyMeetings: ({sx}) => (
-    <Button component={ReactRouterLink} variant="soft" sx={sx} to={"/my-meetings"}>
+    <Button component={ReactRouterLink} sx={sx} to={"/my-meetings"}>
       {t("nav.myMeetings")}
     </Button>
   ),
-  LogIn: ({sx, currentUser}) => (
+  CompanyOffersList: ({currentUser, small}) => {
+    const navigate = useNavigate();
+    const {companyId: currentCompanyId} = useParams();
+
+
+    const companiesLength = currentUser.companies.length;
+
+    const displayMenu = small || companiesLength > 1;
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const handleClose = () => setAnchorEl(null);
+
+    const handleNavigateToCompany = (id) => () => {
+      navigate(`/company/${id}`);
+      handleClose();
+    };
+    const open = !!anchorEl;
+
+    const buttonProps = small
+      ? {
+          children: <PersonRoundedIcon />,
+          variant: "solid",
+        }
+      : {
+          startDecorator: <ApartmentRoundedIcon />,
+          endDecorator: companiesLength > 1 && <KeyboardArrowDownIcon />,
+          children: t("company.myCompany", {count: companiesLength}),
+        };
+    const ButtonComp = small ? IconButton : Button;
+
+    const Item = ({companyId}) => {
+      const company = useSelector((state) => selectCompanyById(state, companyId));
+      const selected = currentCompanyId === companyId;
+      return (
+        <MenuItem
+          {...(selected && {selected: true, variant: "soft"})}
+          onClick={handleNavigateToCompany(companyId)}>
+          {company.name}
+        </MenuItem>
+      );
+    };
+
+    return (
+      <>
+        <ButtonComp
+          id="companies-button"
+          aria-controls={open ? "companies-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={(event) => {
+            if (displayMenu) {
+              event.stopPropagation();
+              setAnchorEl(event.currentTarget);
+            } else {
+              handleNavigateToCompany(currentUser.companies[0])();
+            }
+          }}
+          {...buttonProps}
+        />
+        {displayMenu && (
+          <Menu
+            id="companies-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="companies-button">
+            {small && (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/account");
+                    handleClose();
+                  }}>
+                  Mon compte
+                </MenuItem>
+                <Divider sx={{mb: 1}} />
+              </>
+            )}
+            {currentUser.companies.map((companyId) => (
+              <Item companyId={companyId} key={companyId} />
+            ))}
+          </Menu>
+        )}
+      </>
+    );
+  },
+  Account: ({sx, currentUser}) => (
     <Button
       component={ReactRouterLink}
       sx={sx}
-      to={currentUser ? "/account" : "/login"}
+      to={"/account"}
+      variant={"soft"}
+      color={"neutral"}
       startDecorator={<PersonRoundedIcon />}>
-      {currentUser ? currentUser.firstName : t("nav.logIn")}
+      {currentUser.firstName}
     </Button>
   ),
-  LogInShort: ({sx, currentUser}) => (
-    <ReactRouterLink to={currentUser ? "/account" : "/login"}>
-      <IconButton sx={sx} variant={"solid"}>
-        <PersonRoundedIcon />
-      </IconButton>
-    </ReactRouterLink>
-  ),
+  LogIn: ({sx}) => {
+    const location = useLocation();
+    console.log(import.meta.env.VITE_MIDDLEWARE_URL)
+    console.log(window.location.href);
+  return (
+    <Button
+      sx={sx}
+      onClick={() => {window.location.assign(import.meta.env.VITE_MIDDLEWARE_URL+'/auth?redirectUrl='+window.location.href)}}
+      variant={"solid"}
+      startDecorator={<PersonRoundedIcon />}>
+      {t("nav.logIn")}
+    </Button>
+  )},
+  LogInShort: ({sx, currentUser}) => {
+    const isCompanyAccount = currentUser?.companies?.length > 0;
+    return (
+      <ReactRouterLink
+        to={
+          currentUser
+            ? isCompanyAccount
+              ? `/company/${currentUser.companies[0]}`
+              : "/my-meetings"
+            : "/login"
+        }>
+        <IconButton sx={sx} variant={"solid"}>
+          <PersonRoundedIcon />
+        </IconButton>
+      </ReactRouterLink>
+    );
+  },
   SignUp: ({sx}) => (
     <Button
       component={ReactRouterLink}

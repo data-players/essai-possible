@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
-// import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
-import {user, userToken} from "./auth-slice-data.js";
+import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
+import {users} from "./auth-slice-data.js";
+import jwtDecode from 'jwt-decode';
 
 /**
  * AUTHENTICATION SLICE
@@ -16,9 +16,11 @@ const slice = createSlice({
   },
   reducers: {
     setToken : (state, {payload}) => {
-      console.log('auth-slice token',{payload: {path, token}});
       state.token = payload;
+      console.log('token',payload);
       localStorage.setItem("token", payload); // Also persist token to local storage
+      const tockenData = jwtDecode(payload);
+      console.log('webId',tockenData.webID);
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
@@ -73,23 +75,24 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 api.injectEndpoints({
   endpoints: (builder) => ({
     logIn: builder.mutation({
-      query: () => "auth",
+      query: () => "breeds?limit=100",
       // query: ({email, password}) => ({
       //   url: "auth",
       //   method: "POST",
       //   body: {email, password},
       // }),
-      transformResponse() {
+      transformResponse(a, b, id) {
         // Mock data
+        const user = users.find((user) => user.id === id);
         return {
-          token: userToken,
-          user: user,
+          token: user.token,
+          user,
         };
       },
     }),
 
     signUp: builder.mutation({
-      query: () => "auth",
+      query: () => "breeds?limit=100",
       // query(initialUser) {
       //   return {
       //     url: "user",
@@ -97,11 +100,12 @@ api.injectEndpoints({
       //     body: initialUser,
       //   };
       // },
-      transformResponse() {
+      transformResponse(a, b, id) {
         // Mock data
+        const user = users.find((user) => user.id === id);
         return {
-          token: userToken,
-          user: user,
+          token: user.token,
+          user,
         };
       },
     }),
@@ -114,8 +118,9 @@ api.injectEndpoints({
       // }),
       transformResponse() {
         // Mock data
-        if (!localStorage.getItem("token")) throw Error("No token in local storage");
-        return user;
+        const localStorageToken = localStorage.getItem("token");
+        if (!localStorageToken) throw Error("No token in local storage");
+        return users.find((user) => user.token === localStorageToken);
       },
     }),
 
@@ -128,6 +133,7 @@ api.injectEndpoints({
       // }),
       transformResponse(baseQueryReturnValue, meta, userPatch) {
         // Mock data
+        const user = users.find((user) => user.id === userPatch.id);
         return {...user, ...userPatch};
       },
     }),

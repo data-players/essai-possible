@@ -18,12 +18,13 @@ import {useSnackbar} from "../../components/snackbar.jsx";
 import * as yup from "yup";
 import {
   confirmNewPassword,
-  email,
-  firstName,
-  lastName,
   newPassword,
-  phone,
+  requiredEmail,
+  requiredPhone,
+  requiredString,
 } from "../../app/fieldValidation.js";
+import {t} from "i18next";
+import {AuthButton} from "../../components/Layout.jsx";
 
 export default function PageAccount() {
   const dispatch = useDispatch();
@@ -34,7 +35,6 @@ export default function PageAccount() {
   const [deleteUser, {isLoading: isDeletingUser}] = useDeleteUserMutation();
 
   const currentUser = useSelector(selectCurrentUser);
-
   async function onSubmit(values) {
     await updateUser(values).unwrap();
   }
@@ -46,10 +46,10 @@ export default function PageAccount() {
       <Card variant={"soft"} invertedColors>
         <Form
           validationSchema={yup.object({
-            firstName,
-            lastName,
-            email,
-            phone,
+            firstName: requiredString,
+            lastName: requiredString,
+            email: requiredEmail,
+            phone: requiredPhone,
             newPassword,
             confirmNewPassword,
           })}
@@ -123,14 +123,25 @@ export default function PageAccount() {
 
       <Stack gap={3} direction={{md: "row"}} justifyContent={""}>
         <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>
-          <Stack gap={2}>
-            <Typography level={"h2"}>Mes rendez-vous</Typography>
-            <Typography>Consultez vos rendez-vous en cours sur la page dédiée.</Typography>
+          {currentUser?.companies?.length > 0 ? (
+            <Stack gap={2}>
+              <Typography level={"h2"}>
+                {t("company.myCompany", {count: currentUser?.companies?.length})}
+              </Typography>
+              <Typography>Consultez vos offres en cours en cliquant ci-dessous.</Typography>
 
-            <Button color={"neutral"} component={ReactRouterLink} to={"/my-meetings"}>
-              Voir mes rendez-vous en cours
-            </Button>
-          </Stack>
+              <AuthButton.CompanyOffersList currentUser={currentUser} />
+            </Stack>
+          ) : (
+            <Stack gap={2}>
+              <Typography level={"h2"}>Mes rendez-vous</Typography>
+              <Typography>Consultez vos rendez-vous en cours sur la page dédiée.</Typography>
+
+              <Button component={ReactRouterLink} to={"/my-meetings"}>
+                Voir mes rendez-vous en cours
+              </Button>
+            </Stack>
+          )}
         </Card>
 
         <Card variant={"soft"} sx={{flexGrow: 1, flexBasis: 1}}>

@@ -42,7 +42,7 @@ function ModalitiesCard({offer}) {
 
         <FormControl>
           <FormLabel>Horaires</FormLabel>
-          <Typography>{offer.timeSchedule} jours ouvrés</Typography>
+          <Typography>{offer.timeSchedule}</Typography>
         </FormControl>
 
         <Chip

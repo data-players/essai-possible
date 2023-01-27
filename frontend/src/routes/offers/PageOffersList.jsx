@@ -196,7 +196,7 @@ export default function PageOffersList() {
                       <CheckboxGroup
                         options={goalOptions}
                         value={goals}
-                        setFieldValue={(value) => {
+                        onChange={(value) => {
                           setGoals(value);
                           setURLParam("goals", value, "array");
                         }}
@@ -210,7 +210,7 @@ export default function PageOffersList() {
                         <CheckboxGroup
                           options={sectorsOptions}
                           value={sectors}
-                          setFieldValue={(value) => {
+                          onChange={(value) => {
                             setSectors(value);
                             setURLParam("sectors", value, "array");
                           }}
@@ -231,9 +231,9 @@ export default function PageOffersList() {
 
       <ListPageContent
         ready={offersReady && companiesReady}
-        noResultsText={t("error.oopsNoResults")}
+        noResultsContent={t("error.oopsNoResults")}
         values={filteredOffersIds}
-        item={({value, key}) => <OfferListItem offerId={value} key={key} />}
+        item={OfferListItem}
       />
     </>
   );

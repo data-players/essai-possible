@@ -1,10 +1,19 @@
-export let user = {
-  id: 1,
-  email: "john@doe.com",
-  firstName: "John",
-  lastName: "Doe",
-  phone: "+33672649583",
-  companies: ["tibillet"],
-};
-
-export const userToken = "myTokenEtc";
+export const users = [
+  {
+    id: 1,
+    token: "canditoken",
+    email: "john@doe.com",
+    firstName: " John(Candidat)",
+    lastName: "Doe",
+    phone: "+33672649583",
+  },
+  {
+    id: 2,
+    token: "protoken",
+    email: "john@doe.com",
+    firstName: "John(Pro)",
+    lastName: "Doe",
+    phone: "+33672649583",
+    companies: ["tibillet", "pvgroep"],
+  },
+];
