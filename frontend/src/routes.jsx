@@ -8,15 +8,15 @@ import HomePage from "./routes/HomePage.jsx";
 import PageBook from "./routes/offers/book/PageBook.jsx";
 import PageAccount from "./routes/account/PageAccount.jsx";
 import {AuthComponent} from "./routes/account/AuthComponent.jsx";
-import PageOfferProtection from "./routes/offers/PageOfferProtection.jsx";
-import ConnectedUserProtection from "./routes/account/ConnectedUserProtection.jsx";
+import DefinedOfferProtection from "./components/routingProtections/DefinedOfferProtection.jsx";
+import ConnectedUserProtection from "./components/routingProtections/ConnectedUserProtection.jsx";
 import PageMyMeetings from "./routes/account/PageMyMeetings.jsx";
 import PageCGU from "./routes/PageCGU";
 import PageEditOffer from "./routes/offers/edit/PageEditOffer";
 import PageCompanyOffersList from "./routes/company/PageCompanyOffersList.jsx";
 import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
-import CompanyAccountProtection from "./routes/company/CompanyAccountProtection.jsx";
+import CompanyAccountProtection from "./components/routingProtections/CompanyAccountProtection.jsx";
 import PageEditCompany from "./routes/company/PageEditCompany";
 
 export default function Router() {
@@ -42,7 +42,7 @@ export default function Router() {
             {index: true, element: <PageOffersList />},
             {
               path: ":id",
-              element: <PageOfferProtection />,
+              element: <DefinedOfferProtection />,
               children: [
                 {index: true, element: <PageOffer />},
                 {path: "book", element: <PageBook />},

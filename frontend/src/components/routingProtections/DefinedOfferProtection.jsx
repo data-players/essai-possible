@@ -1,13 +1,13 @@
 // The Offer page wrapper that safely loads data so we don't need to worry about it inside it
 import {Outlet, useParams} from "react-router-dom";
-import {selectOfferById, useFetchOfferQuery} from "./offers-slice.js";
+import {selectOfferById, useFetchOfferQuery} from "../../routes/offers/offers-slice.js";
 import {useSelector} from "react-redux";
-import {selectCompanyById, useLazyFetchCompanyQuery} from "./companies-slice.js";
+import {selectCompanyById, useLazyFetchCompanyQuery} from "../../routes/offers/companies-slice.js";
 import {useEffect} from "react";
-import {LoadingSpinner} from "../../components/atoms.jsx";
-import {useFetchSlotsQuery} from "./book/slots-slice.js";
+import {LoadingSpinner} from "../atoms.jsx";
+import {useFetchSlotsQuery} from "../../routes/offers/book/slots-slice.js";
 
-export default function PageOfferProtection() {
+export default function DefinedOfferProtection() {
   const {id} = useParams();
 
   // Fetch the full offer
