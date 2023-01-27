@@ -2,6 +2,8 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {isAnyOf} from "@reduxjs/toolkit";
 
 
+console.log('MIDDLEWARE_URL',import.meta.env.VITE_MIDDLEWARE_URL)
+
 /**
  * API OBJECT
  *
@@ -14,8 +16,8 @@ import {isAnyOf} from "@reduxjs/toolkit";
  */
 const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.thedogapi.com/v1",
-    // baseUrl : import.meta.env.VITE_MIDDLEWARE_URL,
+    // baseUrl: "https://api.thedogapi.com/v1",
+    baseUrl : import.meta.env.VITE_MIDDLEWARE_URL,
     prepareHeaders: (headers, {getState}) => {
       // By default, if we have a token in the store, add it to request headers
       const token = getState().auth.token;

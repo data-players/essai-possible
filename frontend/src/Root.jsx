@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Outlet, ScrollRestoration, useLocation, useNavigate} from "react-router-dom";
 import IconButton from "@mui/joy/IconButton";
@@ -15,16 +15,20 @@ import {
   selectCurrentUser,
   selectCurrentUserReady,
   useLazyFetchUserQuery,
+  authActions,
 } from "./app/auth-slice.js";
-import {useSelector} from "react-redux";
+import {useSelector,useDispatch} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
 import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
+import queryString from 'query-string'
 
 export default function Root() {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const [semaphore, setSemaphore] = useState(false);
 
   // When we land on the website, prepare the data:
 
@@ -40,7 +44,27 @@ export default function Root() {
     if (authTokenExists) launchFetchUserQuery();
   }, [authTokenExists, launchFetchUserQuery]);
 
-  const path = useLocation().pathname;
+  const location = useLocation();
+  const values = queryString.parse(location.search)
+  const path = location.pathname;
+
+  useEffect(() => {
+    if (values.token ){
+      if(!authTokenExists){
+        try {
+          dispatch(authActions.setToken(values.token));
+        } catch (e) {
+          console.error(e);
+        } finally {
+
+        }
+
+      } else if (authTokenExists) {
+        navigate(path);
+      }
+    }
+  },[authTokenExists]);
+
   const currentUser = useSelector(selectCurrentUser);
 
   // - prefetch the user meetings as soon as the user is available
@@ -71,7 +95,7 @@ export default function Root() {
           const noScrollResetPaths = ["/offers"];
           return noScrollResetPaths.includes(location.pathname)
             ? // custom paths: restore by pathname
-              location.pathname
+              path
             : // everything else: restore by location like the browser does natively
               location.key;
         }}

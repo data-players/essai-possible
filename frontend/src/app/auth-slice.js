@@ -1,6 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
 import {users} from "./auth-slice-data.js";
+import jwtDecode from 'jwt-decode';
 
 /**
  * AUTHENTICATION SLICE
@@ -14,6 +15,13 @@ const slice = createSlice({
     token: localStorage.getItem("token") || null,
   },
   reducers: {
+    setToken : (state, {payload}) => {
+      state.token = payload;
+      console.log('token',payload);
+      localStorage.setItem("token", payload); // Also persist token to local storage
+      const tockenData = jwtDecode(payload);
+      console.log('webId',tockenData.webID);
+    },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
       state.token = token;
@@ -67,7 +75,7 @@ export const selectAuthTokenExists = (state) => !!state.auth.token;
 api.injectEndpoints({
   endpoints: (builder) => ({
     logIn: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: () => "breeds?limit=100",
       // query: ({email, password}) => ({
       //   url: "auth",
       //   method: "POST",
@@ -84,7 +92,7 @@ api.injectEndpoints({
     }),
 
     signUp: builder.mutation({
-      query: (id) => "breeds?limit=100",
+      query: () => "breeds?limit=100",
       // query(initialUser) {
       //   return {
       //     url: "user",

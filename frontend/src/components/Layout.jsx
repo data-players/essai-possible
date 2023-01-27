@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
 import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
-import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
+import {Link as ReactRouterLink, useNavigate, useParams,useLocation} from "react-router-dom";
 import Slide from "@mui/material/Slide";
 import Fade from "@mui/material/Fade";
 import Container from "@mui/joy/Container";
@@ -30,6 +30,8 @@ import Divider from "@mui/joy/Divider";
 import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 import {ExternalLink} from "./atoms.jsx";
+
+
 
 function Root(props) {
   return (
@@ -292,6 +294,7 @@ export const AuthButton = {
     const navigate = useNavigate();
     const {companyId: currentCompanyId} = useParams();
 
+
     const companiesLength = currentUser.companies.length;
 
     const displayMenu = small || companiesLength > 1;
@@ -384,16 +387,19 @@ export const AuthButton = {
       {currentUser.firstName}
     </Button>
   ),
-  LogIn: ({sx}) => (
+  LogIn: ({sx}) => {
+    const location = useLocation();
+    console.log(import.meta.env.VITE_MIDDLEWARE_URL)
+    console.log(window.location.href);
+  return (
     <Button
-      component={ReactRouterLink}
       sx={sx}
-      to={"/login"}
+      onClick={() => {window.location.assign(import.meta.env.VITE_MIDDLEWARE_URL+'/auth?redirectUrl='+window.location.href)}}
       variant={"solid"}
       startDecorator={<PersonRoundedIcon />}>
       {t("nav.logIn")}
     </Button>
-  ),
+  )},
   LogInShort: ({sx, currentUser}) => {
     const isCompanyAccount = currentUser?.companies?.length > 0;
     return (
