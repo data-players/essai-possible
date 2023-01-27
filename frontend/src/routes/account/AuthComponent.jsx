@@ -1,6 +1,7 @@
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import * as React from "react";
+import {useEffect} from "react";
 
 import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
 import Grid from "@mui/joy/Grid";
@@ -37,16 +38,17 @@ export const AuthComponent = ({mode, redirect = false}) => {
 
   // Redirect user to the offers page if it is a basic user, to its meetings
   // if it has already meetings, and to the company offers if it is a pro account
-  if (redirect && currentUser && meetingsReady) {
-    navigate(
-      currentUser.companies?.length > 0
-        ? `/company/${currentUser.companies[0]}`
-        : meetings.length > 0
-        ? "/account/my-meetings"
-        : "/offers"
-    );
-    return;
-  }
+  useEffect(() => {
+    if (redirect && currentUser && meetingsReady) {
+      navigate(
+        currentUser.companies?.length > 0
+          ? `/company/${currentUser.companies[0]}`
+          : meetings.length > 0
+          ? "/account/my-meetings"
+          : "/offers"
+      );
+    }
+  }, [redirect, currentUser, meetingsReady]);
 
   return (
     <PageContent mb={0}>
