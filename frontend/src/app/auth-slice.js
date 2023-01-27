@@ -12,15 +12,17 @@ const slice = createSlice({
   initialState: {
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
-    webId: undefined,
     token: localStorage.getItem("token") || null,
+    webId: localStorage.getItem("token")?jwtDecode(localStorage.getItem("token")).webId : null,
   },
   reducers: {
     setToken: (state, {payload}) => {
-      state.token = payload;
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
       state.webId = tockenData.webId;
+      state.token = payload;
+
+
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
@@ -117,16 +119,20 @@ api.injectEndpoints({
     // }),
 
     fetchUser: builder.query({
-      query: () => jwtDecode(localStorage.getItem("token")).webId,
-      transformResponse(response) {
+      queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
+        const webId= getState().auth.webId;
+        const result = await baseQuery(webId);
+        const data = result.data
         return {
-          id: response.id,
-          email: response["pair:e-mail"],
-          firstName: response["pair:firstName"],
-          lastName: response["pair:lastName"],
-          companies: Array.isArray(response["pair:affiliatedBy"])
-            ? response["pair:affiliatedBy"]
-            : [response["pair:affiliatedBy"]],
+          data:{
+            id: data.id,
+            email: data["pair:e-mail"],
+            firstName: data["pair:firstName"],
+            lastName: data["pair:lastName"],
+            companies: Array.isArray(data["pair:affiliatedBy"])
+              ? data["pair:affiliatedBy"]
+              : [data["pair:affiliatedBy"]],
+          }
         };
       },
     }),
