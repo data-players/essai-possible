@@ -14,6 +14,8 @@ import {
 } from "../../../components/atoms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import {
+  offerDefaultValues,
+  offerValidationSchema,
   selectOfferById,
   selectOfferReady,
   useAddOfferMutation,
@@ -24,61 +26,20 @@ import OfferBanner from "../OfferBanner.jsx";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {useSelector} from "react-redux";
-import {selectCompanyById, selectCompanyReady} from "../companies-slice";
+import {
+  companyDefaultValues,
+  companyValidationSchema,
+  selectCompanyById,
+  selectCompanyReady,
+} from "../companies-slice";
 import {sectorsOptions} from "../companies-slice-data.js";
-import {
-  goalOptions,
-  offerDefaultValues,
-  softSkillsOptions,
-  statusOptions,
-} from "../offers-slice-data.js";
+import {goalOptions, softSkillsOptions, statusOptions} from "../offers-slice-data.js";
 import Box from "@mui/joy/Box";
-import {
-  required,
-  requiredArray,
-  requiredEmail,
-  requiredNumber,
-  requiredPhone,
-  requiredString,
-  requiredUrl,
-} from "../../../app/fieldValidation.js";
 import * as yup from "yup";
 import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 import PageEdit from "../../../components/PageEdit.jsx";
 import Link from "@mui/joy/Link";
-
-const offerValidationSchema = yup.object({
-  // Job description
-  title: requiredString,
-  goal: requiredString,
-  description: requiredString,
-  tasks: requiredString,
-  skills: requiredString,
-  softSkills: requiredArray,
-  workEnvironment: requiredString,
-
-  //Modalities
-  duration: requiredNumber,
-  timeSchedule: requiredString,
-  location: required,
-
-  // Mentor contact
-  meetingDetails: requiredString,
-  mentorPhone: requiredPhone,
-  mentorEmail: requiredEmail,
-
-  // Status
-  status: requiredString,
-});
-
-const companyValidationSchema = yup.object({
-  // Job description
-  name: requiredString,
-  description: requiredString,
-  sectors: requiredArray,
-  website: requiredUrl,
-});
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -139,10 +100,13 @@ export default function PageEditOffer({mode}) {
       }
       initialValues={
         isEditMode
-          ? {offer: Object.assign({}, offerDefaultValues, offer), company}
+          ? {
+              offer: {...offerDefaultValues, ...offer},
+              company,
+            }
           : {
               offer: offerDefaultValues,
-              company: {name: "", description: "", website: "", sectors: [], ...company},
+              company: {...companyDefaultValues, ...company},
             }
       }
       validationSchema={validationSchema}
@@ -167,7 +131,7 @@ export default function PageEditOffer({mode}) {
       deleteAreYouSureText={
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
       }>
-      {(register, {values, setFieldValue, errors, dirty}) => (
+      {(register, {values, setFieldValue}) => (
         <>
           <FormStep
             stepNumber={1}

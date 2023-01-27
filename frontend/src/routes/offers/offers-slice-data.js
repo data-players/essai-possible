@@ -21,32 +21,6 @@ export const softSkillsOptions = [
 
 export const statusOptions = ["Brouillon", "Publiée", "Pourvue"];
 
-export const offerDefaultValues = {
-  // Job description
-  title: "",
-  goal: "",
-  description: "",
-  tasks: "",
-  skills: "",
-  softSkills: [],
-  workEnvironment: "",
-
-  //Modalities
-  duration: undefined,
-  timeSchedule: "",
-  location: null,
-  particularConditions: "",
-  possibleArrangements: "",
-
-  // Mentor contact
-  mentorPhone: "",
-  mentorEmail: "",
-
-  // Status
-  status: "Brouillon",
-  publishedAt: undefined,
-};
-
 // Ful data mock
 export const fullOffers = [
   {

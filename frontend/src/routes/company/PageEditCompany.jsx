@@ -3,6 +3,7 @@ import Stack from "@mui/joy/Stack";
 import {CheckboxGroup, FormInput, SimpleBanner} from "../../components/atoms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import {
+  companyValidationSchema,
   selectCompanyById,
   selectCompanyReady,
   useAddCompanyMutation,
@@ -13,18 +14,9 @@ import {useTranslationWithDates} from "../../app/i18n.js";
 import {useSelector} from "react-redux";
 import {sectorsOptions} from "../offers/companies-slice-data.js";
 import Box from "@mui/joy/Box";
-import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
-import * as yup from "yup";
 import PageEdit from "../../components/PageEdit.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
-
-const validationSchema = yup.object({
-  name: requiredString,
-  description: requiredString,
-  sectors: requiredArray,
-  website: requiredUrl,
-});
 
 export default function PageEditCompany({mode}) {
   const isEditMode = mode === "edit";
@@ -60,7 +52,7 @@ export default function PageEditCompany({mode}) {
       ready={companyReady}
       pageBanner={<SimpleBanner>{pageTitle}</SimpleBanner>}
       initialValues={isEditMode ? company : {name: "", description: "", website: "", sectors: []}}
-      validationSchema={validationSchema}
+      validationSchema={companyValidationSchema}
       onSubmit={onSubmit}
       isEditMode={isEditMode}
       helpBox={

@@ -3,6 +3,15 @@ import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api
 import {normalize, sorter} from "../../app/utils.js";
 import {fullOffers, lightOffersList, statusOptions} from "./offers-slice-data.js";
 import {selectAllCompaniesById} from "./companies-slice.js";
+import * as yup from "yup";
+import {
+  required,
+  requiredArray,
+  requiredEmail,
+  requiredNumber,
+  requiredPhone,
+  requiredString,
+} from "../../app/fieldValidation.js";
 
 /**
  * OFFERS SLICE
@@ -189,3 +198,57 @@ export const {
   useUpdateOfferMutation,
   useDeleteOfferMutation,
 } = api;
+
+/**
+ * OFFERS FORM UTILITIES
+ */
+
+export const offerValidationSchema = yup.object({
+  // Job description
+  title: requiredString,
+  goal: requiredString,
+  description: requiredString,
+  tasks: requiredString,
+  skills: requiredString,
+  softSkills: requiredArray,
+  workEnvironment: requiredString,
+
+  //Modalities
+  duration: requiredNumber,
+  timeSchedule: requiredString,
+  location: required,
+
+  // Mentor contact
+  meetingDetails: requiredString,
+  mentorPhone: requiredPhone,
+  mentorEmail: requiredEmail,
+
+  // Status
+  status: requiredString,
+});
+
+export const offerDefaultValues = {
+  // Job description
+  title: "",
+  goal: "",
+  description: "",
+  tasks: "",
+  skills: "",
+  softSkills: [],
+  workEnvironment: "",
+
+  //Modalities
+  duration: undefined,
+  timeSchedule: "",
+  location: null,
+  particularConditions: "",
+  possibleArrangements: "",
+
+  // Mentor contact
+  mentorPhone: "",
+  mentorEmail: "",
+
+  // Status
+  status: "Brouillon",
+  publishedAt: undefined,
+};

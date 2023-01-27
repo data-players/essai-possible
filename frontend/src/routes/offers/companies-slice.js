@@ -1,6 +1,8 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api.js";
 import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
+import * as yup from "yup";
+import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
 
 /**
  * COMPANIES SLICE
@@ -124,3 +126,16 @@ export const {
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
 } = api;
+
+/**
+ * COMPANY VALIDATION SCHEMA
+ */
+
+export const companyValidationSchema = yup.object({
+  name: requiredString,
+  description: requiredString,
+  sectors: requiredArray,
+  website: requiredUrl,
+});
+
+export const companyDefaultValues = {name: "", description: "", website: "", sectors: []};
