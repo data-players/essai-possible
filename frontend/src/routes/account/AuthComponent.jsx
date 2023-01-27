@@ -6,7 +6,7 @@ import {useEffect} from "react";
 import {selectCurrentUser, useLogInMutation, useSignUpMutation} from "../../app/auth-slice.js";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
-import {Form} from "../../components/atoms.jsx";
+import {Form} from "../../components/forms.jsx";
 import * as yup from "yup";
 import {requiredPhone, requiredString} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";

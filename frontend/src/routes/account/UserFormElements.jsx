@@ -1,4 +1,4 @@
-import {FormInput} from "../../components/atoms.jsx";
+import {FormInput} from "../../components/forms.jsx";
 import * as React from "react";
 
 export function UserFormElements({register}) {

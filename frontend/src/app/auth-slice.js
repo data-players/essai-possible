@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
 import {users} from "./auth-slice-data.js";
-import jwtDecode from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
 /**
  * AUTHENTICATION SLICE
@@ -15,12 +15,12 @@ const slice = createSlice({
     token: localStorage.getItem("token") || null,
   },
   reducers: {
-    setToken : (state, {payload}) => {
+    setToken: (state, {payload}) => {
       state.token = payload;
-      console.log('token',payload);
+      console.log("token", payload);
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
-      console.log('webId',tockenData.webID);
+      console.log("webId", tockenData.webID);
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;

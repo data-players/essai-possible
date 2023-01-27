@@ -8,13 +8,8 @@ import {
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
-import {
-  ButtonWithConfirmation,
-  Form,
-  FormInput,
-  FormStep,
-  SimpleBanner,
-} from "../../components/atoms";
+import {ButtonWithConfirmation, SimpleBanner} from "../../components/atoms";
+import {Form, FormInput, FormStep} from "../../components/forms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";

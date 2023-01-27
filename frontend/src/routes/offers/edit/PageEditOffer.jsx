@@ -5,13 +5,12 @@ import Button from "@mui/joy/Button";
 import {
   CheckboxGroup,
   ExternalLink,
-  FormInput,
-  FormStep,
   HelpBox,
   LocationSearchBar,
   RadioGroup,
   SimpleBanner,
 } from "../../../components/atoms.jsx";
+import {FormInput, FormStep} from "../../../components/forms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import {
   offerDefaultValues,

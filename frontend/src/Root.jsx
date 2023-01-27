@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Outlet, ScrollRestoration, useLocation, useNavigate} from "react-router-dom";
 import IconButton from "@mui/joy/IconButton";
@@ -11,23 +11,23 @@ import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
 import {
+  authActions,
   selectAuthTokenExists,
   selectCurrentUser,
   selectCurrentUserReady,
   useLazyFetchUserQuery,
-  authActions,
 } from "./app/auth-slice.js";
-import {useSelector,useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
 import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
 import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
-import queryString from 'query-string'
+import queryString from "query-string";
 
 export default function Root() {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [semaphore, setSemaphore] = useState(false);
 
   // When we land on the website, prepare the data:
@@ -45,25 +45,23 @@ export default function Root() {
   }, [authTokenExists, launchFetchUserQuery]);
 
   const location = useLocation();
-  const values = queryString.parse(location.search)
+  const values = queryString.parse(location.search);
   const path = location.pathname;
 
   useEffect(() => {
-    if (values.token ){
-      if(!authTokenExists){
+    if (values.token) {
+      if (!authTokenExists) {
         try {
           dispatch(authActions.setToken(values.token));
         } catch (e) {
           console.error(e);
         } finally {
-
         }
-
       } else if (authTokenExists) {
         navigate(path);
       }
     }
-  },[authTokenExists]);
+  }, [authTokenExists]);
 
   const currentUser = useSelector(selectCurrentUser);
 

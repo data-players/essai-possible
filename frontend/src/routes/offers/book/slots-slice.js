@@ -61,7 +61,7 @@ api.injectEndpoints({
       // query: ({offer}) => "slots",
       transformResponse(baseQueryReturnValue, meta, {offer} = {}) {
         // Mock data
-        return offer ? slots.filter((slot) => slot.offer == offer) : slots;
+        return offer ? slots.filter((slot) => slot.offer === offer) : slots;
       },
     }),
 
