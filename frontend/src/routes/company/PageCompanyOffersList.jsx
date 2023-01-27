@@ -14,6 +14,7 @@ import {Link as ReactRouterLink, useParams} from "react-router-dom";
 import {selectCompanyById, useFetchCompanyQuery} from "../offers/companies-slice.js";
 import Card from "@mui/joy/Card";
 import AddRoundedIcon from "@mui/icons-material/AddRounded.js";
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 export default function PageCompanyOffersList() {
   const {t} = useTranslation();
@@ -36,13 +37,13 @@ export default function PageCompanyOffersList() {
               </Typography>
             </Grid>
             <Grid xs={12} display={"flex"} justifyContent={"center"} mt={3}>
-              <Card size={"lg"} sx={{maxWidth: 600}}>
+              <Card size={"lg"} sx={{maxWidth: 630}}>
                 <Stack gap={3}>
-                  <Typography>
-                    Bienvenue sur la page de votre entreprise. Consultez vos offres en cours.
+                  <Typography textAlign={"center"}>
+                    Bienvenue sur la page de votre entreprise. Voici vos offres en cours.
                   </Typography>
                   <Stack
-                    direction={{xs: "column", sm: "row"}}
+                    direction={"row"}
                     gap={3}
                     justifyContent={"center"}
                     alignItems={"stretch"}
@@ -51,11 +52,18 @@ export default function PageCompanyOffersList() {
                       component={ReactRouterLink}
                       to={"new-offer"}
                       size={"lg"}
+                      sx={{flexGrow: 1}}
                       startDecorator={<AddRoundedIcon />}>
                       {t("offers.proposeAnOffer")}
                     </Button>
-                    <Button size={"lg"} variant={"soft"}>
-                      Editer mon entreprise
+                    <Button
+                      component={ReactRouterLink}
+                      startDecorator={<CreateRoundedIcon />}
+                      to={"edit"}
+                      size={"lg"}
+                      sx={{flexGrow: 1}}
+                      variant={"soft"}>
+                      Éditer mon entreprise
                     </Button>
                   </Stack>
                 </Stack>

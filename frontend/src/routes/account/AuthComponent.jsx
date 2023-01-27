@@ -42,7 +42,7 @@ export const AuthComponent = ({mode, redirect = false}) => {
       currentUser.companies?.length > 0
         ? `/company/${currentUser.companies[0]}`
         : meetings.length > 0
-        ? "/my-meetings"
+        ? "/account/my-meetings"
         : "/offers"
     );
     return;

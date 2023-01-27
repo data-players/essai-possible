@@ -167,6 +167,7 @@ api.injectEndpoints({
         return {...offer, ...offerPatch};
       },
     }),
+
     deleteOffer: builder.mutation({
       query: (id) => "breeds?limit=100",
       // query: (id) => ({

@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {Outlet, useNavigate, useParams} from "react-router-dom";
 import {selectCompanyById, useFetchCompanyQuery} from "../offers/companies-slice.js";
 import {useSelector} from "react-redux";
 import {selectCurrentUser} from "../../app/auth-slice.js";
@@ -28,7 +28,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 
   if (!company?.id) return <LoadingSpinner />;
 
-  return children;
+  return children || <Outlet />;
 };
 
 export default function CompanyAccountProtection(props) {

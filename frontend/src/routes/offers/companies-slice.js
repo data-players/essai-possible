@@ -17,7 +17,10 @@ const companiesSlice = createSlice({
   extraReducers(builder) {
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchCompanies"]), companiesAdapter.upsertMany)
-      .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne);
+      .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne)
+      .addMatcher(matchAny("matchFulfilled", ["updateCompany"]), companiesAdapter.upsertOne)
+      .addMatcher(matchAny("matchFulfilled", ["addCompany"]), companiesAdapter.addOne)
+      .addMatcher(matchAny("matchFulfilled", ["deleteCompany"]), companiesAdapter.removeOne);
 
     addStatusForEndpoints(builder, ["fetchCompanies", "fetchCompany"]);
   },
@@ -68,7 +71,56 @@ api.injectEndpoints({
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
+
+    addCompany: builder.mutation({
+      query: (company) => {
+        return "breeds?limit=100";
+      },
+      // query: ({slot, comments}) => ({
+      //   url: "companies",
+      //   method: "POST",
+      //   body: {slot, comments},
+      // }),
+      transformResponse(baseResponse, meta, company) {
+        // Mock data
+        const res = {...company, id: fullCompanies.length + 1};
+        return res;
+      },
+    }),
+
+    updateCompany: builder.mutation({
+      query: () => "breeds?limit=100",
+      // query: (companyPatch) => ({
+      //   url: "companies",
+      //   method: "PATCH",
+      //   body: companyPatch,
+      // }),
+      transformResponse(baseQueryReturnValue, meta, companyPatch) {
+        // Mock data
+        let company = fullCompanies.find((company) => company.id === companyPatch.id);
+        return {...company, ...companyPatch};
+      },
+    }),
+
+    deleteCompany: builder.mutation({
+      query: (id) => "breeds?limit=100",
+      // query: (id) => ({
+      //   url: `company`,
+      //   method: "DELETE",
+      // }),
+      transformResponse(baseQueryReturnValue, meta, id) {
+        // Mock data
+        return id;
+      },
+    }),
   }),
 });
 
-export const {useFetchCompaniesQuery, useLazyFetchCompanyQuery, useFetchCompanyQuery} = api;
+export const {
+  useFetchCompaniesQuery,
+  useLazyFetchCompanyQuery,
+  useFetchCompanyQuery,
+  useAddCompanyMutation,
+  useUpdateCompanyMutation,
+  useDeleteCompanyMutation,
+} = api;

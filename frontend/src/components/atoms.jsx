@@ -402,7 +402,7 @@ export function FormStep({
   subtitle,
   showTitle = false,
   showContent = false,
-  showDivider = false,
+  noDivider = false,
 }) {
   showTitle = !!(currentFormStep >= stepNumber || showTitle);
   showContent = currentFormStep === stepNumber || showContent;
@@ -425,9 +425,9 @@ export function FormStep({
         <Button sx={{mt: 2}} variant="soft" size={"sm"} color="neutral">
           Modifier
         </Button>
-        <Divider sx={{mt: 2}} />
+        {(noDivider || showContent) && <Divider sx={{mt: 5, mb: 2}} />}
       </Collapse>
-      {showDivider && <Divider sx={{mt: 2}} />}
+      {!noDivider && <Divider sx={{mt: 5, mb: 2}} />}
     </Stack>
   );
 }
@@ -465,3 +465,11 @@ export const SimpleBanner = ({children}) => (
     </Container>
   </HeroBanner>
 );
+
+export function HelpBox({children}) {
+  return (
+    <Card variant="soft" color={"warning"} size={"lg"}>
+      <Stack gap={1}>{children}</Stack>
+    </Card>
+  );
+}

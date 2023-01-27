@@ -75,6 +75,7 @@ export default function PageBook() {
       currentFormStep={currentFormStep}
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.chooseYourMeetingSlot")}
+      noDivider
       subtitle={
         <>
           <Typography fontSize={"lg"}>{offer.meetingDetails}</Typography>
@@ -133,6 +134,7 @@ export default function PageBook() {
       setCurrentFormStep={setCurrentFormStep}
       title={t("offers.myInformation")}
       showTitle={meetingForOffer || comments?.length > 0}
+      noDivider
       subtitle={<AuthCard />}>
       <Form
         initialValues={{comments}}
@@ -142,7 +144,7 @@ export default function PageBook() {
             slot: selectedSlot,
             comments,
           }).unwrap();
-          navigate("/my-meetings");
+          navigate("/account/my-meetings");
         }}>
         {(register) => (
           <Stack gap={3}>
@@ -157,18 +159,15 @@ export default function PageBook() {
               />
             )}
 
-            <Stack>
-              <Button
-                type={"submit"}
-                size={"lg"}
-                loading={isAddingMeeting}
-                disabled={!currentUser}
-                color={"success"}
-                sx={{flexGrow: 1}}
-                startDecorator={<CheckIcon />}>
-                {t("offers.validateInformationAndBook")}
-              </Button>
-            </Stack>
+            <Button
+              type={"submit"}
+              size={"lg"}
+              loading={isAddingMeeting}
+              disabled={!currentUser}
+              color={"success"}
+              startDecorator={<CheckIcon />}>
+              {t("offers.validateInformationAndBook")}
+            </Button>
           </Stack>
         )}
       </Form>

@@ -90,5 +90,9 @@
     "myCompany": "Mon Entreprise",
     "myCompany_other": "Mes Entreprises"
   },
-  "tousTesPossibles": "Tous Tes Possibles"
+  "tousTesPossibles": "Tous Tes Possibles",
+  "companies": {
+    "modifyACompany": "Modifier l'entreprise \"{{name}}\"",
+    "createANewCompany": "Créer une entreprise"
+  }
 }

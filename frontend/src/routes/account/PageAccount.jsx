@@ -53,7 +53,7 @@ export default function PageAccount() {
       <PageContent gap={3} mt={6} maxWidth={"lg"}>
         <Grid container rowSpacing={3} columnSpacing={6}>
           <Grid xs={12} md={7}>
-            <FormStep showTitle showContent title={"Mes informations personnelles"}>
+            <FormStep showTitle showContent title={"Mes informations personnelles"} noDivider>
               <Form
                 validationSchema={yup.object({
                   firstName: requiredString,
@@ -137,7 +137,7 @@ export default function PageAccount() {
                     <Typography level={"h3"}>Mes rendez-vous</Typography>
                     <Typography>Consultez vos rendez-vous en cours sur la page dédiée.</Typography>
 
-                    <Button component={ReactRouterLink} to={"/my-meetings"}>
+                    <Button component={ReactRouterLink} to={"/account/my-meetings"}>
                       Voir mes rendez-vous en cours
                     </Button>
                   </Stack>

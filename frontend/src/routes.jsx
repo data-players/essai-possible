@@ -17,6 +17,7 @@ import PageCompanyOffersList from "./routes/company/PageCompanyOffersList.jsx";
 import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
 import CompanyAccountProtection from "./routes/company/CompanyAccountProtection.jsx";
+import PageEditCompany from "./routes/company/PageEditCompany";
 
 export default function Router() {
   const currentUser = useSelector(selectCurrentUser);
@@ -60,41 +61,34 @@ export default function Router() {
 
         {
           path: "company/:companyId",
+          element: <CompanyAccountProtection />,
           children: [
             {
               index: true,
-              element: (
-                <CompanyAccountProtection>
-                  <PageCompanyOffersList />
-                </CompanyAccountProtection>
-              ),
+              element: <PageCompanyOffersList />,
             },
             {
               path: "new-offer",
-              element: (
-                <CompanyAccountProtection>
-                  <PageEditOffer mode={"new"} />
-                </CompanyAccountProtection>
-              ),
+              element: <PageEditOffer mode={"new"} />,
+            },
+            {
+              path: "edit",
+              element: <PageEditCompany mode={"edit"} />,
             },
           ],
         },
+
         {
           path: "account",
-          element: (
-            <ConnectedUserProtection>
-              <PageAccount />
-            </ConnectedUserProtection>
-          ),
-        },
+          element: <ConnectedUserProtection />,
+          children: [
+            {index: true, element: <PageAccount />},
 
-        !isACompanyAccount && {
-          path: "my-meetings",
-          element: (
-            <ConnectedUserProtection>
-              <PageMyMeetings />
-            </ConnectedUserProtection>
-          ),
+            !isACompanyAccount && {
+              path: "my-meetings",
+              element: <PageMyMeetings />,
+            },
+          ],
         },
 
         {path: "login", element: <AuthComponent mode={"logIn"} redirect />},

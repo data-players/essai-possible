@@ -6,7 +6,7 @@ import {
 import * as React from "react";
 import {useEffect} from "react";
 import {useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 import {LoadingSpinner} from "../../components/atoms";
 
 export default function ConnectedUserProtection({children}) {
@@ -25,5 +25,5 @@ export default function ConnectedUserProtection({children}) {
   // Connected but loading users wait
   if (authTokenExists && !currentUserReady) return <LoadingSpinner />;
 
-  return children;
+  return children || <Outlet />;
 }

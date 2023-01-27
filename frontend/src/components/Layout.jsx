@@ -284,7 +284,7 @@ export function PageContent({maxWidth, ...props}) {
 
 export const AuthButton = {
   MyMeetings: ({sx}) => (
-    <Button component={ReactRouterLink} sx={sx} to={"/my-meetings"}>
+    <Button component={ReactRouterLink} sx={sx} to={"/account/my-meetings"}>
       {t("nav.myMeetings")}
     </Button>
   ),
@@ -402,7 +402,7 @@ export const AuthButton = {
           currentUser
             ? isCompanyAccount
               ? `/company/${currentUser.companies[0]}`
-              : "/my-meetings"
+              : "/account/my-meetings"
             : "/login"
         }>
         <IconButton sx={sx} variant={"solid"}>
