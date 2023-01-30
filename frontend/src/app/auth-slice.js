@@ -15,15 +15,17 @@ const slice = createSlice({
   initialState: {
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
-    webId: undefined,
     token: localStorage.getItem("token") || null,
+    webId: localStorage.getItem("token")?jwtDecode(localStorage.getItem("token")).webId : null,
   },
   reducers: {
     setToken: (state, {payload}) => {
-      state.token = payload;
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
       state.webId = tockenData.webId;
+      state.token = payload;
+
+
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
@@ -79,8 +81,11 @@ const userMarshaller = createJsonLDMarshaller(
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchUser: builder.query({
-      query: () => jwtDecode(localStorage.getItem("token")).webId,
-      transformResponse: userMarshaller.marshall,
+      queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
+        const webId= getState().auth.webId;
+        const result = await baseQuery(webId);
+        return {data: userMarshaller.marshall(result.data)}
+      },
     }),
 
     updateUser: builder.mutation({
