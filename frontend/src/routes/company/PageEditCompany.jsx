@@ -11,7 +11,7 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../app/i18n.js";
 import {useSelector} from "react-redux";
-import EditFormComponent from "../../components/EditFormComponent.jsx";
+import PageEdit from "../../components/PageEdit.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
 import {CompanyFormElements} from "./CompanyFormElements.jsx";
@@ -39,8 +39,14 @@ export default function PageEditCompany({mode}) {
     navigate("/company/" + newCompany.id);
   }
 
+  // async function onDelete() {
+  //   await deleteCompany(companyId).unwrap();
+  //   openSnackbar("Suppression réussie");
+  //   navigate("/company/" + companyId);
+  // }
+
   return (
-    <EditFormComponent
+    <PageEdit
       ready={companyReady}
       pageBanner={<SimpleBanner>{pageTitle}</SimpleBanner>}
       initialValues={isEditMode ? company : {name: "", description: "", website: "", sectors: []}}
@@ -66,6 +72,6 @@ export default function PageEditCompany({mode}) {
           <Divider sx={{my: 1}} />
         </Stack>
       )}
-    </EditFormComponent>
+    </PageEdit>
   );
 }
