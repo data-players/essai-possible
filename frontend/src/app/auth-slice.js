@@ -1,7 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
-import {users} from "./auth-slice-data.js";
 import jwtDecode from "jwt-decode";
+import {createJsonLDMarshaller} from "./utils.js";
+import * as yup from "yup";
+import {requiredEmail, requiredPhone, requiredString} from "./fieldValidation.js";
+import {baseUpdateMutation} from "./api.js";
 
 /**
  * AUTHENTICATION SLICE
@@ -28,7 +31,6 @@ const slice = createSlice({
       // localStorage.setItem("token", token); // Also persist token to local storage
     },
     setUser: (state, {payload: user}) => {
-      console.log("setUser", user);
       state.user = user;
     },
     logOut: (state) => {
@@ -39,16 +41,7 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // LOG IN - SIGN UP : Set user and token after logIn and signup mutations
-      // .addMatcher(
-      //   matchAny("matchFulfilled", ["logIn", "signUp"]),
-      //   slice.caseReducers.setCredentials
-      // )
-      // FETCH - UPDATE : Set user after fetch and update query
-      .addMatcher(
-        matchAny("matchFulfilled", ["fetchUser", "updateUser"]),
-        slice.caseReducers.setUser
-      )
+      .addMatcher(matchAny("matchFulfilled", ["fetchUser"]), slice.caseReducers.setUser)
       // If there is any problem with those ops the user, log out the user
       .addMatcher(matchAny("matchRejected", ["fetchUser"]), slice.caseReducers.logOut)
       .addMatcher(matchAny("matchFulfilled", ["deleteUser"]), slice.caseReducers.logOut);
@@ -67,82 +60,32 @@ export default slice.reducer;
 export const selectCurrentUserReady = readySelector("auth", "fetchUser");
 
 export const selectCurrentUser = (state) => state.auth.user;
-export const selectAuthTokenExists = (state) => {
-  // console.log('selectAuthTokenExists',state.auth);
-  return state.auth.token != undefined;
-};
+export const selectAuthTokenExists = (state) => state.auth.token != undefined;
 
 /**
  * AUTHENTICATION API ENDPOINTS
  */
 
+const userMarshaller = createJsonLDMarshaller(
+  {
+    email: "pair:e-mail",
+    firstName: "pair:firstName",
+    lastName: "pair:lastName",
+    companies: "pair:affiliatedBy",
+  },
+  {objectArrayFields: ["companies"]}
+);
+
 api.injectEndpoints({
   endpoints: (builder) => ({
-    // logIn: builder.mutation({
-    //   query: () => "breeds?limit=100",
-    //   // query: () => {
-    //   //   return {
-    //   //   url: "auth",
-    //   //   method: "POST",
-    //   //   body: {email, password},
-    //   //   }
-    //   // },
-    //   transformResponse(a, b, id) {
-    //     // Mock data
-    //     const user = users.find((user) => user.id === id);
-    //     return {
-    //       token: user.token,
-    //       user,
-    //     };
-    //   },
-    // }),
-    //
-    // signUp: builder.mutation({
-    //   query: () => "breeds?limit=100",
-    //   // query(initialUser) {
-    //   //   return {
-    //   //     url: "user",
-    //   //     method: "POST",
-    //   //     body: initialUser,
-    //   //   };
-    //   // },
-    //   transformResponse(a, b, id) {
-    //     // Mock data
-    //     const user = users.find((user) => user.id === id);
-    //     return {
-    //       token: user.token,
-    //       user,
-    //     };
-    //   },
-    // }),
-
     fetchUser: builder.query({
       query: () => jwtDecode(localStorage.getItem("token")).webId,
-      transformResponse(response) {
-        return {
-          id: response.id,
-          email: response["pair:e-mail"],
-          firstName: response["pair:firstName"],
-          lastName: response["pair:lastName"],
-          companies: Array.isArray(response["pair:affiliatedBy"])
-            ? response["pair:affiliatedBy"]
-            : [response["pair:affiliatedBy"]],
-        };
-      },
+      transformResponse: userMarshaller.marshall,
     }),
 
     updateUser: builder.mutation({
-      query: () => "/users",
-      // query: (userPatch) => ({
-      //   url: `user`,
-      //   method: "PATCH",
-      //   body: userPatch,
-      // }),
-      transformResponse(baseQueryReturnValue, meta, userPatch) {
-        // Mock data
-        const user = users.find((user) => user.id === userPatch.id);
-        return {...user, ...userPatch};
-      },
+      query: baseUpdateMutation(userMarshaller),
+      // transformResponse: userMarshaller.marshall,
     }),
 
     deleteUser: builder.mutation({
@@ -167,3 +110,21 @@ export const {
   useFetchUserQuery,
   useLazyFetchUserQuery,
 } = api;
+
+/**
+ * ATUH FORM UTILS
+ */
+
+export const userValidationSchema = yup.object({
+  firstName: requiredString,
+  lastName: requiredString,
+  phone: requiredPhone,
+  email: requiredEmail,
+});
+
+export const userDefaultValues = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+};

@@ -130,3 +130,7 @@ dist
 .idea
 *.iml
 gen
+
+
+# Git files
+*.orig

@@ -26,21 +26,21 @@ export const sectorsOptions = [
 // Ful data mock
 export const fullCompanies = [
   {
-    id: "pvgroep",
+    id: "http://localhost:3000/organizations/pvgroep",
     name: "P&V Grouuup",
     website: "https://www.pvgroep.coop/",
     description: loremIpsum({count: 3}),
     sectors: [sectorsOptions[1], sectorsOptions[8]],
   },
   {
-    id: "tibillet",
+    id: "http://localhost:3000/organizations/tibillet",
     name: "TiBillet",
     website: "https://tibillet.org",
     description: loremIpsum({count: 3}),
     sectors: [sectorsOptions[5], sectorsOptions[8]],
   },
   {
-    id: "enercoop",
+    id: "http://localhost:3000/organizations/enercoop",
     name: "Enercoop",
     website: "https://www.enercoop.fr/",
     description: loremIpsum({count: 3}),

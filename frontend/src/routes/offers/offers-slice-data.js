@@ -28,7 +28,7 @@ export const fullOffers = [
     status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:22"),
     title: "Titre de l'offre",
-    company: "pvgroep",
+    company: "http://localhost:3000/organizations/pvgroep",
     location: {
       label: "Place de la Cathédrale 67000 Strasbourg",
       context: "67, Bas-Rhin, Grand Est",
@@ -58,7 +58,7 @@ export const fullOffers = [
     status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:23"),
     title: "Comptable",
-    company: "tibillet",
+    company: "http://localhost:3000/organizations/tibillet",
     location: {
       label: "Pre Neuf 01300 Saint-Germain-les-Paroisses",
       context: "01, Ain, Auvergne-Rhône-Alpes",
@@ -86,7 +86,7 @@ export const fullOffers = [
     id: "devcooperatiffront",
     status: statusOptions[1],
     title: "Dev Coopératif front",
-    company: "tibillet",
+    company: "http://localhost:3000/organizations/tibillet",
     location: {
       label: "Pre Neuf 01300 Saint-Germain-les-Paroisses",
       context: "01, Ain, Auvergne-Rhône-Alpes",
@@ -117,7 +117,7 @@ export const fullOffers = [
     publishedAt: dateTimeISOString("2023-1-4 16:15"),
     title:
       "Très long vraiment très long titre d'une très longue offre qui s'affiche difficilement car elle est très longue",
-    company: "pvgroep",
+    company: "http://localhost:3000/organizations/pvgroep",
     location: {
       label: "Place de la Cathédrale 67000 Strasbourg",
       context: "67, Bas-Rhin, Grand Est",
@@ -147,7 +147,7 @@ export const fullOffers = [
     status: statusOptions[1],
     publishedAt: dateTimeISOString("2023-1-4 16:28"),
     title: "Consultant énergies renouvelables",
-    company: "enercoop",
+    company: "http://localhost:3000/organizations/enercoop",
     location: {
       label: "Rue de la Ville en Pierre 44000 Nantes",
       context: "44, Loire-Atlantique, Pays de la Loire",

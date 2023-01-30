@@ -300,7 +300,7 @@ export const AuthButton = {
     const handleClose = () => setAnchorEl(null);
 
     const handleNavigateToCompany = (id) => () => {
-      navigate(`/company/${id}`);
+      navigate(`/company/${encodeURIComponent(id)}`);
       handleClose();
     };
     const open = !!anchorEl;

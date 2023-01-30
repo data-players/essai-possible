@@ -50,14 +50,14 @@ export default function CompanyOfferPreview({offer, children}) {
                   {button}
                   <Button
                     component={ReactRouterLink}
-                    to={`/offers/${offer.id}/edit`}
+                    to={`/offers/${encodeURIComponent(offer.id)}/edit`}
                     variant={"soft"}
                     startDecorator={<CreateRoundedIcon />}>
                     Modifier
                   </Button>
                   <Button
                     component={ReactRouterLink}
-                    to={`/company/${company.id}`}
+                    to={`/company/${encodeURIComponent(company.id)}`}
                     variant={"soft"}>
                     Toutes les offres de "{company.name}"
                   </Button>

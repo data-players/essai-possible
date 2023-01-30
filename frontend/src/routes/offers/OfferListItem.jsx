@@ -49,7 +49,7 @@ function OfferListItemRoot({offer, children}) {
         launchCompanyPrefetch(offer.company);
       }}>
       <Card
-        onClick={() => navigate(`/offers/${offer.id}`)}
+        onClick={() => navigate(`/offers/${encodeURIComponent(offer.id)}`)}
         variant={"soft"}
         size={"lg"}
         sx={{

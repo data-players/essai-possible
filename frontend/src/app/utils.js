@@ -94,19 +94,25 @@ export function getDeepValue(obj, splitName) {
  *
  * Usage:
  *
- * const offersMarshaller = createMarshaller({
- *   title: "pair:title",
- *   location: createMarshaller(
- *     {
- *       city: "location:city",
- *       label: "location:label",
- *     },
- *     "pair:location"
- *   ),
- * });
+ * const offersMarshaller = createJsonLDMarshaller(
+ *   {
+ *     title: "pair:title",
+ *     softSkills: "pair:softSkills",
+ *     location: createJsonLDMarshaller(
+ *       {
+ *         city: "location:city",
+ *         label: "location:label",
+ *       },
+ *       {oldFieldName: "pair:location"}
+ *     ),
+ *   },
+ *   {objectArrayFields: ["softSkills"]}
+ * );
  *
  * const offer = {
  *   "pair:title": "Truc Muche",
+ *   "pair:softSkills": ["truc", "muche"],
+ *   "pair:softSkills": ["truc", "muche"],
  *   "pair:location": {
  *     "location:city": "Avranches",
  *     "location:label": "Ville d'avranches",
@@ -123,12 +129,16 @@ export function getDeepValue(obj, splitName) {
  * "newName": "oldName"
  *    --> oldFieldNameOrMarshaller is a string
  * or :
- * "newName": createMarshaller(nestedRenamingsSchema, "oldName")
+ * "newName": createJsonLDMarshaller(nestedRenamingsSchema, "oldName")
  *    --> oldFieldNameOrMarshaller is a marshaller that contains an attribute oldFieldName containing "oldName"
  * @param oldFieldName Needed for nested marshallers. Its the old name of the field.
+ * @param objectArrayFields the fields that contain links to one or more elements, and thus can be either ids or arrays of ids in JSON-LD (in their new fieldName)
  * @returns {{marshall: (function(*): {}), oldFieldName: string, unmarshall: (function(*): {})}}
  */
-export function createMarshaller(renamingsSchema, oldFieldName = undefined) {
+export function createJsonLDMarshaller(
+  renamingsSchema,
+  {oldFieldName = undefined, objectArrayFields = []} = {}
+) {
   const isObjectMarshaller = (obj) =>
     typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
 
@@ -138,7 +148,8 @@ export function createMarshaller(renamingsSchema, oldFieldName = undefined) {
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {
-          outObject[newFieldName] = inObject[oldFieldNameOrMarshaller]; // The value at oldFieldName
+          if (inObject[oldFieldNameOrMarshaller])
+            outObject[newFieldName] = inObject[oldFieldNameOrMarshaller]; // The value at oldFieldName
         } else if (
           isObjectMarshaller(oldFieldNameOrMarshaller) &&
           oldFieldNameOrMarshaller.oldFieldName
@@ -149,15 +160,47 @@ export function createMarshaller(renamingsSchema, oldFieldName = undefined) {
           throw new Error("The renamings schema is incorrect");
         }
       }
+
+      // Convert "keys that should be arrays"
+      for (const objectArrayField of objectArrayFields) {
+        if (outObject[objectArrayField]) {
+          if (!Array.isArray(outObject[objectArrayField]))
+            outObject[objectArrayField] = [outObject[objectArrayField]];
+
+          // outObject[objectArrayField] = outObject[objectArrayField].map(encodeURIComponent);
+        }
+      }
+
+      // Encode ID for use in the URL
+      outObject.id = encodeURIComponent(inObject.id);
+
       return outObject;
     },
 
-    unmarshall: function (outObject) {
+    unmarshall: function (outObjectInit) {
+      const outObject = {...outObjectInit};
       const inObject = {};
+
+      // Decode ID
+      outObject.id = decodeURIComponent(inObject.id);
+
+      // Convert "keys that should be arrays"
+      for (const objectArrayField of objectArrayFields) {
+        if (outObject[objectArrayField] && Array.isArray(outObject[objectArrayField])) {
+          const {length} = outObject[objectArrayField];
+          outObject[objectArrayField] =
+            length === 1
+              ? outObject[objectArrayField][0]
+              : length === 0
+              ? null
+              : outObject[objectArrayField];
+          // outObject[objectArrayField] = outObject[objectArrayField].map(decodeURIComponent);
+        }
+      }
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {
-          inObject[oldFieldNameOrMarshaller] = outObject[newFieldName]; // The value at oldFieldName
+          if (outObject[newFieldName]) inObject[oldFieldNameOrMarshaller] = outObject[newFieldName]; // The value at oldFieldName
         } else if (
           isObjectMarshaller(oldFieldNameOrMarshaller) &&
           oldFieldNameOrMarshaller.oldFieldName
@@ -169,6 +212,7 @@ export function createMarshaller(renamingsSchema, oldFieldName = undefined) {
           throw new Error("The renamings schema is incorrect");
         }
       }
+
       return inObject;
     },
 

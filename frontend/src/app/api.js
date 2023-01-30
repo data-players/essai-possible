@@ -1,5 +1,6 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {isAnyOf} from "@reduxjs/toolkit";
+import * as path from "path";
 
 /**
  * API OBJECT
@@ -13,7 +14,7 @@ import {isAnyOf} from "@reduxjs/toolkit";
  */
 const api = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.thedogapi.com/v1",
+    baseUrl: "",
     // baseUrl : import.meta.env.VITE_MIDDLEWARE_URL,
     prepareHeaders: (headers, {getState}) => {
       // By default, if we have a token in the store, add it to request headers
@@ -58,3 +59,22 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
       .addMatcher(api.endpoints[endpoint].matchFulfilled, setStatusReducer("ready", endpoint));
   }
 };
+
+/**
+ * API UTILS
+ */
+
+export function baseUpdateMutation(marshaller) {
+  return (patch) => ({
+    url: decodeURIComponent(patch.id),
+    method: "PUT",
+    body: marshaller.unmarshall(patch),
+  });
+}
+
+export function baseFetchEntitiesQuery(endpoint) {
+  return (fetchParams = {}) => ({
+    url: path.join(import.meta.env.VITE_MIDDLEWARE_URL, endpoint),
+    ...fetchParams,
+  });
+}

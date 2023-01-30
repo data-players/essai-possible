@@ -37,7 +37,7 @@ import Box from "@mui/joy/Box";
 import * as yup from "yup";
 import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
-import PageEdit from "../../../components/PageEdit.jsx";
+import EditFormComponent from "../../../components/EditFormComponent.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
 
@@ -85,7 +85,7 @@ export default function PageEditOffer({mode}) {
   }
 
   return (
-    <PageEdit
+    <EditFormComponent
       ready={companyReady && (offerReady || !isEditMode)}
       pageBanner={
         isEditMode ? (
@@ -335,7 +335,9 @@ export default function PageEditOffer({mode}) {
                 </Typography>
                 <Typography>
                   Vous pouvez également modifier votre entreprise sur{" "}
-                  <Link to={`/company/${company.id}/edit`} component={ReactRouterLink}>
+                  <Link
+                    to={`/company/${encodeURIComponent(company.id)}/edit`}
+                    component={ReactRouterLink}>
                     cette page dédiée
                   </Link>
                   .
@@ -360,6 +362,6 @@ export default function PageEditOffer({mode}) {
           </FormStep>
         </>
       )}
-    </PageEdit>
+    </EditFormComponent>
   );
 }
