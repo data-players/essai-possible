@@ -9,7 +9,6 @@ import ConnectedUserProtection from "./ConnectedUserProtection.jsx";
 import {selectOfferById} from "../../routes/offers/offers-slice.js";
 
 const Protection = ({children, redirectTo = "/offers"}) => {
-
   const {id, companyId} = useParams();
   const navigate = useNavigate();
 
@@ -26,7 +25,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
     if (!currentUser?.companies.includes(finalCompanyId)) navigate(redirectTo);
   }, [finalCompanyId, currentUser?.companies]);
 
-  console.log('company',company);
+  console.log("company", company);
   if (!company?.id) return <LoadingSpinner />;
 
   return children || <Outlet />;

@@ -65,11 +65,11 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       queryFn: async (id, {getState}, extraOptions, baseQuery) => {
-        let entity=getState().companies.entities[id];
-        if(!entity){
-          entity=(await baseQuery(id)).data;
+        let entity = getState().companies.entities[id];
+        if (!entity) {
+          entity = (await baseQuery(id)).data;
         }
-        return {data: entity}
+        return {data: entity};
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),

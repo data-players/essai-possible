@@ -16,7 +16,7 @@ const slice = createSlice({
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
     user: null,
     token: localStorage.getItem("token") || null,
-    webId: localStorage.getItem("token")?jwtDecode(localStorage.getItem("token")).webId : null,
+    webId: localStorage.getItem("token") ? jwtDecode(localStorage.getItem("token")).webId : null,
   },
   reducers: {
     setToken: (state, {payload}) => {
@@ -24,8 +24,6 @@ const slice = createSlice({
       const tockenData = jwtDecode(payload);
       state.webId = tockenData.webId;
       state.token = payload;
-
-
     },
     setCredentials: (state, {payload: {user, token}}) => {
       state.user = user;
@@ -82,11 +80,11 @@ api.injectEndpoints({
   endpoints: (builder) => ({
     fetchUser: builder.query({
       queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
-        const webId= getState().auth.webId;
+        const webId = getState().auth.webId;
         const result = await baseQuery(webId);
-        const out= userMarshaller.marshall(result.data);
-        console.log('out',out);
-        return {data: out}
+        const out = userMarshaller.marshall(result.data);
+        console.log("out", out);
+        return {data: out};
       },
     }),
 
