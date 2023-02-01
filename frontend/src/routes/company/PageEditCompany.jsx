@@ -33,8 +33,6 @@ export default function PageEditCompany({mode}) {
   const [addCompany, {isLoading: isAddingCompany}] = useAddCompanyMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
 
-  console.log("isLoading", isLoading);
-
   const pageTitle = isEditMode
     ? t("companies.modifyACompany", {name: company.name})
     : t("companies.createANewCompany");
