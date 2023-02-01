@@ -76,12 +76,12 @@ export default function PageEditOffer({mode}) {
     if (shouldUpdateCompany) updateCompany(values.company);
 
     const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
-    navigate("/offers/" + newOffer.id);
+    navigate(`/offers/${encodeURIComponent(newOffer.id)}`);
   }
 
   async function onDelete() {
     await deleteOffer(id).unwrap();
-    navigate("/company/" + company.id);
+    navigate(`/company/${encodeURIComponent(company.id)}`);
   }
 
   return (

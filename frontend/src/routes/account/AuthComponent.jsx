@@ -47,7 +47,7 @@ export const AuthComponent = ({mode, redirect = false}) => {
     if (redirect && currentUser && meetingsReady) {
       navigate(
         currentUser.companies?.length > 0
-          ? `/company/${currentUser.companies[0]}`
+          ? `/company/${encodeURIComponent(currentUser.companies[0])}`
           : meetings.length > 0
           ? "/account/my-meetings"
           : "/offers"

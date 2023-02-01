@@ -45,7 +45,7 @@ console.log('PageEditCompany');
   async function onSubmit(values) {
     const method = isEditMode ? updateCompany : addCompany;
     const newCompany = await method({...values, id: company?.id}).unwrap();
-    navigate("/company/" + newCompany.id);
+    navigate(`/company/${encodeURIComponent(newCompany.id)}`);
   }
 
   // async function onDelete() {
