@@ -15,6 +15,8 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
 import Link from "@mui/joy/Link";
+import {ExternalLink} from "../components/atoms";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 
 export default function HomePage() {
   const {t} = useTranslation();
@@ -22,21 +24,15 @@ export default function HomePage() {
     <>
       {/* HERO HEADER */}
       <HeroBanner>
-        <Grid
-          container
-          columnSpacing={10}
-          rowSpacing={5}
-          position={"relative"}
-          p={2}
-          alignItems="center">
-          <Grid xs={12}>
+        <Stack gap={6} position={"relative"} p={2}>
+          <Box mb={{md: 2}}>
             <Typography level="h1" component={"h2"} mb={{xs: 2, md: 4}}>
               {t("homePage.heroHeadline")}
             </Typography>
             <Typography level="h4" component={"h3"} mb={{xs: 4, md: 6}}>
               {t("homePage.heroSubtitle")}
             </Typography>
-            <Typography level="h6" component={"h4"} textColor={"text.tertiary"}>
+            <Typography fontSize={"lg"} component={"h4"} textColor={"text.tertiary"}>
               {t("homePage.heroCreatedBy")}
               <Link
                 variant={"soft"}
@@ -47,10 +43,18 @@ export default function HomePage() {
                 {t("tousTesPossibles")}
               </Link>
             </Typography>
-          </Grid>
-          <Grid xs={12}></Grid>
-          <Grid xs={12} md={6}>
-            <Card invertedColors color={"primary"} variant={"solid"} size={"lg"}>
+          </Box>
+          <Stack
+            direction={{md: "row"}}
+            rowGap={5}
+            columnGap={{md: 7, lg: 10}}
+            justifyContent={"space-between"}>
+            <Card
+              invertedColors
+              color={"primary"}
+              variant={"solid"}
+              size={"lg"}
+              sx={{flexBasis: "50%"}}>
               <Stack gap={4} m={1}>
                 <Typography level="h2">{t("homePage.candidates")}</Typography>
                 <Typography level="h4">
@@ -65,9 +69,8 @@ export default function HomePage() {
                 </Button>
               </Stack>
             </Card>
-          </Grid>
-          <Grid xs={12} md={6}>
-            <Card variant={"soft"} size={"lg"}>
+
+            <Card variant={"soft"} size={"lg"} sx={{flexBasis: "50%"}}>
               <Stack gap={4} m={1}>
                 <Typography level="h2">{t("homePage.companies")}</Typography>
                 <Typography level="h4">
@@ -83,8 +86,8 @@ export default function HomePage() {
                 </Button>
               </Stack>
             </Card>
-          </Grid>
-        </Grid>
+          </Stack>
+        </Stack>
       </HeroBanner>
 
       <Stack mt={6} gap={6}>
@@ -150,10 +153,16 @@ export default function HomePage() {
           <Grid container spacing={4} alignItems="center">
             <Grid xs={12} md={6} sx={{alignItems: "stretch"}}>
               <Stack gap={4} m={1}>
-                <Typography level="h2">{t("homePage.ourImplantations")}</Typography>
+                <Typography level="h2">{t("homePage.essaiPossibleTerritories")}</Typography>
                 <Typography level={"h4"} component={"p"}>
                   {t("homePage.implantationsExplanation")}
                 </Typography>
+                <ExternalLink
+                  level={""}
+                  startDecorator={<MailOutlineRoundedIcon />}
+                  href={"mailto:contact@essaipossible.fr"}>
+                  contact@essaipossible.fr
+                </ExternalLink>
               </Stack>
             </Grid>{" "}
             <Grid xs={12} md={6}>
