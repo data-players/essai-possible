@@ -11,14 +11,13 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../app/i18n.js";
 import {useSelector} from "react-redux";
-import PageEdit from "../../components/PageEdit.jsx";
+import EditFormComponent from "../../components/EditFormComponent.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
 import {CompanyFormElements} from "./CompanyFormElements.jsx";
 
 export default function PageEditCompany({mode}) {
 
-console.log('PageEditCompany');
 
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
@@ -34,8 +33,6 @@ console.log('PageEditCompany');
   const [addCompany, {isLoading: isAddingCompany}] = useAddCompanyMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
 
-  // console.log('isLoading',isLoading);
-
   const pageTitle = isEditMode
     ? t("companies.modifyACompany", {name: company.name})
     : t("companies.createANewCompany");
@@ -43,7 +40,7 @@ console.log('PageEditCompany');
   async function onSubmit(values) {
     const method = isEditMode ? updateCompany : addCompany;
     const newCompany = await method({...values, id: company?.id}).unwrap();
-    navigate("/company/" + newCompany.id);
+    navigate(`/company/${encodeURIComponent(newCompany.id)}`);
   }
 
   // async function onDelete() {
@@ -53,7 +50,7 @@ console.log('PageEditCompany');
   // }
 
   return (
-    <PageEdit
+    <EditFormComponent
       ready={companyReady}
       pageBanner={<SimpleBanner>{pageTitle}</SimpleBanner>}
       initialValues={isEditMode ? company : {name: "", description: "", website: "", sectors: []}}
@@ -79,6 +76,6 @@ console.log('PageEditCompany');
           <Divider sx={{my: 1}} />
         </Stack>
       )}
-    </PageEdit>
+    </EditFormComponent>
   );
 }

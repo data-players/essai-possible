@@ -86,7 +86,6 @@ api.injectEndpoints({
         if(!entity){
           entity=(await baseQuery(id)).data;
         }
-        // console.log('entity',entity);
         const data = marshaller.marshall(entity);
         console.log('data',data);
         return {data: data}

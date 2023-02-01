@@ -3,25 +3,27 @@ import {
   authActions,
   selectCurrentUser,
   useDeleteUserMutation,
+  userDefaultValues,
+  userValidationSchema,
   useUpdateUserMutation,
 } from "../../app/auth-slice.js";
 import * as React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link as ReactRouterLink, useNavigate} from "react-router-dom";
-import {ButtonWithConfirmation, SimpleBanner} from "../../components/atoms";
-import {Form, FormInput, FormStep} from "../../components/forms";
+import {ButtonWithConfirmation, ExternalLink, SimpleBanner} from "../../components/atoms";
+import {FormStep} from "../../components/forms";
 import {PageContent} from "../../components/Layout";
 import Typography from "@mui/joy/Typography";
 import Card from "@mui/joy/Card";
 import Grid from "@mui/joy/Grid";
 import Stack from "@mui/joy/Stack";
 import {useSnackbar} from "../../components/snackbar.jsx";
-import * as yup from "yup";
-import {confirmNewPassword, requiredPhone, requiredString} from "../../app/fieldValidation.js";
 import {t} from "i18next";
 import {AuthButton} from "../../components/Layout.jsx";
 import Divider from "@mui/joy/Divider";
 import {UserFormElements} from "./UserFormElements.jsx";
+import EditFormComponent from "../../components/EditFormComponent.jsx";
+import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded";
 
 export default function PageAccount() {
   const dispatch = useDispatch();
@@ -43,52 +45,35 @@ export default function PageAccount() {
       <PageContent gap={3} mt={6} maxWidth={"lg"}>
         <Grid container rowSpacing={3} columnSpacing={6}>
           <Grid xs={12} md={7}>
-            <FormStep showTitle showContent title={"Mes informations personnelles"} noDivider>
-              <Form
-                validationSchema={yup.object({
-                  firstName: requiredString,
-                  lastName: requiredString,
-                  phone: requiredPhone,
-                })}
-                initialValues={currentUser}
-                onSubmit={onSubmit}
-                successText={"Modifications enregistrées"}>
-                {(register) => (
+            <EditFormComponent
+              helpBox={
+                <>
+                  <Typography fontWeight={"lg"}>
+                    Vous êtes identifié·e avec votre compte Les Communs.
+                  </Typography>
+
+                  <ExternalLink
+                    href={"https://lescommuns.org/"}
+                    startDecorator={<LaunchRoundedIcon />}>
+                    C'est quoi, Les Communs ?
+                  </ExternalLink>
+                </>
+              }
+              component={Stack}
+              mt={0}
+              validationSchema={userValidationSchema}
+              updateLoading={isUpdatingUser}
+              initialValues={{...userDefaultValues, ...currentUser}}
+              onSubmit={onSubmit}>
+              {(register) => (
+                <FormStep showTitle showContent title={"Mes informations personnelles"}>
                   <Stack gap={3}>
                     <UserFormElements register={register} />
-
-                    <FormInput
-                      label="Email"
-                      name={"email"}
-                      placeholder="email@example.com"
-                      type={"email"}
-                      register={register}
-                    />
-
-                    <FormInput
-                      label="Nouveau mot de passe"
-                      name={"newPassword"}
-                      placeholder="mot de passe"
-                      type={"password"}
-                      register={register}
-                    />
-
-                    <FormInput
-                      label="Confirmez le nouveau mot de passe"
-                      name={"confirmNewPassword"}
-                      placeholder="mot de passe"
-                      type={"password"}
-                      register={register}
-                    />
-
-                    <Button loading={isUpdatingUser} type="submit" size="lg" color="success">
-                      Enregistrer les modifications
-                    </Button>
                   </Stack>
-                )}
-              </Form>
-              <Divider sx={{mt: 4, mb: 1, display: {md: "none"}}} />
-            </FormStep>
+                </FormStep>
+              )}
+            </EditFormComponent>
+            <Divider sx={{mt: 4, mb: 1, display: {md: "none"}}} />
           </Grid>
 
           <Grid xs={12} md={5}>

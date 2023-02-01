@@ -10,19 +10,21 @@ import Card from "@mui/joy/Card";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
 import {useSnackbar} from "./snackbar.jsx";
 
-export default function PageEdit({
+export default function EditFormComponent({
+  component: Component = PageContent,
   ready = true,
   onSubmit,
   onDelete,
   pageBanner,
   initialValues,
   validationSchema,
-  isEditMode,
+  isEditMode = true,
   updateLoading,
   deleteLoading,
   helpBox,
   deleteAreYouSureText,
   children,
+  ...props
 }) {
   const [openSnackbar] = useSnackbar();
 
@@ -45,7 +47,7 @@ export default function PageEdit({
         successText={isEditMode ? "Modifications réussies" : "Création réussie"}
         onSubmit={onSubmit}>
         {(register, {values, setFieldValue, errors, dirty}) => (
-          <PageContent gap={3} mt={6} maxWidth={"lg"}>
+          <Component gap={3} mt={6} {...props}>
             {helpBox && (
               <>
                 <HelpBox>{helpBox}</HelpBox>
@@ -76,7 +78,7 @@ export default function PageEdit({
               color="success"
               disabled={!dirty}
               loading={updateLoading}
-              onClick={() => Object.keys(errors).length > 0 && setShowingErrors(true)}
+              onClick={() => setShowingErrors(Object.keys(errors).length > 0)}
               startDecorator={<CheckIcon />}>
               {isEditMode ? "Valider les modifications" : "Valider la création"}
             </Button>
@@ -91,7 +93,7 @@ export default function PageEdit({
                 Supprimer l'offre
               </ButtonWithConfirmation>
             )}
-          </PageContent>
+          </Component>
         )}
       </Form>
     </>

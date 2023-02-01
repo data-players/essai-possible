@@ -24,26 +24,27 @@ import Autocomplete from "@mui/joy/Autocomplete";
 import {useLazyFetchGeocodingSuggestionsQuery} from "../app/geocodingApi.js";
 import debounce from "@mui/utils/debounce.js";
 import Pagination from "@mui/material/Pagination";
-import {getUrlParam, setURLParam} from "../app/utils.js";
+import {getUrlParam, groupBy, setURLParam, sorter} from "../app/utils.js";
 import Radio from "@mui/joy/Radio";
 import MuiRadioGroup from "@mui/joy/RadioGroup";
 import Link from "@mui/joy/Link";
 import FileOpenRoundedIcon from "@mui/icons-material/FileOpenRounded.js";
 import Grid from "@mui/joy/Grid";
+import dayjs from "dayjs";
+import "dayjs/locale/fr";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import ListSubheader from "@mui/joy/ListSubheader";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded.js";
+import {useTranslationWithDates} from "../app/i18n.js";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
 
-export function BasicList({elements, component = "ul"}) {
-  return (
-    <Box component={component} sx={{mt: 1, ml: -1}}>
-      {elements?.map((el) => (
-        <Box component={"li"} key={el}>
-          {el}
-        </Box>
-      ))}
-    </Box>
-  );
-}
+/**
+ * INPUTS
+ */
 
-export const RadioChips = ({options, name, value, setFieldValue, ...props}) => {
+export const RadioChips = ({options, name, value, onChange, deletable, itemSx, ...props}) => {
   // https://mui.com/joy-ui/react-chip/#with-a-checkbox
   return (
     <Stack direction="row" columnGap={2} rowGap={2} flexWrap="wrap">
@@ -63,6 +64,15 @@ export const RadioChips = ({options, name, value, setFieldValue, ...props}) => {
                 </>
               )
             }
+            endDecorator={
+              deletable && (
+                <DeleteOutlineRoundedIcon
+                  color={"danger"}
+                  sx={{ml: 1, opacity: 0.6, ":hover": {color: "red"}}}
+                />
+              )
+            }
+            sx={itemSx?.({key, label, title, checked})}
             {...props}>
             <Checkbox
               variant={checked ? "solid" : "soft"}
@@ -70,7 +80,10 @@ export const RadioChips = ({options, name, value, setFieldValue, ...props}) => {
               overlay
               label={label}
               checked={checked}
-              onChange={(event) => setFieldValue(event.target.checked ? key : undefined)}
+              onChange={(event) => {
+                console.log("onChange", key, event.target.checked);
+                onChange(key, event.target.checked);
+              }}
             />
           </Chip>
         );
@@ -79,51 +92,43 @@ export const RadioChips = ({options, name, value, setFieldValue, ...props}) => {
   );
 };
 
-export function Breadcrumbs({breadcrumbs}) {
-  return (
-    <Container>
-      <MuiBreadcrumbs
-        sx={{my: 1, display: {xs: "none", sm: "flex"}}}
-        separator={<ChevronRightIcon color={"primary"} />}
-        aria-label="breadcrumbs">
-        <Chip
-          component={ReactRouterLink}
-          startDecorator={<ChevronLeftIcon />}
-          variant={"soft"}
-          to={breadcrumbs[0].to}>
-          {breadcrumbs[0].label}
-        </Chip>
-        {breadcrumbs
-          .slice(1)
-          .filter((el) => !!el)
-          .map(({label, to, onClick}, index) => (
-            <Typography
-              key={index}
-              component={ReactRouterLink}
-              to={to}
-              onClick={onClick}
-              sx={{
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                maxWidth: 300,
-                color: index > 0 && "text.tertiary",
-                cursor: onClick && "pointer",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}>
-              {label}
-            </Typography>
-          ))}
-      </MuiBreadcrumbs>
-    </Container>
+export function SlotsList({
+  slots,
+  selectedSlot,
+  onChange,
+  deletable = false,
+  itemSx,
+  itemKey = "id",
+  ...props
+}) {
+  const {tDate, tTime} = useTranslationWithDates();
+  const slotsByDate = groupBy(
+    slots?.sort((a, b) => sorter.date(a.start, b.start)),
+    (slot) => tDate(slot.start, "long")
   );
-}
 
-export function LoadingSpinner(props) {
   return (
-    <Stack justifyContent={"center"} alignItems={"center"} minHeight={300} {...props}>
-      <div className="lds-dual-ring" />
-    </Stack>
+    <List>
+      {Object.entries(slotsByDate).map(([date, slots]) => (
+        <React.Fragment key={date}>
+          <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
+          <ListItem sx={{mb: 3}}>
+            <RadioChips
+              itemSx={itemSx}
+              deletable={deletable}
+              options={slots.map((slot) => ({
+                label: tTime(slot.start),
+                icon: CalendarMonthRoundedIcon,
+                key: slot[itemKey],
+              }))}
+              value={selectedSlot}
+              onChange={onChange}
+              {...props}
+            />
+          </ListItem>
+        </React.Fragment>
+      ))}
+    </List>
   );
 }
 
@@ -176,12 +181,12 @@ export function LocationSearchBar({sx, ...props}) {
 }
 
 export const CheckboxGroup = React.memo(
-  function ({options, value, onChange, color}) {
+  function ({options, value, onChange, color, ...props}) {
     const [val, setVal] = useState(value);
     console.log('CheckboxGroup val',val);
     return (
-      <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1}}>
-        <List size="sm">
+      <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
+        <List size="sm" {...props}>
           {options.map((option, index) => {
             const checked = val&&val.includes(option);
             return (
@@ -209,7 +214,7 @@ export const CheckboxGroup = React.memo(
 
 export function RadioGroup({options, color, ...props}) {
   return (
-    <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2}}>
+    <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2, boxShadow: "none"}}>
       <MuiRadioGroup {...props}>
         {options.map((option) => (
           <Radio value={option} key={option} label={option} />
@@ -218,6 +223,37 @@ export function RadioGroup({options, color, ...props}) {
     </Card>
   );
 }
+
+export function DateInput({
+  value,
+  datePickerComponent: DatePickerComponent = DatePicker,
+  inputFormat,
+  ...props
+}) {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"fr"}>
+      <DatePickerComponent
+        value={dayjs(value)}
+        {...(inputFormat ? {inputFormat} : {})}
+        renderInput={({inputRef, inputProps, InputProps}) => {
+          const onClick = InputProps.endAdornment?.props.children.props.onClick;
+          return (
+            <Input
+              onClick={onClick}
+              slotProps={{input: {ref: inputRef, ...inputProps}}}
+              endDecorator={InputProps.endAdornment}
+            />
+          );
+        }}
+        {...props}
+      />
+    </LocalizationProvider>
+  );
+}
+
+/**
+ * COMPONENTS
+ */
 
 export function ButtonWithConfirmation({
   children,
@@ -245,6 +281,66 @@ export function ButtonWithConfirmation({
         </Button>
       </Stack>
     </Card>
+  );
+}
+
+export function Breadcrumbs({breadcrumbs}) {
+  return (
+    <Container>
+      <MuiBreadcrumbs
+        sx={{my: 1, display: {xs: "none", sm: "flex"}}}
+        separator={<ChevronRightIcon color={"primary"} />}
+        aria-label="breadcrumbs">
+        <Chip
+          component={ReactRouterLink}
+          startDecorator={<ChevronLeftIcon />}
+          variant={"soft"}
+          to={breadcrumbs[0].to}>
+          {breadcrumbs[0].label}
+        </Chip>
+        {breadcrumbs
+          .slice(1)
+          .filter((el) => !!el)
+          .map(({label, to, onClick}, index) => (
+            <Typography
+              key={index}
+              component={ReactRouterLink}
+              to={to}
+              onClick={onClick}
+              sx={{
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                maxWidth: 300,
+                color: index > 0 && "text.tertiary",
+                cursor: onClick && "pointer",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}>
+              {label}
+            </Typography>
+          ))}
+      </MuiBreadcrumbs>
+    </Container>
+  );
+}
+
+export function LoadingSpinner(props) {
+  return (
+    <Stack justifyContent={"center"} alignItems={"center"} minHeight={300} {...props}>
+      <div className="lds-dual-ring" />
+    </Stack>
+  );
+}
+
+export function BasicList({elements, component = "ul"}) {
+  return (
+    <Box component={component} sx={{mt: 1, ml: -1}}>
+      {elements?.map((el) => (
+        <Box component={"li"} key={el}>
+          {el}
+        </Box>
+      ))}
+    </Box>
   );
 }
 

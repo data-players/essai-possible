@@ -37,9 +37,11 @@ import Box from "@mui/joy/Box";
 import * as yup from "yup";
 import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
-import PageEdit from "../../../components/PageEdit.jsx";
+import EditFormComponent from "../../../components/EditFormComponent.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
+import MeetingSlotsGenerator from "./MeetingSlotsGenerator.jsx";
+import {selectSlotsForOffer, selectSlotsReady} from "../book/slots-slice.js";
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -53,18 +55,23 @@ export default function PageEditOffer({mode}) {
   const {id, companyId} = useParams();
 
   const [openCompanyForm, setOpenCompanyForm] = useState(null);
+  const [openSlotsGenerator, setOpenSlotsGenerator] = useState(null);
 
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, id) : undefined));
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : companyId)
   );
+  const slots = useSelector((state) => (isEditMode ? selectSlotsForOffer(state, id) : []));
 
   const companyReady = useSelector(selectCompanyReady);
   const offerReady = useSelector(selectOfferReady);
+  const slotsReady = useSelector(selectSlotsReady);
 
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
+  // TODO Update slots for offer
+  // const [updateSlotsForOffer, {isLoading: isUpdatingSlotsForOffer}] = useUpdateSlotsForOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
   const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
@@ -75,18 +82,24 @@ export default function PageEditOffer({mode}) {
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
 
+    const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(slots);
+    if (shouldUpdateSlots) {
+      // TODO Update slots for offer
+    }
+
     const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
-    navigate("/offers/" + newOffer.id);
+    navigate(`/offers/${encodeURIComponent(newOffer.id)}`);
   }
 
   async function onDelete() {
     await deleteOffer(id).unwrap();
-    navigate("/company/" + company.id);
+    navigate(`/company/${encodeURIComponent(company.id)}`);
   }
 
   return (
-    <PageEdit
-      ready={companyReady && (offerReady || !isEditMode)}
+    <EditFormComponent
+      // ready when the company is ready + if edit mode, the offer and the slots are ready
+      ready={companyReady && (!isEditMode || (offerReady && slotsReady))}
       pageBanner={
         isEditMode ? (
           <OfferBanner
@@ -108,10 +121,12 @@ export default function PageEditOffer({mode}) {
           ? {
               offer: {...offerDefaultValues, ...offer},
               company,
+              slots,
             }
           : {
               offer: offerDefaultValues,
               company: {...companyDefaultValues, ...company},
+              slots,
             }
       }
       validationSchema={validationSchema}
@@ -293,6 +308,72 @@ export default function PageEditOffer({mode}) {
 
           <FormStep
             stepNumber={4}
+            currentFormStep={openSlotsGenerator}
+            setCurrentFormStep={setOpenSlotsGenerator}
+            showTitle
+            showContent={!isEditMode || values.slots.length === 0}
+            title={"Créneaux de rendez-vous"}
+            subtitle={
+              <>
+                <Typography fontSize={"lg"}>
+                  Listez tous les créneaux de rendez-vous possibles pour rencontrer vos candidat·es.
+                </Typography>
+                <Typography fontSize={"lg"}>
+                  {t("offers.xMeetingSlotsAvailable", {count: values.slots.length})}
+                </Typography>
+              </>
+            }>
+            <Stack gap={3}>
+              <HelpBox>
+                <Typography fontWeight={"lg"}>
+                  Vous pouvez renseigner des créneaux de rendez-vous en utilisant le générateur
+                  ci-dessous.
+                </Typography>
+                <Typography>
+                  Vous pouvez lancer le générateur plusieurs fois avec des paramètres différents, et
+                  les créneaux générés s'additionneront. Cela vous permet de générer facilement des
+                  créneaux, même avec un emploi du temps complexe.
+                </Typography>
+                <Typography>
+                  <u>Exemple :</u> vous êtes disponible de la date A à la date B, tous les jours de
+                  la semaine de 13h à 17h <em>sauf le lundi</em>. En effet, le lundi, vous n'êtes
+                  disponible qu'en matinée, de 10 à 12h. Dans ce cas, vous pouvez lancer deux
+                  générations différentes :
+                  <ul>
+                    <li>
+                      Une première tous les jours de la semaine sauf samedi et dimanche, entre 13 et
+                      17h, de la date A à la date B,
+                    </li>
+                    <li>
+                      Une seconde le lundi seulement, entre 10 et 12h, de la date A à la date B.
+                    </li>
+                  </ul>
+                </Typography>
+              </HelpBox>
+
+              <MeetingSlotsGenerator
+                offerId={id}
+                values={values}
+                register={register}
+                slots={slots}
+                setFieldValue={setFieldValue}
+              />
+
+              {isEditMode && (
+                <Button
+                  sx={{mt: 2, width: "fit-content"}}
+                  variant="soft"
+                  size={"sm"}
+                  color="neutral"
+                  onClick={() => setOpenSlotsGenerator(false)}>
+                  Fermer
+                </Button>
+              )}
+            </Stack>
+          </FormStep>
+
+          <FormStep
+            stepNumber={5}
             subtitle={
               <Typography>
                 Par défaut, votre offre est enregistrée en statut de <strong>Brouillon</strong>.
@@ -318,7 +399,7 @@ export default function PageEditOffer({mode}) {
           </FormStep>
 
           <FormStep
-            stepNumber={5}
+            stepNumber={6}
             currentFormStep={openCompanyForm}
             setCurrentFormStep={setOpenCompanyForm}
             showTitle
@@ -362,6 +443,6 @@ export default function PageEditOffer({mode}) {
           </FormStep>
         </>
       )}
-    </PageEdit>
+    </EditFormComponent>
   );
 }
