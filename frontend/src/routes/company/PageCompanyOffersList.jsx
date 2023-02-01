@@ -17,11 +17,13 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded.js";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 export default function PageCompanyOffersList() {
+
+  console.log('PageCompanyOffersList');
   const {t} = useTranslation();
   const {companyId} = useParams();
   useFetchCompanyQuery(companyId);
   const offersForCompany = useSelector((state) => selectOfferIdsForCompany(state, companyId));
-  const company = useSelector((state) => selectCompanyById(state, companyId));
+  const company = useSelector((state) => selectCompanyById(state, encodeURIComponent(companyId)));
   const offersReady = useSelector(selectOffersReady);
 
   if (!company?.id) return <LoadingSpinner />;

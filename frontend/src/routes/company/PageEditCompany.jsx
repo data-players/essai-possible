@@ -20,8 +20,6 @@ export default function PageEditCompany({mode}) {
 
 console.log('PageEditCompany');
 
-  console.log('ALLLO');
-
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
@@ -29,14 +27,14 @@ console.log('PageEditCompany');
 
 
 
-  const company = useSelector((state) => selectCompanyById(state, companyId));
+  const company = useSelector((state) => selectCompanyById(state, encodeURIComponent(companyId)));
 
   const companyReady = useSelector(selectCompanyReady);
 
   const [addCompany, {isLoading: isAddingCompany}] = useAddCompanyMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
 
-  console.log('isLoading',isLoading);
+  // console.log('isLoading',isLoading);
 
   const pageTitle = isEditMode
     ? t("companies.modifyACompany", {name: company.name})

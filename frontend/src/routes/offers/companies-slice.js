@@ -3,6 +3,7 @@ import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/api
 import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 import * as yup from "yup";
 import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
+import {createJsonLDMarshaller} from "./../../app/utils.js";
 
 /**
  * COMPANIES SLICE
@@ -44,6 +45,22 @@ export const {
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
 
+
+const marshaller = createJsonLDMarshaller(
+  {
+    affiliates: "pair:affiliates",
+    description: "pair:description",
+    hasLocation: "pair:hasLocation",
+    label:"pair:label",
+    offers:"pair:offers",
+    type:"type",
+    image:"image"
+
+  },
+  {objectArrayFields: ["offers","affiliates"]}
+);
+
+
 /**
  * COMPANIES API ENDPOINTS
  */
@@ -69,7 +86,10 @@ api.injectEndpoints({
         if(!entity){
           entity=(await baseQuery(id)).data;
         }
-        return {data: entity}
+        // console.log('entity',entity);
+        const data = marshaller.marshall(entity);
+        console.log('data',data);
+        return {data: data}
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),

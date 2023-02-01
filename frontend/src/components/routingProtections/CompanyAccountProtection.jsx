@@ -11,6 +11,7 @@ import {selectOfferById} from "../../routes/offers/offers-slice.js";
 const Protection = ({children, redirectTo = "/offers"}) => {
 
   const {id, companyId} = useParams();
+  // console.log('id, companyId',id, companyId);
   const navigate = useNavigate();
 
   const offer = useSelector((state) => selectOfferById(state, id));
@@ -18,15 +19,18 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 
   useFetchCompanyQuery(finalCompanyId);
 
+
   const currentUser = useSelector(selectCurrentUser);
-  const company = useSelector((state) => selectCompanyById(state, finalCompanyId));
+    // console.log('currentUser',currentUser);
+    // console.log('finalCompanyId',encodeURIComponent(finalCompanyId));
+  const company = useSelector((state) => selectCompanyById(state, encodeURIComponent(finalCompanyId)));
 
   // User not belonging to the company bump out
   useEffect(() => {
     if (!currentUser?.companies.includes(finalCompanyId)) navigate(redirectTo);
   }, [finalCompanyId, currentUser?.companies]);
 
-  console.log('company',company);
+  console.log('protector company',company,!company?.id);
   if (!company?.id) return <LoadingSpinner />;
 
   return children || <Outlet />;
