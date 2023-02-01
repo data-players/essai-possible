@@ -76,6 +76,7 @@
   "intl": {
     "time": "{{val, datetime(timeStyle: short)}}",
     "date": "{{val, datetime(dateStyle: long)}}",
+    "date_long": "{{val, datetime(dateStyle: full)}}",
     "dateTime": "{{val, datetime(dateStyle: long; timeStyle: short)}}",
     "dateTime_long": "le {{val, datetime(dateStyle: long)}} à {{val, datetime(timeStyle: short)}}"
   },
@@ -94,5 +95,10 @@
   "companies": {
     "modifyACompany": "Modifier l'entreprise \"{{name}}\"",
     "createANewCompany": "Créer une entreprise"
+  },
+  "list": "{{values, list}}",
+  "offer": {
+    "generatorSummary": "Vous allez générer des créneaux toutes les {{meetingDuration}} minutes, <strong>du {{startDate}} au {{endDate}}</strong> les <strong>{{daysOfWeek, list}}</strong>, entre <strong>{{startTime}} et {{endTime}}</strong>.",
+    "generatorSummary_sameDate": "Vous allez générer des créneaux toutes les {{meetingDuration}} minutes, <strong>le {{startDate}}</strong>, entre <strong>{{startTime}} et {{endTime}}</strong>."
   }
 }

@@ -117,7 +117,7 @@ export const {
 } = api;
 
 /**
- * ATUH FORM UTILS
+ * AUTH FORM UTILS
  */
 
 export const userValidationSchema = yup.object({

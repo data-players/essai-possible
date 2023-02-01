@@ -4,7 +4,7 @@ import BrowserLanguageDetector from "i18next-browser-languagedetector";
 import fr from "../locales/fr.json";
 import dayjs from "dayjs";
 
-export const initI18n = () =>
+export const initI18n = () => {
   i18next
     .use(BrowserLanguageDetector)
     .use(initReactI18next)
@@ -16,6 +16,9 @@ export const initI18n = () =>
       interpolation: {escapeValue: false},
       fallbackLng: "fr",
     });
+
+  dayjs.locale("fr");
+};
 
 export function useTranslationWithDates() {
   const {t} = useTranslation();
