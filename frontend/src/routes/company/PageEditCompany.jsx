@@ -11,7 +11,7 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../app/i18n.js";
 import {useSelector} from "react-redux";
-import PageEdit from "../../components/PageEdit.jsx";
+import EditFormComponent from "../../components/EditFormComponent.jsx";
 import Typography from "@mui/joy/Typography";
 import Divider from "@mui/joy/Divider";
 import {CompanyFormElements} from "./CompanyFormElements.jsx";
@@ -46,7 +46,7 @@ export default function PageEditCompany({mode}) {
   // }
 
   return (
-    <PageEdit
+    <EditFormComponent
       ready={companyReady}
       pageBanner={<SimpleBanner>{pageTitle}</SimpleBanner>}
       initialValues={isEditMode ? company : {name: "", description: "", website: "", sectors: []}}
@@ -72,6 +72,6 @@ export default function PageEditCompany({mode}) {
           <Divider sx={{my: 1}} />
         </Stack>
       )}
-    </PageEdit>
+    </EditFormComponent>
   );
 }

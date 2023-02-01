@@ -2,6 +2,8 @@ import {createSlice} from "@reduxjs/toolkit";
 import api, {addStatusForEndpoints, matchAny, readySelector} from "./api.js";
 import {users} from "./auth-slice-data.js";
 import jwtDecode from "jwt-decode";
+import {requiredEmail, requiredPhone, requiredString} from "./fieldValidation.js";
+import * as yup from "yup";
 
 /**
  * AUTHENTICATION SLICE
@@ -160,3 +162,21 @@ export const {
   useFetchUserQuery,
   useLazyFetchUserQuery,
 } = api;
+
+/**
+ * AUTH FORM UTILS
+ */
+
+export const userValidationSchema = yup.object({
+  firstName: requiredString,
+  lastName: requiredString,
+  phone: requiredPhone,
+  email: requiredEmail,
+});
+
+export const userDefaultValues = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+};

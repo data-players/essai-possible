@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from "react";
-import List from "@mui/joy/List";
-import ListItem from "@mui/joy/ListItem";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
-import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {Trans} from "react-i18next";
-import {RadioChips} from "../../../components/atoms.jsx";
+import {SlotsList} from "../../../components/atoms.jsx";
 import {Form, FormInput, FormStep} from "../../../components/forms.jsx";
-import ListSubheader from "@mui/joy/ListSubheader";
 import CheckIcon from "@mui/icons-material/Check";
 import {groupBy} from "../../../app/utils.js";
 import {PageContent} from "../../../components/Layout.jsx";
@@ -96,24 +92,11 @@ export default function PageBook() {
           </Collapse>
         </>
       }>
-      <List>
-        {Object.entries(slotsByDate).map(([date, slots]) => (
-          <React.Fragment key={date}>
-            <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
-            <ListItem sx={{mb: 3}}>
-              <RadioChips
-                options={slots.map((slot) => ({
-                  label: tTime(slot.start),
-                  icon: CalendarMonthRoundedIcon,
-                  key: slot.id,
-                }))}
-                value={selectedSlot}
-                setFieldValue={(selectedSlot) => setFormData({selectedSlot})}
-              />
-            </ListItem>
-          </React.Fragment>
-        ))}
-      </List>
+      <SlotsList
+        selectedSlot={selectedSlot}
+        onChange={(key, checked) => setFormData({selectedSlot: checked ? key : undefined})}
+        slots={slotsForOffer}
+      />
 
       <Stack>
         <Button
@@ -194,7 +177,7 @@ export default function PageBook() {
       />
 
       <PageContent gap={4} mt={6}>
-        {slotsByDate ? (
+        {slotsForOffer.length > 0 ? (
           steps
         ) : (
           <Typography mt={4} textColor={"text.tertiary"}>
