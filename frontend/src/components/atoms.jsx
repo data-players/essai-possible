@@ -235,7 +235,7 @@ export function DateInput({
         value={dayjs(value)}
         {...(inputFormat ? {inputFormat} : {})}
         renderInput={({inputRef, inputProps, InputProps}) => {
-          const onClick = InputProps.endAdornment.props.children.props.onClick;
+          const onClick = InputProps.endAdornment?.props.children.props.onClick;
           return (
             <Input
               onClick={onClick}

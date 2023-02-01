@@ -55,7 +55,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
     while (currentDate.isBefore(maxDate) || currentDate.isSame(maxDate)) {
       console.log(" DAY :", currentDate.format("DD/MM"));
 
-      const dayOfWeek = currentDate.locale("fr").format("dddd").toLowerCase();
+      const dayOfWeek = currentDate.format("dddd").toLowerCase();
       if (daysOfWeek.find((day) => day.toLowerCase() === dayOfWeek)) {
         let currentTime = realStartTime;
         while (currentTime.isBefore(realEndTime) || currentTime.isSame(realEndTime)) {
@@ -76,7 +76,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
 
     const existingSlotsKeys = values.slots.map((slot) => slot.start);
     const dedoubledNewSlots = slots.filter((slot) => !existingSlotsKeys.includes(slot.start));
-    console.log(dedoubledNewSlots);
+    console.log([...values.slots, ...dedoubledNewSlots]);
     setFieldValue("slots", [...values.slots, ...dedoubledNewSlots]);
   }
 
@@ -141,7 +141,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
             <FormInput
               component={CheckboxGroup}
               sx={{
-                flexDirection: "row",
+                flexDirection: {xs: "column", md: "row"},
                 flexWrap: "wrap",
                 columnGap: 3,
                 justifyContent: "space-between",
@@ -183,9 +183,10 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
 
       <FormControl>
         <FormLabel>Créneaux :</FormLabel>
-        <FormHelperText sx={{mb: 1}}>
+        <FormHelperText sx={{mb: 1, display: "inline"}}>
           Les créneaux nouvellement créés sont
           <Box
+            component={"span"}
             sx={{
               border: "2px solid lightgreen",
               bgcolor: "neutral.softBg",
@@ -202,9 +203,11 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
             <SlotsList
               slots={values.slots}
               itemKey={"start"}
-              itemSx={({key}) =>
-                existingOfferSlotsKeys.includes(key) ? undefined : {outline: "2px solid lightgreen"}
-              }
+              itemSx={({key}) => {
+                if (!existingOfferSlotsKeys.includes(key)) return {outline: "2px solid lightgreen"};
+                // // TODO fetch all meetings for the offer (not only for the current user) and match them
+                // if (meetingForOffer.start === key) return {outline: "3px solid red"};
+              }}
               deletable
               onChange={(key) => {
                 console.log(key, values.slots);

@@ -70,6 +70,8 @@ export default function PageEditOffer({mode}) {
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
+  // TODO Update slots for offer
+  // const [updateSlotsForOffer, {isLoading: isUpdatingSlotsForOffer}] = useUpdateSlotsForOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
   const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
@@ -79,6 +81,11 @@ export default function PageEditOffer({mode}) {
 
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
+
+    const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(slots);
+    if (shouldUpdateSlots) {
+      // TODO Update slots for offer
+    }
 
     const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
     navigate("/offers/" + newOffer.id);
