@@ -17,10 +17,17 @@ import Divider from "@mui/joy/Divider";
 import {CompanyFormElements} from "./CompanyFormElements.jsx";
 
 export default function PageEditCompany({mode}) {
+
+console.log('PageEditCompany');
+
+  console.log('ALLLO');
+
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
   const {companyId} = useParams();
+
+
 
   const company = useSelector((state) => selectCompanyById(state, companyId));
 
@@ -28,6 +35,8 @@ export default function PageEditCompany({mode}) {
 
   const [addCompany, {isLoading: isAddingCompany}] = useAddCompanyMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
+
+  console.log('isLoading',isLoading);
 
   const pageTitle = isEditMode
     ? t("companies.modifyACompany", {name: company.name})

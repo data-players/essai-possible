@@ -64,12 +64,12 @@ api.injectEndpoints({
 
     // Fetch one company by id
     fetchCompany: builder.query({
-      query(id) {
-        return `/organizations`;
-      },
-      transformResponse(baseQueryReturnValue, meta, id) {
-        // Mock data with companies
-        return fullCompanies.find((company) => company.id === id);
+      queryFn: async (id, {getState}, extraOptions, baseQuery) => {
+        let entity=getState().companies.entities[id];
+        if(!entity){
+          entity=(await baseQuery(id)).data;
+        }
+        return {data: entity}
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),

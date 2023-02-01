@@ -84,7 +84,9 @@ api.injectEndpoints({
       queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
         const webId= getState().auth.webId;
         const result = await baseQuery(webId);
-        return {data: userMarshaller.marshall(result.data)}
+        const out= userMarshaller.marshall(result.data);
+        console.log('out',out);
+        return {data: out}
       },
     }),
 
