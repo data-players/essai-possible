@@ -222,12 +222,8 @@ function SideDrawer({onClose, ...props}) {
   );
 }
 
-export function HeroBanner({
-  noBackground = false,
-  invertedColors = true,
-  component: Component = Sheet,
-  ...props
-}) {
+export function HeroBanner({noBackground = false, invertedColors = true, ...props}) {
+  const Component = props.component || Sheet;
   return (
     <Component
       variant="solid"
