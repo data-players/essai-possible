@@ -54,6 +54,14 @@ export default function Router() {
                     </CompanyAccountProtection>
                   ),
                 },
+                {
+                  path: "copy",
+                  element: (
+                    <CompanyAccountProtection redirectTo={".."}>
+                      <PageEditOffer mode={"edit"} isCopying />
+                    </CompanyAccountProtection>
+                  ),
+                },
               ],
             },
           ],

@@ -16,6 +16,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentUser, selectCurrentUserReady} from "../../app/auth-slice.js";
 import {selectCompanyById} from "./companies-slice.js";
 import CheckIcon from "@mui/icons-material/Check.js";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 
 export default function CompanyOfferPreview({offer, children}) {
   const isDraft = offer.status === statusOptions[0];
@@ -54,6 +55,13 @@ export default function CompanyOfferPreview({offer, children}) {
                     variant={"soft"}
                     startDecorator={<CreateRoundedIcon />}>
                     Modifier
+                  </Button>
+                  <Button
+                    component={ReactRouterLink}
+                    to={`/offers/${encodeURIComponent(offer.id)}/copy`}
+                    variant={"soft"}
+                    startDecorator={<ContentCopyRoundedIcon />}>
+                    Copier
                   </Button>
                   <Button
                     component={ReactRouterLink}
