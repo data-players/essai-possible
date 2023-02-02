@@ -13,21 +13,22 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   const navigate = useNavigate();
 
   const offer = useSelector((state) => selectOfferById(state, id));
-  const finalCompanyId = companyId || offer.company;
-  console.log('finalCompanyId',finalCompanyId);
+  const encodedCompanyId = encodeURIComponent(companyId || offer.company);
+  // console.log('finalCompanyId',finalCompanyId);
 
-  useFetchCompanyQuery(encodeURIComponent(finalCompanyId));
+  useFetchCompanyQuery(encodedCompanyId);
 
   const currentUser = useSelector(selectCurrentUser);
   const company = useSelector((state) =>
-    selectCompanyById(state, encodeURIComponent(finalCompanyId))
+    selectCompanyById(state, encodedCompanyId)
   );
-  console.log('company',company);
+  // console.log('Protection company',company);
+  // console.log('Protection currentUser',currentUser);
 
   // User not belonging to the company bump out
   useEffect(() => {
-    if (!currentUser?.companies.includes(finalCompanyId)) navigate(redirectTo);
-  }, [finalCompanyId, currentUser?.companies]);
+    if (!currentUser?.companies.includes(encodedCompanyId)) navigate(redirectTo);
+  }, [encodedCompanyId, currentUser?.companies]);
 
   if (!company?.id) return <LoadingSpinner />;
 

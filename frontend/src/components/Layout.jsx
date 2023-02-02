@@ -320,7 +320,7 @@ export const AuthButton = {
         <MenuItem
           {...(selected && {selected: true, variant: "soft"})}
           onClick={handleNavigateToCompany(companyId)}>
-          {company.name}
+          {company?.name}
         </MenuItem>
       );
     };

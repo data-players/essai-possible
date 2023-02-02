@@ -137,7 +137,7 @@ export function getDeepValue(obj, splitName) {
  */
 export function createJsonLDMarshaller(
   renamingsSchema,
-  {oldFieldName = undefined, objectArrayFields = []} = {}
+  {oldFieldName = undefined, objectArrayFields = [],encodeUriFields = []} = {}
 ) {
   const isObjectMarshaller = (obj) =>
     typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
@@ -166,8 +166,17 @@ export function createJsonLDMarshaller(
         if (outObject[objectArrayField]) {
           if (!Array.isArray(outObject[objectArrayField]))
             outObject[objectArrayField] = [outObject[objectArrayField]];
-
           // outObject[objectArrayField] = outObject[objectArrayField].map(encodeURIComponent);
+        }
+      }
+
+      for (const encodeUriField of encodeUriFields) {
+        if (outObject[encodeUriFields]) {
+          if (Array.isArray(outObject[encodeUriField])){
+              outObject[encodeUriField]=outObject[encodeUriField].map(v=>encodeURIComponent(v))
+          }else {
+            outObject[encodeUriField]=encodeURIComponent(outObject[encodeUriField])
+          }
         }
       }
 
@@ -182,13 +191,13 @@ export function createJsonLDMarshaller(
       const inObject = {};
 
       // Decode ID
-      outObject.id = decodeURIComponent(inObject.id);
+      inObject.id = decodeURIComponent(outObject.id);
 
       // Convert "keys that should be arrays"
       for (const objectArrayField of objectArrayFields) {
         if (outObject[objectArrayField] && Array.isArray(outObject[objectArrayField])) {
           const {length} = outObject[objectArrayField];
-          outObject[objectArrayField] =
+          inObject[objectArrayField] =
             length === 1
               ? outObject[objectArrayField][0]
               : length === 0
@@ -197,6 +206,16 @@ export function createJsonLDMarshaller(
           // outObject[objectArrayField] = outObject[objectArrayField].map(decodeURIComponent);
         }
       }
+
+      // for (const encodeUriField of encodeUriFields) {
+      //   if (inObject[encodeUriFields]) {
+      //     if (Array.isArray(outObject[encodeUriField])){
+      //         inObject[encodeUriField]=inObject[encodeUriField].map(v=>encodeURIComponent(v))
+      //     }else {
+      //       inObject[encodeUriField]=encodeURIComponent(inObject[encodeUriField])
+      //     }
+      //   }
+      // }
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {

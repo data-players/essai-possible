@@ -11,6 +11,9 @@ const dataServers = {
         'pair:Organization': ['/organizations'],
         'semapps:Page': ['/pages'],
         'pair:Person': ['/users'],
+        'ep:Sector':['/sectors'],
+        'ep:Skill':['/skills'],
+        'ep:Goal':['/goals'],
         'aurba:DataSource': ['/data-sources'],
       }
     },

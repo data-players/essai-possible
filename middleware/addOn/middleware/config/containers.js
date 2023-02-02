@@ -102,6 +102,21 @@ module.exports = [
     acceptedTypes: ['pair:Theme']
   },
   {
+    path: '/sectors',
+    preferredView: '/Sector',
+    acceptedTypes: ['ep:sector']
+  },
+  {
+    path: '/skills',
+    preferredView: '/Skill',
+    acceptedTypes: ['ep:skill']
+  },
+  {
+    path: '/goals',
+    preferredView: '/Goal',
+    acceptedTypes: ['ep:goal']
+  },
+  {
     path: '/status',
     preferredView: '/Status',
     acceptedTypes: [

@@ -10,13 +10,13 @@ export default {
     edit: ConceptEdit,
     icon: StyleIcon,
     options: {
-      label: 'Modes de formation',
+      label: 'Objectif',
       parent: 'Concept'
     }
   },
   dataModel: {
     types: [
-      'opal:TrainingMode',
+      'ep:Goal',
     ],
     fieldsMapping: {
       title: 'pair:label'
@@ -24,7 +24,7 @@ export default {
   },
   translations: {
     fr: {
-      name: 'Mode de formation |||| Modes de formation',
+      name: 'Objectif |||| Objectifs',
       fields: {
         '@type': 'Classe',
         'pair:label': 'Nom'

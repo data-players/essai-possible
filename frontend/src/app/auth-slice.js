@@ -73,7 +73,10 @@ const userMarshaller = createJsonLDMarshaller(
     lastName: "pair:lastName",
     companies: "pair:affiliatedBy",
   },
-  {objectArrayFields: ["companies"]}
+  {
+    objectArrayFields: ["companies"],
+    encodeUriFields:["companies"]
+  },
 );
 
 api.injectEndpoints({
@@ -83,6 +86,7 @@ api.injectEndpoints({
         const webId = getState().auth.webId;
         const result = await baseQuery(webId);
         const out = userMarshaller.marshall(result.data);
+        console.log('out',out);
         return {data: out};
       },
     }),

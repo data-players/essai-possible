@@ -10,13 +10,13 @@ export default {
     edit: ConceptEdit,
     icon: StyleIcon,
     options: {
-      label: 'Genre',
+      label: 'Secteur',
       parent: 'Concept'
     }
   },
   dataModel: {
     types: [
-      'opal:Gender',
+      'ep:Sector',
     ],
     fieldsMapping: {
       title: 'pair:label'
@@ -24,7 +24,7 @@ export default {
   },
   translations: {
     fr: {
-      name: 'Genre |||| Genres',
+      name: 'Secteur |||| Secteurs',
       fields: {
         '@type': 'Classe',
         'pair:label': 'Nom'

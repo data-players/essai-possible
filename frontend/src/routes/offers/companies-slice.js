@@ -21,7 +21,7 @@ const companiesSlice = createSlice({
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchCompanies"]), companiesAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne)
-      .addMatcher(matchAny("matchFulfilled", ["updateCompany"]), companiesAdapter.removeOne)
+      .addMatcher(matchAny("matchFulfilled", ["updateCompany"]), companiesAdapter.upsertOne)
       .addMatcher(matchAny("matchFulfilled", ["addCompany"]), companiesAdapter.addOne)
       .addMatcher(matchAny("matchFulfilled", ["deleteCompany"]), companiesAdapter.removeOne);
 
@@ -56,7 +56,10 @@ const marshaller = createJsonLDMarshaller(
     type: "type",
     image: "image",
   },
-  {objectArrayFields: ["offers", "affiliates"]}
+  {
+    objectArrayFields: ["offers", "affiliates"],
+    encodeUriFields:["offers", "affiliates"]
+  }
 );
 
 /**
@@ -79,7 +82,6 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       query: (id) => {
-        console.log('fetchCompany');
         return decodeURIComponent(id);
       },
       transformResponse(baseResponse, meta, arg) {
@@ -89,7 +91,7 @@ api.injectEndpoints({
       // queryFn: async (id, {getState}, extraOptions, baseQuery) => {
       //   let entity = getState().companies.entities[id];
       //   if (!entity) {
-      //     entity = (await baseQuery(id)).data;
+      //     entity = (await baseQuery({url:id,method:'POST'})).data;
       //   }
       //   const data = marshaller.marshall(entity);
       //   return {data: data};
@@ -114,25 +116,35 @@ api.injectEndpoints({
     }),
 
     updateCompany: builder.mutation({
-      // queryFn: async (args, {getState}, extraOptions, baseQuery) => {
-      //   console.log('baseQuery',baseQuery);
-      //   baseQuery.setMethod('POST');
-      //   return {data: args};
-      // },
-
-      query: (args) => ({
-        url: decodeURIComponent(args.id),
-        method: "PUT",
-        body: marshaller.unmarshall(args),
-      }),
-      transformResponse(baseQueryReturnValue, meta, args) {
-        // Mock data
-        // console.log('api',api);
-        // console.log('baseQueryReturnValue',baseQueryReturnValue);
-        // let company = fullCompanies.find((company) => company.id === args.id);
-        console.log('end update -> math remove',args);
-        return args.id;
+      queryFn: async (args, {getState}, extraOptions, baseQuery) => {
+        console.log('args',args);
+        const body = marshaller.unmarshall(args);
+        console.log('body',body);
+        await baseQuery({
+          url:body.id,
+          method:'PUT',
+          body:body
+        });
+        console.log('body.id',body.id);
+        const data = (await baseQuery(body.id)).data;
+        const out= marshaller.marshall(data);
+        console.log('updateCompany out',out);
+        return {data: out};
       },
+
+      // query: (args) => ({
+      //   url: decodeURIComponent(args.id),
+      //   method: "PUT",
+      //   body: marshaller.unmarshall(args),
+      // }),
+      // transformResponse(baseQueryReturnValue, meta, args) {
+      //   // Mock data
+      //   // console.log('api',api);
+      //   // console.log('baseQueryReturnValue',baseQueryReturnValue);
+      //   // let company = fullCompanies.find((company) => company.id === args.id);
+      //   console.log('end update -> math remove',args);
+      //   return args.id;
+      // },
     }),
 
     deleteCompany: builder.mutation({
