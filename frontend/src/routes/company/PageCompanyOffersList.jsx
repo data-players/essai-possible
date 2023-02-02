@@ -17,8 +17,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded.js";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 
 export default function PageCompanyOffersList() {
-
-  console.log('PageCompanyOffersList');
+  console.log("PageCompanyOffersList");
   const {t} = useTranslation();
   const {companyId} = useParams();
   useFetchCompanyQuery(companyId);

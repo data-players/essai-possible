@@ -45,21 +45,18 @@ export const {
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
 
-
 const marshaller = createJsonLDMarshaller(
   {
     affiliates: "pair:affiliates",
     description: "pair:description",
     hasLocation: "pair:hasLocation",
-    label:"pair:label",
-    offers:"pair:offers",
-    type:"type",
-    image:"image"
-
+    label: "pair:label",
+    offers: "pair:offers",
+    type: "type",
+    image: "image",
   },
-  {objectArrayFields: ["offers","affiliates"]}
+  {objectArrayFields: ["offers", "affiliates"]}
 );
-
 
 /**
  * COMPANIES API ENDPOINTS
@@ -82,13 +79,13 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       queryFn: async (id, {getState}, extraOptions, baseQuery) => {
-        let entity=getState().companies.entities[id];
-        if(!entity){
-          entity=(await baseQuery(id)).data;
+        let entity = getState().companies.entities[id];
+        if (!entity) {
+          entity = (await baseQuery(id)).data;
         }
         const data = marshaller.marshall(entity);
-        console.log('data',data);
-        return {data: data}
+        console.log("data", data);
+        return {data: data};
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),

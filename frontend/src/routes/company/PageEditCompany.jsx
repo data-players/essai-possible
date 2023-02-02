@@ -17,14 +17,10 @@ import Divider from "@mui/joy/Divider";
 import {CompanyFormElements} from "./CompanyFormElements.jsx";
 
 export default function PageEditCompany({mode}) {
-
-
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
   const {companyId} = useParams();
-
-
 
   const company = useSelector((state) => selectCompanyById(state, encodeURIComponent(companyId)));
 
