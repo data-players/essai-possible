@@ -94,7 +94,11 @@ export default function PageEditOffer({mode, isCopying}) {
     const offerPayload = {...values.offer, id: offer?.id, company: company.id};
     if (isCopying) delete offerPayload.id; // Delete id if we are copying from an existing offer
 
-    const manipulatedOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
+    const manipulatedOffer = await method({
+      ...values.offer,
+      id: offer?.id,
+      company: company.id,
+    }).unwrap();
     navigate(`/offers/${encodeURIComponent(manipulatedOffer.id)}`);
   }
 
@@ -430,12 +434,13 @@ export default function PageEditOffer({mode, isCopying}) {
             }>
             <Stack gap={3}>
               <HelpBox>
-                <Typography>
-                  Les informations de votre entreprise seront visibles par les candidat·es dans la
-                  liste des offres et dans le détail des offres.
+                <Typography fontWeight={"lg"}>
+                  Les modifications de votre entreprise sont visibles pour toutes vos offres.
                 </Typography>
                 <Typography>
-                  Vous pouvez également modifier votre entreprise sur{" "}
+                  Les informations de votre entreprise seront visibles par les candidat·es dans la
+                  liste des offres et dans le détail des offres. Vous pouvez également modifier
+                  votre entreprise sur{" "}
                   <Link
                     to={`/company/${encodeURIComponent(company.id)}/edit`}
                     component={ReactRouterLink}>
