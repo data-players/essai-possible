@@ -11,7 +11,6 @@ import Typography from "@mui/joy/Typography";
 import {useSelector} from "react-redux";
 import {selectSlotsForOffer} from "../book/slots-slice.js";
 import FormLabel from "@mui/joy/FormLabel";
-import FormControl from "@mui/joy/FormControl";
 import FormHelperText from "@mui/joy/FormHelperText";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
@@ -29,6 +28,8 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
     const setDateTime = isSettingStart ? setStart : setEnd;
     const setOtherDateTime = isSettingStart ? setEnd : setStart;
     return (date) => {
+      console.log("newdate", date.toString(), "otherdate", otherDate.toString());
+
       setDateTime(date); // Set the date
 
       // If there is a date overlap, then set the other date to the same
@@ -101,6 +102,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               component={DateInput}
               label="Date de début"
               inputFormat={"ddd D MMM YYYY"}
+              disableMaskedInput
               value={startDate}
               onChange={handleSetDateTimeFn(true, setStartDate, setEndDate, endDate)}
               help={"De cette date (comprise)..."}
@@ -111,8 +113,9 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               component={DateInput}
               label="Date de fin"
               inputFormat={"ddd D MMM YYYY"}
+              disableMaskedInput
               value={endDate}
-              onChange={handleSetDateTimeFn(false, setStartDate, setEndDate, endDate)}
+              onChange={handleSetDateTimeFn(false, setStartDate, setEndDate, startDate)}
               help={"...jusqu'à cette date incluse..."}
             />
           </Grid>
@@ -132,7 +135,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               datePickerComponent={TimePicker}
               label="Heure de fin"
               value={endTime}
-              onChange={handleSetDateTimeFn(false, setStartTime, setEndTime, endTime)}
+              onChange={handleSetDateTimeFn(false, setStartTime, setEndTime, startTime)}
               help={"...jusqu'à cette heure là incluse."}
             />
           </Grid>
@@ -140,6 +143,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
           <Grid xs={12}>
             <FormInput
               component={CheckboxGroup}
+              wrapperComponent={Box}
               sx={{
                 flexDirection: {xs: "column", md: "row"},
                 flexWrap: "wrap",
@@ -181,7 +185,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
         </Grid>
       </Card>
 
-      <FormControl>
+      <Box>
         <FormLabel>Créneaux :</FormLabel>
         <FormHelperText sx={{mb: 1, display: "inline"}}>
           Les créneaux nouvellement créés sont
@@ -209,13 +213,12 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
                 // if (meetingForOffer.start === key) return {outline: "3px solid red"};
               }}
               deletable
-              onChange={(key) => {
-                console.log(key, values.slots);
+              onChange={(key) =>
                 setFieldValue(
                   "slots",
                   values.slots.filter((slot) => slot.start !== key)
-                );
-              }}
+                )
+              }
             />
           ) : (
             <Typography>
@@ -233,7 +236,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
             </Button>
           )}
         </Card>
-      </FormControl>
+      </Box>
     </Stack>
   );
 }

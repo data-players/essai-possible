@@ -334,11 +334,13 @@ export default function PageEditOffer({mode}) {
                   les créneaux générés s'additionneront. Cela vous permet de générer facilement des
                   créneaux, même avec un emploi du temps complexe.
                 </Typography>
-                <Typography>
-                  <u>Exemple :</u> vous êtes disponible de la date A à la date B, tous les jours de
-                  la semaine de 13h à 17h <em>sauf le lundi</em>. En effet, le lundi, vous n'êtes
-                  disponible qu'en matinée, de 10 à 12h. Dans ce cas, vous pouvez lancer deux
-                  générations différentes :
+                <Box>
+                  <Typography>
+                    <u>Exemple :</u> vous êtes disponible de la date A à la date B, tous les jours
+                    de la semaine de 13h à 17h <em>sauf le lundi</em>. En effet, le lundi, vous
+                    n'êtes disponible qu'en matinée, de 10 à 12h. Dans ce cas, vous pouvez lancer
+                    deux générations différentes :
+                  </Typography>
                   <ul>
                     <li>
                       Une première tous les jours de la semaine sauf samedi et dimanche, entre 13 et
@@ -348,7 +350,7 @@ export default function PageEditOffer({mode}) {
                       Une seconde le lundi seulement, entre 10 et 12h, de la date A à la date B.
                     </li>
                   </ul>
-                </Typography>
+                </Box>
               </HelpBox>
 
               <MeetingSlotsGenerator
