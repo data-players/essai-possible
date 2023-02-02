@@ -44,7 +44,7 @@ function OfferListItemRoot({offer, children}) {
   return (
     <ListItem
       onMouseEnter={(e) => {
-        console.log('onMouseEnter',e);
+        console.log("onMouseEnter", e);
         // launchOfferPrefetch(offer.id);
         // launchSlotsPrefetch({offer: offer.id});
         // launchCompanyPrefetch(offer.company);

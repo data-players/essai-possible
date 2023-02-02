@@ -19,9 +19,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   useFetchCompanyQuery(encodedCompanyId);
 
   const currentUser = useSelector(selectCurrentUser);
-  const company = useSelector((state) =>
-    selectCompanyById(state, encodedCompanyId)
-  );
+  const company = useSelector((state) => selectCompanyById(state, encodedCompanyId));
   // console.log('Protection company',company);
   // console.log('Protection currentUser',currentUser);
 

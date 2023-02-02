@@ -52,13 +52,13 @@ const marshaller = createJsonLDMarshaller(
     hasLocation: "pair:hasLocation",
     name: "pair:label",
     offers: "pair:offers",
-    website : "pair:homePage",
+    website: "pair:homePage",
     type: "type",
     image: "image",
   },
   {
     objectArrayFields: ["offers", "affiliates"],
-    encodeUriFields:["offers", "affiliates"]
+    encodeUriFields: ["offers", "affiliates"],
   }
 );
 
@@ -74,7 +74,7 @@ api.injectEndpoints({
         return `/organizations`;
       },
       transformResponse(baseResponse, meta) {
-        return baseResponse['ldp:contains'].map(company=>marshaller.marshall(company))
+        return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
@@ -117,18 +117,18 @@ api.injectEndpoints({
 
     updateCompany: builder.mutation({
       queryFn: async (args, {getState}, extraOptions, baseQuery) => {
-        console.log('args',args);
+        console.log("args", args);
         const body = marshaller.unmarshall(args);
-        console.log('body',body);
+        console.log("body", body);
         await baseQuery({
-          url:body.id,
-          method:'PUT',
-          body:body
+          url: body.id,
+          method: "PUT",
+          body: body,
         });
-        console.log('body.id',body.id);
+        console.log("body.id", body.id);
         const data = (await baseQuery(body.id)).data;
-        const out= marshaller.marshall(data);
-        console.log('updateCompany out',out);
+        const out = marshaller.marshall(data);
+        console.log("updateCompany out", out);
         return {data: out};
       },
 

@@ -137,7 +137,7 @@ export function getDeepValue(obj, splitName) {
  */
 export function createJsonLDMarshaller(
   renamingsSchema,
-  {oldFieldName = undefined, objectArrayFields = [],encodeUriFields = []} = {}
+  {oldFieldName = undefined, objectArrayFields = [], encodeUriFields = []} = {}
 ) {
   const isObjectMarshaller = (obj) =>
     typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
@@ -172,10 +172,10 @@ export function createJsonLDMarshaller(
 
       for (const encodeUriField of encodeUriFields) {
         if (outObject[encodeUriFields]) {
-          if (Array.isArray(outObject[encodeUriField])){
-              outObject[encodeUriField]=outObject[encodeUriField].map(v=>encodeURIComponent(v))
-          }else {
-            outObject[encodeUriField]=encodeURIComponent(outObject[encodeUriField])
+          if (Array.isArray(outObject[encodeUriField])) {
+            outObject[encodeUriField] = outObject[encodeUriField].map((v) => encodeURIComponent(v));
+          } else {
+            outObject[encodeUriField] = encodeURIComponent(outObject[encodeUriField]);
           }
         }
       }
