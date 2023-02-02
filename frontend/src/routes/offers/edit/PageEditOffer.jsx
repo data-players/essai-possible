@@ -48,7 +48,7 @@ const validationSchema = yup.object({
   company: companyValidationSchema,
 });
 
-export default function PageEditOffer({mode}) {
+export default function PageEditOffer({mode, isCopying}) {
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
@@ -74,10 +74,14 @@ export default function PageEditOffer({mode}) {
   // const [updateSlotsForOffer, {isLoading: isUpdatingSlotsForOffer}] = useUpdateSlotsForOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
 
-  const pageTitle = isEditMode ? t("offers.modifyAnOffer") : t("offers.createANewOffer");
+  const pageTitle = isEditMode
+    ? isCopying
+      ? t("offers.copyAnOffer")
+      : t("offers.modifyAnOffer")
+    : t("offers.createANewOffer");
 
   async function onSubmit(values) {
-    const method = isEditMode ? updateOffer : addOffer;
+    const method = isEditMode && !isCopying ? updateOffer : addOffer;
 
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
@@ -87,8 +91,11 @@ export default function PageEditOffer({mode}) {
       // TODO Update slots for offer
     }
 
-    const newOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
-    navigate(`/offers/${encodeURIComponent(newOffer.id)}`);
+    const offerPayload = {...values.offer, id: offer?.id, company: company.id};
+    if (isCopying) delete offerPayload.id; // Delete id if we are copying from an existing offer
+
+    const manipulatedOffer = await method({...values.offer, id: offer?.id, company: company.id}).unwrap();
+    navigate(`/offers/${encodeURIComponent(manipulatedOffer.id)}`);
   }
 
   async function onDelete() {
@@ -101,7 +108,7 @@ export default function PageEditOffer({mode}) {
       // ready when the company is ready + if edit mode, the offer and the slots are ready
       ready={companyReady && (!isEditMode || (offerReady && slotsReady))}
       pageBanner={
-        isEditMode ? (
+        isEditMode && !isCopying ? (
           <OfferBanner
             showPills={false}
             pageTitle={pageTitle}
@@ -131,16 +138,27 @@ export default function PageEditOffer({mode}) {
       }
       validationSchema={validationSchema}
       onSubmit={onSubmit}
-      isEditMode={isEditMode}
+      isEditMode={isEditMode && !isCopying}
       onDelete={onDelete}
       helpBox={
         <>
           <Typography fontWeight={"lg"} fontSize={"lg"}>
-            Voici un peu d'aide !
+            {isCopying
+              ? `Vous êtes en train de créer une nouvelle offre à partir de "${offer.title}".`
+              : "Voici un peu d'aide !"}
           </Typography>
           <Typography>
-            Rédiger une offre de qualité relève d'un travail d'analyse de besoins et de rédaction.
-            Nous avons créé des fiches d'aide pour vous guider.
+            {isCopying ? (
+              <>
+                Modifiez les données du formulaire ci dessous, et cliquez sur "Valider la création"
+                pour créer une nouvelle offre à partir de l'offre pré-existante.
+              </>
+            ) : (
+              <>
+                Rédiger une offre de qualité relève d'un travail d'analyse de besoins et de
+                rédaction. Nous avons créé des fiches d'aide pour vous guider.
+              </>
+            )}
           </Typography>
           <ExternalLink href={HelpPdf1}>Comment analyser les besoins d'un poste ?</ExternalLink>
           <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
@@ -334,11 +352,13 @@ export default function PageEditOffer({mode}) {
                   les créneaux générés s'additionneront. Cela vous permet de générer facilement des
                   créneaux, même avec un emploi du temps complexe.
                 </Typography>
-                <Typography>
-                  <u>Exemple :</u> vous êtes disponible de la date A à la date B, tous les jours de
-                  la semaine de 13h à 17h <em>sauf le lundi</em>. En effet, le lundi, vous n'êtes
-                  disponible qu'en matinée, de 10 à 12h. Dans ce cas, vous pouvez lancer deux
-                  générations différentes :
+                <Box>
+                  <Typography>
+                    <u>Exemple :</u> vous êtes disponible de la date A à la date B, tous les jours
+                    de la semaine de 13h à 17h <em>sauf le lundi</em>. En effet, le lundi, vous
+                    n'êtes disponible qu'en matinée, de 10 à 12h. Dans ce cas, vous pouvez lancer
+                    deux générations différentes :
+                  </Typography>
                   <ul>
                     <li>
                       Une première tous les jours de la semaine sauf samedi et dimanche, entre 13 et
@@ -348,7 +368,7 @@ export default function PageEditOffer({mode}) {
                       Une seconde le lundi seulement, entre 10 et 12h, de la date A à la date B.
                     </li>
                   </ul>
-                </Typography>
+                </Box>
               </HelpBox>
 
               <MeetingSlotsGenerator
