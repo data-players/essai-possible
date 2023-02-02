@@ -43,10 +43,11 @@ function OfferListItemRoot({offer, children}) {
 
   return (
     <ListItem
-      onMouseEnter={() => {
-        launchOfferPrefetch(offer.id);
-        launchSlotsPrefetch({offer: offer.id});
-        launchCompanyPrefetch(offer.company);
+      onMouseEnter={(e) => {
+        console.log('onMouseEnter',e);
+        // launchOfferPrefetch(offer.id);
+        // launchSlotsPrefetch({offer: offer.id});
+        // launchCompanyPrefetch(offer.company);
       }}>
       <Card
         onClick={() => navigate(`/offers/${encodeURIComponent(offer.id)}`)}

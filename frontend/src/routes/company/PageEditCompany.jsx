@@ -35,8 +35,9 @@ export default function PageEditCompany({mode}) {
 
   async function onSubmit(values) {
     const method = isEditMode ? updateCompany : addCompany;
-    const newCompany = await method({...values, id: company?.id}).unwrap();
-    navigate(`/company/${encodeURIComponent(newCompany.id)}`);
+    const newCompanyId = await method({...values, id: company?.id}).unwrap();
+    console.log("newCompany.id",newCompanyId);
+    navigate(`/company/${newCompanyId}`);
   }
 
   // async function onDelete() {

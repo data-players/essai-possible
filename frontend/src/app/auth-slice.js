@@ -83,7 +83,6 @@ api.injectEndpoints({
         const webId = getState().auth.webId;
         const result = await baseQuery(webId);
         const out = userMarshaller.marshall(result.data);
-        console.log("out", out);
         return {data: out};
       },
     }),

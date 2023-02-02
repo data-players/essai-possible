@@ -55,3 +55,22 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
       .addMatcher(api.endpoints[endpoint].matchFulfilled, setStatusReducer("ready", endpoint));
   }
 };
+
+/**
+ * API UTILS
+ */
+
+export function baseUpdateMutation(marshaller) {
+  return (patch) => ({
+    url: decodeURIComponent(patch.id),
+    method: "PUT",
+    body: marshaller.unmarshall(patch),
+  });
+}
+
+export function baseFetchEntitiesQuery(endpoint) {
+  return (fetchParams = {}) => ({
+    url: path.join(import.meta.env.VITE_MIDDLEWARE_URL, endpoint),
+    ...fetchParams,
+  });
+}

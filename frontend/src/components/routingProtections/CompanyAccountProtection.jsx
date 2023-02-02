@@ -14,20 +14,21 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 
   const offer = useSelector((state) => selectOfferById(state, id));
   const finalCompanyId = companyId || offer.company;
+  console.log('finalCompanyId',finalCompanyId);
 
-  useFetchCompanyQuery(finalCompanyId);
+  useFetchCompanyQuery(encodeURIComponent(finalCompanyId));
 
   const currentUser = useSelector(selectCurrentUser);
   const company = useSelector((state) =>
     selectCompanyById(state, encodeURIComponent(finalCompanyId))
   );
+  console.log('company',company);
 
   // User not belonging to the company bump out
   useEffect(() => {
     if (!currentUser?.companies.includes(finalCompanyId)) navigate(redirectTo);
   }, [finalCompanyId, currentUser?.companies]);
 
-  console.log("company", company);
   if (!company?.id) return <LoadingSpinner />;
 
   return children || <Outlet />;

@@ -183,7 +183,6 @@ export function LocationSearchBar({sx, ...props}) {
 export const CheckboxGroup = React.memo(
   function ({options, value, onChange, color, ...props}) {
     const [val, setVal] = useState(value);
-    console.log("CheckboxGroup val", val);
     return (
       <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
         <List size="sm" {...props}>

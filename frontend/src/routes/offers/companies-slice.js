@@ -21,7 +21,7 @@ const companiesSlice = createSlice({
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchCompanies"]), companiesAdapter.upsertMany)
       .addMatcher(matchAny("matchFulfilled", ["fetchCompany"]), companiesAdapter.upsertOne)
-      .addMatcher(matchAny("matchFulfilled", ["updateCompany"]), companiesAdapter.upsertOne)
+      .addMatcher(matchAny("matchFulfilled", ["updateCompany"]), companiesAdapter.removeOne)
       .addMatcher(matchAny("matchFulfilled", ["addCompany"]), companiesAdapter.addOne)
       .addMatcher(matchAny("matchFulfilled", ["deleteCompany"]), companiesAdapter.removeOne);
 
@@ -50,8 +50,9 @@ const marshaller = createJsonLDMarshaller(
     affiliates: "pair:affiliates",
     description: "pair:description",
     hasLocation: "pair:hasLocation",
-    label: "pair:label",
+    name: "pair:label",
     offers: "pair:offers",
+    website : "pair:homePage",
     type: "type",
     image: "image",
   },
@@ -69,24 +70,30 @@ api.injectEndpoints({
       query() {
         return `/organizations`;
       },
-      transformResponse() {
-        // Mock data with companies
-        return lightCompaniesList;
+      transformResponse(baseResponse, meta) {
+        return baseResponse['ldp:contains'].map(company=>marshaller.marshall(company))
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
     // Fetch one company by id
     fetchCompany: builder.query({
-      queryFn: async (id, {getState}, extraOptions, baseQuery) => {
-        let entity = getState().companies.entities[id];
-        if (!entity) {
-          entity = (await baseQuery(id)).data;
-        }
-        const data = marshaller.marshall(entity);
-        console.log("data", data);
-        return {data: data};
+      query: (id) => {
+        console.log('fetchCompany');
+        return decodeURIComponent(id);
       },
+      transformResponse(baseResponse, meta, arg) {
+        // Mock data with companies
+        return marshaller.marshall(baseResponse);
+      },
+      // queryFn: async (id, {getState}, extraOptions, baseQuery) => {
+      //   let entity = getState().companies.entities[id];
+      //   if (!entity) {
+      //     entity = (await baseQuery(id)).data;
+      //   }
+      //   const data = marshaller.marshall(entity);
+      //   return {data: data};
+      // },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
@@ -107,16 +114,24 @@ api.injectEndpoints({
     }),
 
     updateCompany: builder.mutation({
-      query: () => "/organizations",
-      // query: (companyPatch) => ({
-      //   url: "companies",
-      //   method: "PATCH",
-      //   body: companyPatch,
-      // }),
-      transformResponse(baseQueryReturnValue, meta, companyPatch) {
+      // queryFn: async (args, {getState}, extraOptions, baseQuery) => {
+      //   console.log('baseQuery',baseQuery);
+      //   baseQuery.setMethod('POST');
+      //   return {data: args};
+      // },
+
+      query: (args) => ({
+        url: decodeURIComponent(args.id),
+        method: "PUT",
+        body: marshaller.unmarshall(args),
+      }),
+      transformResponse(baseQueryReturnValue, meta, args) {
         // Mock data
-        let company = fullCompanies.find((company) => company.id === companyPatch.id);
-        return {...company, ...companyPatch};
+        // console.log('api',api);
+        // console.log('baseQueryReturnValue',baseQueryReturnValue);
+        // let company = fullCompanies.find((company) => company.id === args.id);
+        console.log('end update -> math remove',args);
+        return args.id;
       },
     }),
 
