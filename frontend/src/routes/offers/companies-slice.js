@@ -164,7 +164,7 @@ api.injectEndpoints({
 });
 
 /**
- * Sectors API ENDPOINTS
+ * SECTORS API ENDPOINTS
  */
 
 api.injectEndpoints({
@@ -175,7 +175,7 @@ api.injectEndpoints({
         return `/sectors`;
       },
       transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map((company) => sectorMarshaller.marshall(company));
+        return baseResponse["ldp:contains"].map(sectorMarshaller.marshall);
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
@@ -203,8 +203,8 @@ export const {
 export const companyValidationSchema = yup.object({
   name: requiredString,
   description: requiredString,
-  sectors: requiredArray,
   website: requiredUrl,
+  sectors: requiredArray,
 });
 
 export const companyDefaultValues = {name: "", description: "", website: "", sectors: []};

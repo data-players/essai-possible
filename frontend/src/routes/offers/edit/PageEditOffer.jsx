@@ -172,7 +172,8 @@ export default function PageEditOffer({mode, isCopying}) {
       updateLoading={isAddingOffer || isUpdatingOffer || isUpdatingCompany}
       deleteAreYouSureText={
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
-      }>
+      }
+      deleteButtonText={"Supprimer l'offre"}>
       {(register, {values, setFieldValue, errors, showingErrors}) => (
         <>
           <FormStep

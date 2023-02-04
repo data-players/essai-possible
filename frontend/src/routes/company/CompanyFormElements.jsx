@@ -40,15 +40,17 @@ export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
         name={base + "website"}
       />
 
-      <FormInput
-        component={CheckboxGroupSemantic}
-        wrapperComponent={Box}
-        label={"Secteurs"}
-        name={base + "sectors"}
-        register={register}
-        onChange={(value) => setFieldValue(base + "sectors", value)}
-        options={sectors}
-      />
+      {sectorsReady && (
+        <FormInput
+          component={CheckboxGroupSemantic}
+          wrapperComponent={Box}
+          label={"Secteurs"}
+          name={base + "sectors"}
+          register={register}
+          onChange={(value) => setFieldValue(base + "sectors", value)}
+          options={sectors}
+        />
+      )}
     </>
   );
 }

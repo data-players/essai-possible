@@ -23,6 +23,9 @@ export default function EditFormComponent({
   deleteLoading,
   helpBox,
   deleteAreYouSureText,
+  deleteButtonText,
+  validationButtonText,
+  successText,
   children,
   ...props
 }) {
@@ -44,7 +47,7 @@ export default function EditFormComponent({
       <Form
         initialValues={initialValues}
         validationSchema={validationSchema}
-        successText={isEditMode ? "Modifications réussies" : "Création réussie"}
+        successText={successText || (isEditMode ? "Modifications réussies" : "Création réussie")}
         onSubmit={onSubmit}>
         {(register, {values, setFieldValue, errors, dirty}) => (
           <Component gap={3} mt={6} maxWidth={"lg"} {...props}>
@@ -80,17 +83,18 @@ export default function EditFormComponent({
               loading={updateLoading}
               onClick={() => setShowingErrors(Object.keys(errors).length > 0)}
               startDecorator={<CheckIcon />}>
-              {isEditMode ? "Valider les modifications" : "Valider la création"}
+              {validationButtonText ||
+                (isEditMode ? "Valider les modifications" : "Valider la création")}
             </Button>
 
-            {onDelete && isEditMode && (
+            {deleteButtonText && deleteAreYouSureText && onDelete && isEditMode && (
               <ButtonWithConfirmation
                 areYouSureText={deleteAreYouSureText}
                 loading={deleteLoading}
                 onClick={handleDelete}
                 color="danger"
                 startDecorator={<DeleteOutlineRoundedIcon />}>
-                Supprimer l'offre
+                {deleteButtonText}
               </ButtonWithConfirmation>
             )}
           </Component>

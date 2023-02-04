@@ -58,6 +58,16 @@ export default extendTheme({
         variant: "soft",
       },
     },
+    JoySelect: {
+      defaultProps: {
+        variant: "soft",
+      },
+    },
+    JoyAutocomplete: {
+      defaultProps: {
+        variant: "soft",
+      },
+    },
     JoyFormHelperText: {
       defaultProps: {
         sx: {color: "text.tertiary"},

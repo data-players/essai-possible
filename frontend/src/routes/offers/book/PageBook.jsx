@@ -25,17 +25,23 @@ import {
 import {selectCurrentUser} from "../../../app/auth-slice.js";
 import {selectSlotsForOffer} from "./slots-slice.js";
 import CompanyOfferPreview from "../CompanyOfferPreview.jsx";
+import queryString from "query-string";
 
+// TODO not tested at all @Simon
+// Système pour aller chercher le selectedSlotId dans l'URl qui n'a pas été testé du tout
 export default function PageBook() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {t, tTime, tDate, tDateTime} = useTranslationWithDates();
+  const {t, tDate, tDateTime} = useTranslationWithDates();
   const {id} = useParams();
+  const {selectedSlotId: selectedSlotIdFormQueryParams} = queryString.parse(window.location.search);
 
   const currentUser = useSelector(selectCurrentUser);
 
-  const {selectedSlot, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
-  const [currentFormStep, setCurrentFormStep] = useState(selectedSlot ? 2 : 1);
+  const {selectedSlotId, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
+  const [currentFormStep, setCurrentFormStep] = useState(
+    selectedSlotIdFormQueryParams || selectedSlotId ? 2 : 1
+  );
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
@@ -54,6 +60,12 @@ export default function PageBook() {
         data,
       })
     );
+
+  // TODO not tested at all @Simon
+  // If a selectedSlotFormQueryParams is found in the query params, reselect it
+  useEffect(() => {
+    if (selectedSlotIdFormQueryParams) setFormData({selectedSlotId: selectedSlotIdFormQueryParams});
+  }, [selectedSlotIdFormQueryParams]);
 
   const pageTitle = meetingForOffer
     ? t("offers.modifyAMeetingSlot", {context: "short"})
@@ -76,14 +88,14 @@ export default function PageBook() {
       subtitle={
         <>
           <Typography fontSize={"lg"}>{offer.meetingDetails}</Typography>
-          <Collapse in={!!selectedSlot}>
-            {selectedSlot && (
+          <Collapse in={!!selectedSlotId}>
+            {selectedSlotId && (
               <Typography fontSize={"lg"} textColor={"text.secondary"}>
                 <Trans
                   i18nKey="offers.youAreAboutToBookAMeetingOnThe"
                   values={{
                     dateTime: tDateTime(
-                      slotsForOffer.find((slot) => slot.id === selectedSlot).start
+                      slotsForOffer.find((slot) => slot.id === selectedSlotId).start
                     ),
                   }}
                 />
@@ -93,15 +105,15 @@ export default function PageBook() {
         </>
       }>
       <SlotsList
-        selectedSlot={selectedSlot}
-        onChange={(key, checked) => setFormData({selectedSlot: checked ? key : undefined})}
+        selectedSlotId={selectedSlotId}
+        onChange={(key, checked) => setFormData({selectedSlotId: checked ? key : undefined})}
         slots={slotsForOffer}
       />
 
       <Stack>
         <Button
           size={"lg"}
-          disabled={!selectedSlot}
+          disabled={!selectedSlotId}
           color="success"
           onClick={() => setCurrentFormStep(currentFormStep + 1)}
           startDecorator={<CheckIcon />}>
@@ -125,7 +137,7 @@ export default function PageBook() {
         successText={"Rendez-vous réservé avec succès"}
         onSubmit={async ({comments}) => {
           await addMeeting({
-            slot: selectedSlot,
+            slot: selectedSlotId,
             comments,
           }).unwrap();
           navigate("/account/my-meetings");

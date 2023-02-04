@@ -79,14 +79,19 @@ export default function Root() {
 
   const isCompanyAccount = currentUser?.companies?.length > 0;
 
-  const connectionButtons = (
+  const connectionButtons = currentUser ? (
     <>
-      {currentUser && !isCompanyAccount && <AuthButton.MyMeetings />}
-      {currentUser && isCompanyAccount && (
+      {isCompanyAccount ? (
         <AuthButton.CompanyOffersList currentUser={currentUser} />
+      ) : (
+        <AuthButton.MyMeetings />
       )}
-      {currentUser ? <AuthButton.Account currentUser={currentUser} /> : <AuthButton.LogIn />}
-      {!authTokenExists && <AuthButton.SignUp />}
+      <AuthButton.Account currentUser={currentUser} />
+    </>
+  ) : (
+    <>
+      <AuthButton.LogIn />
+      <AuthButton.SignUp />
     </>
   );
 

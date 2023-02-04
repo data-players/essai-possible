@@ -120,8 +120,8 @@ const MemoizedFormInput = React.memo(
     );
   },
   (pp, np) =>
-    JSON.stringify([pp.registration?.value, pp.registration.errors, pp.options]) ===
-    JSON.stringify([np.registration?.value, np.registration.errors, np.options])
+    JSON.stringify([pp.registration?.value, pp.registration.errors, pp.deps]) ===
+    JSON.stringify([np.registration?.value, np.registration.errors, np.deps])
 );
 
 export const FormInput = ({
@@ -132,9 +132,12 @@ export const FormInput = ({
   placeholder,
   help,
   register,
+  deps,
   ...props
 }) => {
-  const registration = register?.(name) || {value: props.value, errors: props.errors};
+  const registration = register?.(name) || {};
+  if (props.value) registration.value = props.value;
+  if (props.errors) registration.errors = props.errors;
   return (
     <MemoizedFormInput
       {...{
@@ -144,6 +147,7 @@ export const FormInput = ({
         placeholder,
         help,
         registration,
+        deps,
         ...props,
       }}
     />

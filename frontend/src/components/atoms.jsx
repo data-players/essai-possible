@@ -9,7 +9,6 @@ import {Link as ReactRouterLink} from "react-router-dom";
 import Typography from "@mui/joy/Typography";
 import MuiBreadcrumbs from "@mui/joy/Breadcrumbs";
 import Container from "@mui/joy/Container";
-import "./spinner.css";
 import React, {useCallback, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import Input from "@mui/joy/Input";
@@ -39,6 +38,7 @@ import ListSubheader from "@mui/joy/ListSubheader";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded.js";
 import {useTranslationWithDates} from "../app/i18n.js";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
+import {CircularProgress} from "@mui/joy";
 
 /**
  * INPUTS
@@ -162,7 +162,6 @@ export function LocationSearchBar({sx, ...props}) {
 
   return (
     <Autocomplete
-      variant={"soft"}
       color={"neutral"}
       defaultValue={props.value}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
@@ -285,6 +284,20 @@ export function DateInput({
  * COMPONENTS
  */
 
+export function ButtonWithLoading(props) {
+  const [loading, setLoading] = useState(false);
+  return (
+    <Button
+      {...props}
+      loading={loading}
+      onClick={(e) => {
+        setLoading(true);
+        props.onClick(e);
+      }}
+    />
+  );
+}
+
 export function ButtonWithConfirmation({
   children,
   color,
@@ -357,7 +370,7 @@ export function Breadcrumbs({breadcrumbs}) {
 export function LoadingSpinner(props) {
   return (
     <Stack justifyContent={"center"} alignItems={"center"} minHeight={300} {...props}>
-      <div className="lds-dual-ring" />
+      <CircularProgress size="lg" color={"neutral"} />
     </Stack>
   );
 }

@@ -29,11 +29,6 @@ const slice = createSlice({
       state.webId = tockenData.webId;
       state.token = payload;
     },
-    setCredentials: (state, {payload: {user, token}}) => {
-      state.user = user;
-      // state.token = token;
-      // localStorage.setItem("token", token); // Also persist token to local storage
-    },
     setUser: (state, {payload: user}) => {
       state.user = user;
     },
@@ -47,6 +42,7 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(matchAny("matchFulfilled", ["fetchUser"]), slice.caseReducers.setUser)
+      .addMatcher(matchAny("matchFulfilled", ["updateUser"]), slice.caseReducers.setUser)
       // If there is any problem with those ops the user, log out the user
       .addMatcher(matchAny("matchRejected", ["fetchUser"]), slice.caseReducers.logOut)
       .addMatcher(matchAny("matchFulfilled", ["deleteUser"]), slice.caseReducers.logOut);
@@ -77,11 +73,12 @@ const userMarshaller = createJsonLDMarshaller(
     firstName: "pair:firstName",
     lastName: "pair:lastName",
     companies: "pair:affiliatedBy",
+    askedCompanies: "ep:askedAffiliation",
     phone: "pair:phone",
   },
   {
-    objectArrayFields: ["companies"],
-    encodeUriFields: ["companies"],
+    objectArrayFields: ["companies", "askedCompanies"],
+    encodeUriFields: ["companies", "askedCompanies"],
   }
 );
 
@@ -142,11 +139,11 @@ export const userDefaultValues = {
   email: "",
 };
 
-export function connectToLesCommunsFn(redirectUrl) {
-  return () =>
-    window.location.assign(
-      `${import.meta.env.VITE_MIDDLEWARE_URL}/auth?redirectUrl=${
-        redirectUrl || window.location.href
-      }`
-    );
+export function connectToLesCommuns(redirectUrl) {
+  const safeRedirectUrl = typeof redirectUrl === "string" && redirectUrl;
+  window.location.assign(
+    `${import.meta.env.VITE_MIDDLEWARE_URL}/auth?redirectUrl=${
+      safeRedirectUrl || window.location.href
+    }`
+  );
 }
