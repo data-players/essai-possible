@@ -211,6 +211,38 @@ export const CheckboxGroup = React.memo(
   (pp, np) => pp.color === np.color
 );
 
+export const CheckboxGroupSemantic = 
+  function ({options, value=[], onChange, color, ...props}) {
+    const [val, setVal] = useState(value);
+    console.log('options',options);
+    console.log('value',value);
+    return (
+      <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
+        <List size="sm" {...props}>
+          {options.map((option, index) => {
+            const checked = val && val.includes(option.id);
+            return (
+              <ListItem key={index}>
+                <Checkbox
+                  label={option.label}
+                  checked={checked}
+                  onChange={(event) => {
+                    console.log('val',val)
+                    const newVal = event.target.checked
+                      ? [...val, option.id]
+                      : val.filter((checkedOption) => option.id !== checkedOption);
+                    setVal(newVal);
+                    onChange(newVal);
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </Card>
+    );
+  };
+
 export function RadioGroup({options, color, ...props}) {
   return (
     <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2, boxShadow: "none"}}>

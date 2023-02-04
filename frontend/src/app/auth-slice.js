@@ -1,10 +1,9 @@
 import {createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "./apiMiddleware.js";
+import api, {addStatusForEndpoints, matchAny, readySelector, baseUpdateMutation} from "./apiMiddleware.js";
 import jwtDecode from "jwt-decode";
 import {createJsonLDMarshaller} from "./utils.js";
 import * as yup from "yup";
 import {requiredEmail, requiredPhone, requiredString} from "./fieldValidation.js";
-import {baseUpdateMutation} from "./api.js";
 
 /**
  * AUTHENTICATION SLICE
@@ -72,6 +71,7 @@ const userMarshaller = createJsonLDMarshaller(
     firstName: "pair:firstName",
     lastName: "pair:lastName",
     companies: "pair:affiliatedBy",
+    phone: "pair:phone",
   },
   {
     objectArrayFields: ["companies"],
@@ -85,14 +85,13 @@ api.injectEndpoints({
       queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
         const result = await baseQuery(webId);
-        const out = userMarshaller.marshall(result.data);
-        console.log("out", out);
-        return {data: out};
+        const marshallData = userMarshaller.marshall(result.data);
+        return {data: marshallData};
       },
     }),
 
     updateUser: builder.mutation({
-      query: baseUpdateMutation(userMarshaller),
+      queryFn: baseUpdateMutation(userMarshaller),
       // transformResponse: userMarshaller.marshall,
     }),
 

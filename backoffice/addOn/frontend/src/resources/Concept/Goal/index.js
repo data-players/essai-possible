@@ -16,7 +16,7 @@ export default {
   },
   dataModel: {
     types: [
-      'ep:Goal',
+      'pair:Chanllenge',
     ],
     fieldsMapping: {
       title: 'pair:label'
