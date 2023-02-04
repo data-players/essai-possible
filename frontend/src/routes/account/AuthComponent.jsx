@@ -76,10 +76,13 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
         // Create the new company
         const newCompany = await addCompany(values.newCompany).unwrap();
         // Add the new created company to the user's companies
-        values.user.companies = [...values.user.companies, newCompany.id];
+        values.user.companies = [...(values.user.companies || []), newCompany.id];
       } else {
         // Add the selected company to the user's companies asked for affiliation
-        values.user.askedCompanies = [...values.user.companies, values.askedCompany.id];
+        values.user.askedCompanies = [
+          ...(values.user.askedCompanies || []),
+          values.askedCompany.id,
+        ];
       }
     }
     await updateUser(values.user).unwrap();
