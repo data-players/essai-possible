@@ -104,17 +104,17 @@ module.exports = [
   {
     path: '/sectors',
     preferredView: '/Sector',
-    acceptedTypes: ['ep:sector']
+    acceptedTypes: ['pair:Sector']
   },
   {
     path: '/skills',
     preferredView: '/Skill',
-    acceptedTypes: ['ep:skill']
+    acceptedTypes: ['pair:Skill']
   },
   {
-    path: '/goals',
-    preferredView: '/Goal',
-    acceptedTypes: ['ep:goal']
+    path: '/challenges',
+    preferredView: '/Challenge',
+    acceptedTypes: ['pair:Challenge']
   },
   {
     path: '/status',

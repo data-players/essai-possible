@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../app/apiMiddleware.js";
+import api, {addStatusForEndpoints, matchAny, readySelector, baseUpdateMutation, baseCreateMutation} from "../../app/apiMiddleware.js";
 import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
 import * as yup from "yup";
 import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
@@ -9,11 +9,9 @@ import {createJsonLDMarshaller} from "./../../app/utils.js";
  * COMPANIES SLICE
  */
 const companiesAdapter = createEntityAdapter();
-
 const initialState = companiesAdapter.getInitialState({
   status: {},
 });
-
 const companiesSlice = createSlice({
   name: "companies",
   initialState,
@@ -28,8 +26,26 @@ const companiesSlice = createSlice({
     addStatusForEndpoints(builder, ["fetchCompanies", "fetchCompany"]);
   },
 });
-
 export default companiesSlice.reducer;
+
+/**
+ * Sectors SLICE
+ */
+ const sectorsAdapter = createEntityAdapter();
+ const sectorsInitialState = sectorsAdapter.getInitialState({
+   status: {},
+ });
+ const sectorsSlice = createSlice({
+   name: "sectors",
+   initialState : sectorsInitialState,
+   extraReducers(builder) {
+     builder
+       .addMatcher(matchAny("matchFulfilled", ["fetchSectors"]), sectorsAdapter.upsertMany)
+     addStatusForEndpoints(builder, ["fetchSectors"]);
+   },
+ });
+ export const sectorReducer =  sectorsSlice.reducer;
+
 
 /**
  * COMPANIES SELECTORS
@@ -45,6 +61,20 @@ export const {
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
 
+/**
+ * Sectors SELECTORS
+ */
+
+export const selectSectorsReady = readySelector("sectors", "fetchSectors");
+
+export const {
+  selectAll: selectAllSectors,
+} = sectorsAdapter.getSelectors((state) => state.sectors);
+
+
+/**
+* Companies Mashaller
+*/
 const marshaller = createJsonLDMarshaller(
   {
     affiliates: "pair:affiliates",
@@ -53,14 +83,25 @@ const marshaller = createJsonLDMarshaller(
     name: "pair:label",
     offers: "pair:offers",
     website: "pair:homePage",
+    sectors: "pair:hasSectors",
     type: "type",
     image: "image",
   },
   {
-    objectArrayFields: ["offers", "affiliates"],
-    encodeUriFields: ["offers", "affiliates"],
+    objectArrayFields: ["offers", "affiliates","sectors"],
+    encodeUriFields: ["offers", "affiliates","sectors"],
   }
 );
+
+/**
+* Sectors Mashaller
+*/
+const sectorMarshaller = createJsonLDMarshaller(
+  {
+    label: "pair:label",
+  }
+);
+
 
 /**
  * COMPANIES API ENDPOINTS
@@ -82,69 +123,23 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       query: (id) => {
+        //log volontaire de controle, suspition que l'id arrive parfait pas encodé
+        console.log('fetchCompany id',id)
         return decodeURIComponent(id);
       },
       transformResponse(baseResponse, meta, arg) {
         // Mock data with companies
         return marshaller.marshall(baseResponse);
       },
-      // queryFn: async (id, {getState}, extraOptions, baseQuery) => {
-      //   let entity = getState().companies.entities[id];
-      //   if (!entity) {
-      //     entity = (await baseQuery({url:id,method:'POST'})).data;
-      //   }
-      //   const data = marshaller.marshall(entity);
-      //   return {data: data};
-      // },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
     addCompany: builder.mutation({
-      query: (company) => {
-        return "/organizations";
-      },
-      // query: ({slot, comments}) => ({
-      //   url: "companies",
-      //   method: "POST",
-      //   body: {slot, comments},
-      // }),
-      transformResponse(baseResponse, meta, company) {
-        // Mock data
-        const res = {...company, id: fullCompanies.length + 1};
-        return res;
-      },
+      queryFn : baseCreateMutation(marshaller,'organizations')
     }),
 
     updateCompany: builder.mutation({
-      queryFn: async (args, {getState}, extraOptions, baseQuery) => {
-        console.log("args", args);
-        const body = marshaller.unmarshall(args);
-        console.log("body", body);
-        await baseQuery({
-          url: body.id,
-          method: "PUT",
-          body: body,
-        });
-        console.log("body.id", body.id);
-        const data = (await baseQuery(body.id)).data;
-        const out = marshaller.marshall(data);
-        console.log("updateCompany out", out);
-        return {data: out};
-      },
-
-      // query: (args) => ({
-      //   url: decodeURIComponent(args.id),
-      //   method: "PUT",
-      //   body: marshaller.unmarshall(args),
-      // }),
-      // transformResponse(baseQueryReturnValue, meta, args) {
-      //   // Mock data
-      //   // console.log('api',api);
-      //   // console.log('baseQueryReturnValue',baseQueryReturnValue);
-      //   // let company = fullCompanies.find((company) => company.id === args.id);
-      //   console.log('end update -> math remove',args);
-      //   return args.id;
-      // },
+      queryFn: baseUpdateMutation(marshaller)
     }),
 
     deleteCompany: builder.mutation({
@@ -158,8 +153,43 @@ api.injectEndpoints({
         return id;
       },
     }),
+    // Fetch the list of all companies
+    fetchSector: builder.query({
+      query() {
+        return `/sectors`;
+      },
+      transformResponse(baseResponse, meta) {
+        return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
+      },
+      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
+    }),
+
   }),
 });
+
+
+/**
+ * Sectors API ENDPOINTS
+ */
+
+api.injectEndpoints({
+  endpoints: (builder) => ({
+    // Fetch the list of all companies
+    fetchSectors: builder.query({
+      query() {
+        return `/sectors`;
+      },
+      transformResponse(baseResponse, meta) {
+        return baseResponse["ldp:contains"].map((company) => sectorMarshaller.marshall(company));
+      },
+      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
+    }),
+  }),
+});
+
+/**
+ * export api hooks
+ */
 
 export const {
   useFetchCompaniesQuery,
@@ -168,6 +198,7 @@ export const {
   useAddCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
+  useFetchSectorsQuery,
 } = api;
 
 /**

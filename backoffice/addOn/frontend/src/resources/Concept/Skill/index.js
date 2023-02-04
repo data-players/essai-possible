@@ -16,7 +16,7 @@ export default {
   },
   dataModel: {
     types: [
-      'ep:Skill',
+      'pair:Skill',
     ],
     fieldsMapping: {
       title: 'pair:label'

@@ -1,12 +1,21 @@
-import {CheckboxGroup} from "../../components/atoms.jsx";
+import {CheckboxGroup,CheckboxGroupSemantic} from "../../components/atoms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import Box from "@mui/joy/Box";
 import {sectorsOptions} from "../offers/companies-slice-data.js";
 import React from "react";
 import {FormInput} from "../../components/forms.jsx";
+import {
+  useFetchSectorsQuery,
+  selectSectorsReady,
+  selectAllSectors,
+} from "../offers/companies-slice.js";
+import {useSelector} from "react-redux";
 
 export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
   const base = baseFormPath ? `${baseFormPath}.` : "";
+  useFetchSectorsQuery();
+  const sectorsReady = useSelector(selectSectorsReady);
+  const sectors = useSelector(selectAllSectors);
   return (
     <>
       <FormInput
@@ -33,13 +42,13 @@ export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
       />
 
       <FormInput
-        component={CheckboxGroup}
+        component={CheckboxGroupSemantic}
         wrapperComponent={Box}
         label={"Secteurs"}
         name={base + "sectors"}
         register={register}
         onChange={(value) => setFieldValue(base + "sectors", value)}
-        options={sectorsOptions}
+        options={sectors}
       />
     </>
   );

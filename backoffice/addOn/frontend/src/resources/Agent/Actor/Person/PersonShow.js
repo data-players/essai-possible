@@ -28,6 +28,7 @@ const PersonShow = props => (
           <TextField source="pair:firstName" />
           <TextField source="pair:lastName" />
           <TextField source="pair:email" />
+          <TextField source="pair:phone" />
         </Hero>
       </Grid>
       <Grid item xs={12} sm={3}>

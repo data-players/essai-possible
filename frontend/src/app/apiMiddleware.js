@@ -60,12 +60,43 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
  * API UTILS
  */
 
+// export function baseUpdateMutation(marshaller) {
+//   return (patch) => ({
+//     url: decodeURIComponent(patch.id),
+//     method: "PUT",
+//     body: marshaller.unmarshall(patch),
+//   });
+// }
+
 export function baseUpdateMutation(marshaller) {
-  return (patch) => ({
-    url: decodeURIComponent(patch.id),
-    method: "PUT",
-    body: marshaller.unmarshall(patch),
-  });
+  const func = async (args, {getState}, extraOptions, baseQuery) => {
+    const body = marshaller.unmarshall(args);
+    await baseQuery({
+      url: body.id,
+      method: "PUT",
+      body: body,
+    });
+    const data = (await baseQuery(body.id)).data;
+    const marshallData = marshaller.marshall(data);
+    return {data: marshallData};
+  }
+  return func 
+}
+
+export function baseCreateMutation(marshaller,container) {
+  const func = async (args, {getState}, extraOptions, baseQuery) => {
+    const body = marshaller.unmarshall(args);
+    const postResponse = await baseQuery({
+      url: container,
+      method: "POST",
+      body: body,
+    });
+    const newId = postResponse.headers.location;
+    const data = (await baseQuery(newId)).data;
+    const marshallData = marshaller.marshall(data);
+    return {data: marshallData};
+  }
+  return func
 }
 
 export function baseFetchEntitiesQuery(endpoint) {

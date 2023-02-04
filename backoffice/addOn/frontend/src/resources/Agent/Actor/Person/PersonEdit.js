@@ -17,11 +17,12 @@ export const PersonEdit = props => (
         <TextInput source="pair:firstName" fullWidth />
         <TextInput source="pair:lastName" fullWidth />
         <TextInput source="pair:email" fullWidth />
+        <TextInput source="pair:phone" fullWidth />
       </FormTab>
       <FormTab label="Relations">
 
         <ReferenceArrayInput
-          source="pair:affilitedBy"
+          source="pair:affiliatedBy"
           reference="Organization"
           fullWidth
         >

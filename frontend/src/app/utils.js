@@ -171,7 +171,7 @@ export function createJsonLDMarshaller(
       }
 
       for (const encodeUriField of encodeUriFields) {
-        if (outObject[encodeUriFields]) {
+        if (outObject[encodeUriField]) {
           if (Array.isArray(outObject[encodeUriField])) {
             outObject[encodeUriField] = outObject[encodeUriField].map((v) => encodeURIComponent(v));
           } else {
@@ -189,9 +189,20 @@ export function createJsonLDMarshaller(
     unmarshall: function (outObjectInit) {
       const outObject = {...outObjectInit};
       const inObject = {};
+      console.log(outObject)
 
       // Decode ID
       inObject.id = decodeURIComponent(outObject.id);
+
+      for (const encodeUriField of encodeUriFields) {
+        if (outObject[encodeUriField]) {
+          if (Array.isArray(outObject[encodeUriField])){
+            outObject[encodeUriField]=outObject[encodeUriField].map(v=>decodeURIComponent(v))
+          }else {
+            outObject[encodeUriField]=decodeURIComponent(outObject[encodeUriField])
+          }
+        }
+      }
 
       // Convert "keys that should be arrays"
       for (const objectArrayField of objectArrayFields) {
@@ -207,15 +218,7 @@ export function createJsonLDMarshaller(
         }
       }
 
-      // for (const encodeUriField of encodeUriFields) {
-      //   if (inObject[encodeUriFields]) {
-      //     if (Array.isArray(outObject[encodeUriField])){
-      //         inObject[encodeUriField]=inObject[encodeUriField].map(v=>encodeURIComponent(v))
-      //     }else {
-      //       inObject[encodeUriField]=encodeURIComponent(inObject[encodeUriField])
-      //     }
-      //   }
-      // }
+
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {

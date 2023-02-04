@@ -16,7 +16,7 @@ export default {
   },
   dataModel: {
     types: [
-      'ep:Sector',
+      'pair:Sector',
     ],
     fieldsMapping: {
       title: 'pair:label'
