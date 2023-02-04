@@ -100,7 +100,7 @@ export default function Root() {
           const noScrollResetPaths = ["/offers"];
           return noScrollResetPaths.includes(location.pathname)
             ? // custom paths: restore by pathname
-              path
+              location.pathname
             : // everything else: restore by location like the browser does natively
               location.key;
         }}
