@@ -30,7 +30,6 @@ import Divider from "@mui/joy/Divider";
 import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
 import {ExternalLink} from "./atoms.jsx";
-import {connectToLesCommuns} from "../app/auth-slice.js";
 
 function Root(props) {
   return (
@@ -384,8 +383,9 @@ export const AuthButton = {
   LogIn: ({sx}) => {
     return (
       <Button
+        component={ReactRouterLink}
         sx={sx}
-        onClick={connectToLesCommuns}
+        to={"/login"}
         variant={"solid"}
         startDecorator={<PersonRoundedIcon />}>
         {t("nav.logIn")}

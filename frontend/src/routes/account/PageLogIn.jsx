@@ -51,6 +51,14 @@ export default function PageLogIn() {
           <Button variant={"soft"} color={"primary"} component={ReactRouterLink} to={"/signup"}>
             Créer un compte
           </Button>
+
+          <Button
+            variant={"soft"}
+            color={"neutral"}
+            component={ReactRouterLink}
+            to={"/company/signup"}>
+            Je suis une entreprise
+          </Button>
         </Stack>
       </Card>
     </PageAuthStructure>

@@ -100,11 +100,18 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
           </Typography>
         </HelpBox>
       ) : (
-        <Typography textAlign={"center"} fontWeight={"lg"}>
-          {logInMode
-            ? "Connectez-vous à Essai Possible en vous identifiant sur le portail des Communs."
-            : "Créez-vous un compte sur Essai Possible en vous identifiant sur le portail des Communs."}
-        </Typography>
+        <>
+          <Typography textAlign={"center"} fontWeight={"lg"}>
+            {logInMode
+              ? "Connectez-vous à Essai Possible en vous identifiant sur le portail des Communs."
+              : "Créez-vous un compte sur Essai Possible en vous identifiant sur le portail des Communs."}
+          </Typography>
+          {companyMode && (
+            <Typography textAlign={"center"} mt={-2}>
+              Vous pourrez ensuite renseigner votre entreprise.
+            </Typography>
+          )}
+        </>
       )}
       {/* LOGO LES COMMUNS */}
       <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
