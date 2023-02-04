@@ -3,48 +3,51 @@ import {useNavigate} from "react-router-dom";
 import * as React from "react";
 import {useEffect} from "react";
 
-import {selectCurrentUser} from "../../app/auth-slice.js";
+import {
+  connectToLesCommunsFn,
+  selectCurrentUser,
+  userDefaultValues,
+  userValidationSchema,
+  useUpdateUserMutation,
+} from "../../app/auth-slice.js";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
-import {Form} from "../../components/forms.jsx";
+import {Form, FormInput} from "../../components/forms.jsx";
 import * as yup from "yup";
-import {requiredPhone, requiredString} from "../../app/fieldValidation.js";
+import {requiredPhone, requiredString, requiredTrueBoolean} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";
 import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
 import {UserFormElements} from "./UserFormElements.jsx";
+import LesCommunsLogo from "../../assets/les-communs-logo.png";
+import Box from "@mui/joy/Box";
+import {selectAllCompanies, useFetchCompaniesQuery} from "../offers/companies-slice.js";
+import {HelpBox} from "../../components/atoms";
+import Option from "@mui/joy/Option";
+import Select from "@mui/joy/Select";
+import Checkbox from "@mui/joy/Checkbox";
+import Collapse from "@mui/material/Collapse";
 
 /**
- * @param mode logIn | signUp
+ * @param logInMode true = logIn | false = signUp
+ * @param redirect true = redirect if logged in and user complete
  */
-export const AuthComponent = ({mode, redirect = false}) => {
+export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
   const navigate = useNavigate();
 
-  const isLoginPage = mode === "logIn";
+  useFetchCompaniesQuery();
 
   const currentUser = useSelector(selectCurrentUser);
+  const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
   const meetings = useSelector(selectAllMeetings);
   const meetingsReady = useSelector(selectMeetingsReady);
+  const companies = useSelector(selectAllCompanies);
 
-  // Log in and sign up actions
-  // const [logIn, {isLoading: isLogInLoading}] = useLogInMutation();
-  // const [signUp, {isLoading: isSignUpLoading}] = useSignUpMutation();
-
-  async function onSubmit(values) {
-    // const mutation = isLoginPage ? logIn : signUp;
-    // await mutation(values).unwrap();
-    window.location.assign(
-      import.meta.env.VITE_MIDDLEWARE_URL + "/auth?redirectUrl=" + window.location.href
-    );
-  }
-
-  const mockConnect = (id) => async () => {
-    await logIn(id).unwrap();
-  };
+  const [updateUser] = useUpdateUserMutation();
 
   // Redirect user to the offers page if it is a basic user, to its meetings
   // if it has already meetings, and to the company offers if it is a pro account
   useEffect(() => {
-    if (redirect && currentUser && meetingsReady) {
+    if (currentUserIsComplete && redirect && meetingsReady) {
       navigate(
         currentUser.companies?.length > 0
           ? `/company/${encodeURIComponent(currentUser.companies[0])}`
@@ -53,47 +56,121 @@ export const AuthComponent = ({mode, redirect = false}) => {
           : "/offers"
       );
     }
-  }, [redirect, currentUser, meetingsReady]);
+  }, [currentUserIsComplete, redirect, meetingsReady]);
+
+  async function onSubmit(values) {
+    if (values.company) {
+      values.companies = [values.company];
+      delete values.company;
+    }
+    await updateUser(values).unwrap();
+  }
 
   return (
-    <>
-      <Stack gap={3} alignItems={"center"} mb={6}>
-        <Typography level={"h3"}>Fausse authentification</Typography>
-        <Button size={"lg"} onClick={mockConnect(1)}>
-          Candidat
-        </Button>
-        <Button size={"lg"} onClick={mockConnect(2)}>
-          Professionnel
-        </Button>
-      </Stack>
+    <Form
+      initialValues={{
+        ...userDefaultValues,
+        ...currentUser,
+        ...(companyMode && {company: null}),
+      }}
+      validationSchema={yup.object({
+        phone: requiredPhone,
+        company: requiredString.nullable(),
+        confirmCompany: requiredTrueBoolean,
+      })}
+      onSubmit={onSubmit}
+      successText={logInMode ? "Connexion réussie" : "Compte créé avec succès"}>
+      {(register, {values, setFieldValue}) => (
+        <Stack gap={3}>
+          <>
+            {/* WELCOME MESSAGE */}
+            {currentUser ? (
+              <HelpBox color={"success"}>
+                <Typography>
+                  <strong>Bonjour {currentUser.firstName} !</strong> Vous êtes identifié avec Les
+                  Communs.
+                </Typography>
+              </HelpBox>
+            ) : (
+              <Typography textAlign={"center"} fontWeight={"lg"}>
+                {logInMode
+                  ? "Connectez-vous à Essai Possible en vous identifiant sur le portail des Communs."
+                  : "Créez-vous un compte sur Essai Possible en vous identifiant sur le portail des Communs."}
+              </Typography>
+            )}
 
-      <Form
-        initialValues={{
-          firstName: "",
-          lastName: "",
-          phone: "",
-        }}
-        validationSchema={yup.object({
-          firstName: requiredString,
-          lastName: requiredString,
-          phone: requiredPhone,
-        })}
-        onSubmit={onSubmit}
-        successText={isLoginPage ? "Connexion réussie" : "Compte créé avec succès"}>
-        {(register) => (
-          <Stack gap={3}>
-            <Button size="lg" color="primary">
-              S'identifier avec Les Communs
-            </Button>
+            {/* LOGO LES COMMUNS */}
+            <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
 
-            {!isLoginPage && <UserFormElements register={register} />}
+            {/* USER INFORMATION */}
+            {currentUser && !currentUserIsComplete ? (
+              <>
+                <HelpBox>
+                  <Typography fontWeight={"lg"}>
+                    Complétez vos informations personnelles pour finaliser votre inscription sur
+                    Essai Possible.
+                  </Typography>
+                </HelpBox>
+                <UserFormElements register={register} companyMode={companyMode} />
 
-            <Button loading={false} type="submit" size="lg" color="success">
-              {isLoginPage ? "Se connecter" : "Créer mon compte"}
-            </Button>
-          </Stack>
-        )}
-      </Form>
-    </>
+                {companyMode && (
+                  <>
+                    <FormInput
+                      label={"Votre entreprise"}
+                      placeholder={"sélectionnez votre entreprise"}
+                      component={(props) => (
+                        <Select
+                          {...props}
+                          variant={"soft"}
+                          onChange={(_, value) => {
+                            setFieldValue("company", value);
+                          }}>
+                          {companies.map((company) => (
+                            <Option value={company.id}>{company.name}</Option>
+                          ))}
+                        </Select>
+                      )}
+                    />
+
+                    <Collapse in={!!values.company}>
+                      <Stack gap={2}>
+                        <Typography>
+                          Le numéro de SIRET de cette entreprise est le{" "}
+                          <strong>{values.company}</strong>. Confirmez-vous que c'est bien votre
+                          entreprise ?
+                        </Typography>
+
+                        <FormInput
+                          component={({value, ...props}) => (
+                            <Stack direction={"row"}>
+                              <Checkbox
+                                {...props}
+                                checked={value}
+                                sx={{fontWeight: "lg"}}
+                                label={`Je confirme que j'ai bien vérifié le numéro de SIRET.`}
+                              />
+                            </Stack>
+                          )}
+                          register={register}
+                          name={"confirmCompany"}
+                        />
+                      </Stack>
+                    </Collapse>
+                  </>
+                )}
+
+                <Button loading={false} type="submit" size="lg" color="success">
+                  {logInMode ? "Se connecter" : "Créer mon compte"}
+                </Button>
+              </>
+            ) : (
+              <Button size="lg" color="primary" onClick={connectToLesCommunsFn()}>
+                S'identifier avec Les Communs
+              </Button>
+            )}
+          </>
+        </Stack>
+      )}
+    </Form>
   );
 };

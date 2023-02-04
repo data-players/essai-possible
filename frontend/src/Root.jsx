@@ -69,8 +69,6 @@ export default function Root() {
 
   const currentUser = useSelector(selectCurrentUser);
 
-  console.log("currentUser", currentUser);
-
   // - prefetch the user meetings as soon as the user is available
   const currentUserReady = useSelector(selectCurrentUserReady);
 

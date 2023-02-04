@@ -47,7 +47,7 @@ export default function EditFormComponent({
         successText={isEditMode ? "Modifications réussies" : "Création réussie"}
         onSubmit={onSubmit}>
         {(register, {values, setFieldValue, errors, dirty}) => (
-          <Component gap={3} mt={6} {...props}>
+          <Component gap={3} mt={6} maxWidth={"lg"} {...props}>
             {helpBox && (
               <>
                 <HelpBox>{helpBox}</HelpBox>

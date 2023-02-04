@@ -23,8 +23,6 @@ export default function ConnectedUserProtection({children}) {
   }, [authTokenExists]);
 
   // Connected but loading users wait
-  // console.log('authTokenExists && !currentUserReady',authTokenExists && !currentUserReady);
-
   if (authTokenExists && !currentUserReady) return <LoadingSpinner />;
 
   return children || <Outlet />;

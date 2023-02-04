@@ -35,7 +35,8 @@ const slice = createSlice({
     },
     logOut: (state) => {
       state.user = null;
-      // state.token = null;
+      state.token = null;
+      state.webId = null;
       localStorage.removeItem("token");
     },
   },
@@ -136,3 +137,12 @@ export const userDefaultValues = {
   phone: "",
   email: "",
 };
+
+export function connectToLesCommunsFn(redirectUrl) {
+  return () =>
+    window.location.assign(
+      `${import.meta.env.VITE_MIDDLEWARE_URL}/auth?redirectUrl=${
+        redirectUrl || window.location.href
+      }`
+    );
+}

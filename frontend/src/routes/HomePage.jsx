@@ -17,9 +17,19 @@ import Card from "@mui/joy/Card";
 import Link from "@mui/joy/Link";
 import {ExternalLink} from "../components/atoms";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
+import {useSelector} from "react-redux";
+import {selectCurrentUser} from "../app/auth-slice.js";
 
 export default function HomePage() {
   const {t} = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
+  const isACompanyAccount = currentUser?.companies?.length > 0;
+
+  const companyActionUrl =
+    currentUser && isACompanyAccount
+      ? `/company/${encodeURIComponent(currentUser.companies[0])}`
+      : "/company/signup";
+
   return (
     <>
       {/* HERO HEADER */}
@@ -62,7 +72,7 @@ export default function HomePage() {
                 </Typography>
                 <Button
                   component={ReactRouterLink}
-                  to={"offers"}
+                  to={"/offers"}
                   size={"lg"}
                   startDecorator={<SearchRoundedIcon />}>
                   {t("offers.seeOffers")}
@@ -79,7 +89,7 @@ export default function HomePage() {
                 <Button
                   component={ReactRouterLink}
                   variant={"soft"}
-                  to={"offers"}
+                  to={companyActionUrl}
                   size={"lg"}
                   startDecorator={<AddRoundedIcon />}>
                   {t("offers.proposeAnOffer")}
@@ -140,7 +150,7 @@ export default function HomePage() {
                 component={ReactRouterLink}
                 variant={"solid"}
                 color="neutral"
-                to={"offers"}
+                to={companyActionUrl}
                 size={"lg"}
                 startDecorator={<CreateRoundedIcon />}>
                 {t("homePage.register")}

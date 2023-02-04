@@ -17,11 +17,11 @@ import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
 import CompanyAccountProtection from "./components/routingProtections/CompanyAccountProtection.jsx";
 import PageEditCompany from "./routes/company/PageEditCompany";
-import PageAuth from "./routes/account/PageAuth.jsx";
+import PageSignUp from "./routes/account/PageSignUp.jsx";
+import PageLogIn from "./routes/account/PageLogIn.jsx";
 
 export default function Router() {
   const currentUser = useSelector(selectCurrentUser);
-
   const isACompanyAccount = currentUser?.companies?.length > 0;
 
   const router = createBrowserRouter([
@@ -99,10 +99,9 @@ export default function Router() {
           ],
         },
 
-        {path: "login", element: <PageAuth mode={"logIn"} type={"candidate"} />},
-        {path: "signup", element: <PageAuth mode={"signUp"} type={"candidate"} />},
-        {path: "login/company", element: <PageAuth mode={"logIn"} type={"company"} />},
-        {path: "signup/company", element: <PageAuth mode={"signUp"} type={"company"} />},
+        {path: "login", element: <PageLogIn />},
+        {path: "signup", element: <PageSignUp />},
+        {path: "company/signup", element: <PageSignUp companyMode />},
         {path: "cgu", element: <PageCGU />},
       ],
     },

@@ -432,12 +432,12 @@ export function ExternalLink(props) {
   );
 }
 
-export const SimpleBanner = ({children}) => (
+export const SimpleBanner = ({children, sx}) => (
   <HeroBanner invertedColors={false}>
     <Container mx={2}>
       <Grid container spacing={2}>
         <Grid xs={12} display={"flex"} justifyContent={"center"}>
-          <Typography level="h1" color={"white"}>
+          <Typography level="h1" color={"white"} {...sx}>
             {children}
           </Typography>
         </Grid>
@@ -446,9 +446,9 @@ export const SimpleBanner = ({children}) => (
   </HeroBanner>
 );
 
-export function HelpBox({children}) {
+export function HelpBox({children, color = "warning"}) {
   return (
-    <Card variant="soft" color={"warning"} size={"lg"}>
+    <Card variant="soft" color={color} size={"lg"}>
       <Stack gap={1}>{children}</Stack>
     </Card>
   );
