@@ -79,11 +79,11 @@ export function baseUpdateMutation(marshaller) {
     const data = (await baseQuery(body.id)).data;
     const marshallData = marshaller.marshall(data);
     return {data: marshallData};
-  }
-  return func 
+  };
+  return func;
 }
 
-export function baseCreateMutation(marshaller,container) {
+export function baseCreateMutation(marshaller, container) {
   const func = async (args, {getState}, extraOptions, baseQuery) => {
     const body = marshaller.unmarshall(args);
     const postResponse = await baseQuery({
@@ -95,8 +95,8 @@ export function baseCreateMutation(marshaller,container) {
     const data = (await baseQuery(newId)).data;
     const marshallData = marshaller.marshall(data);
     return {data: marshallData};
-  }
-  return func
+  };
+  return func;
 }
 
 export function baseFetchEntitiesQuery(endpoint) {

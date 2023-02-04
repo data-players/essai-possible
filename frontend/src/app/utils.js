@@ -189,17 +189,17 @@ export function createJsonLDMarshaller(
     unmarshall: function (outObjectInit) {
       const outObject = {...outObjectInit};
       const inObject = {};
-      console.log(outObject)
+      console.log(outObject);
 
       // Decode ID
       inObject.id = decodeURIComponent(outObject.id);
 
       for (const encodeUriField of encodeUriFields) {
         if (outObject[encodeUriField]) {
-          if (Array.isArray(outObject[encodeUriField])){
-            outObject[encodeUriField]=outObject[encodeUriField].map(v=>decodeURIComponent(v))
-          }else {
-            outObject[encodeUriField]=decodeURIComponent(outObject[encodeUriField])
+          if (Array.isArray(outObject[encodeUriField])) {
+            outObject[encodeUriField] = outObject[encodeUriField].map((v) => decodeURIComponent(v));
+          } else {
+            outObject[encodeUriField] = decodeURIComponent(outObject[encodeUriField]);
           }
         }
       }
@@ -217,8 +217,6 @@ export function createJsonLDMarshaller(
           // outObject[objectArrayField] = outObject[objectArrayField].map(decodeURIComponent);
         }
       }
-
-
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {

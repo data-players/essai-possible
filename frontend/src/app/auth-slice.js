@@ -1,5 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector, baseUpdateMutation} from "./apiMiddleware.js";
+import api, {
+  addStatusForEndpoints,
+  baseUpdateMutation,
+  matchAny,
+  readySelector,
+} from "./apiMiddleware.js";
 import jwtDecode from "jwt-decode";
 import {createJsonLDMarshaller} from "./utils.js";
 import * as yup from "yup";

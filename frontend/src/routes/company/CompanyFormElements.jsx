@@ -1,13 +1,12 @@
-import {CheckboxGroup,CheckboxGroupSemantic} from "../../components/atoms.jsx";
+import {CheckboxGroupSemantic} from "../../components/atoms.jsx";
 import Textarea from "@mui/joy/Textarea";
 import Box from "@mui/joy/Box";
-import {sectorsOptions} from "../offers/companies-slice-data.js";
 import React from "react";
 import {FormInput} from "../../components/forms.jsx";
 import {
-  useFetchSectorsQuery,
-  selectSectorsReady,
   selectAllSectors,
+  selectSectorsReady,
+  useFetchSectorsQuery,
 } from "../offers/companies-slice.js";
 import {useSelector} from "react-redux";
 

@@ -1,6 +1,11 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector, baseUpdateMutation, baseCreateMutation} from "../../app/apiMiddleware.js";
-import {fullCompanies, lightCompaniesList} from "./companies-slice-data.js";
+import api, {
+  addStatusForEndpoints,
+  baseCreateMutation,
+  baseUpdateMutation,
+  matchAny,
+  readySelector,
+} from "../../app/apiMiddleware.js";
 import * as yup from "yup";
 import {requiredArray, requiredString, requiredUrl} from "../../app/fieldValidation.js";
 import {createJsonLDMarshaller} from "./../../app/utils.js";
@@ -31,21 +36,19 @@ export default companiesSlice.reducer;
 /**
  * Sectors SLICE
  */
- const sectorsAdapter = createEntityAdapter();
- const sectorsInitialState = sectorsAdapter.getInitialState({
-   status: {},
- });
- const sectorsSlice = createSlice({
-   name: "sectors",
-   initialState : sectorsInitialState,
-   extraReducers(builder) {
-     builder
-       .addMatcher(matchAny("matchFulfilled", ["fetchSectors"]), sectorsAdapter.upsertMany)
-     addStatusForEndpoints(builder, ["fetchSectors"]);
-   },
- });
- export const sectorReducer =  sectorsSlice.reducer;
-
+const sectorsAdapter = createEntityAdapter();
+const sectorsInitialState = sectorsAdapter.getInitialState({
+  status: {},
+});
+const sectorsSlice = createSlice({
+  name: "sectors",
+  initialState: sectorsInitialState,
+  extraReducers(builder) {
+    builder.addMatcher(matchAny("matchFulfilled", ["fetchSectors"]), sectorsAdapter.upsertMany);
+    addStatusForEndpoints(builder, ["fetchSectors"]);
+  },
+});
+export const sectorReducer = sectorsSlice.reducer;
 
 /**
  * COMPANIES SELECTORS
@@ -67,14 +70,11 @@ export const {
 
 export const selectSectorsReady = readySelector("sectors", "fetchSectors");
 
-export const {
-  selectAll: selectAllSectors,
-} = sectorsAdapter.getSelectors((state) => state.sectors);
-
+export const {selectAll: selectAllSectors} = sectorsAdapter.getSelectors((state) => state.sectors);
 
 /**
-* Companies Mashaller
-*/
+ * Companies Mashaller
+ */
 const marshaller = createJsonLDMarshaller(
   {
     affiliates: "pair:affiliates",
@@ -88,20 +88,17 @@ const marshaller = createJsonLDMarshaller(
     image: "image",
   },
   {
-    objectArrayFields: ["offers", "affiliates","sectors"],
-    encodeUriFields: ["offers", "affiliates","sectors"],
+    objectArrayFields: ["offers", "affiliates", "sectors"],
+    encodeUriFields: ["offers", "affiliates", "sectors"],
   }
 );
 
 /**
-* Sectors Mashaller
-*/
-const sectorMarshaller = createJsonLDMarshaller(
-  {
-    label: "pair:label",
-  }
-);
-
+ * Sectors Mashaller
+ */
+const sectorMarshaller = createJsonLDMarshaller({
+  label: "pair:label",
+});
 
 /**
  * COMPANIES API ENDPOINTS
@@ -124,7 +121,7 @@ api.injectEndpoints({
     fetchCompany: builder.query({
       query: (id) => {
         //log volontaire de controle, suspition que l'id arrive parfait pas encodé
-        console.log('fetchCompany id',id)
+        console.log("fetchCompany id", id);
         return decodeURIComponent(id);
       },
       transformResponse(baseResponse, meta, arg) {
@@ -135,11 +132,11 @@ api.injectEndpoints({
     }),
 
     addCompany: builder.mutation({
-      queryFn : baseCreateMutation(marshaller,'organizations')
+      queryFn: baseCreateMutation(marshaller, "organizations"),
     }),
 
     updateCompany: builder.mutation({
-      queryFn: baseUpdateMutation(marshaller)
+      queryFn: baseUpdateMutation(marshaller),
     }),
 
     deleteCompany: builder.mutation({
@@ -163,10 +160,8 @@ api.injectEndpoints({
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
-
   }),
 });
-
 
 /**
  * Sectors API ENDPOINTS

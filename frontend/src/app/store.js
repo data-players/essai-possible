@@ -1,5 +1,4 @@
 import {configureStore} from "@reduxjs/toolkit";
-import api from "./api.js";
 import apiMiddleware from "./apiMiddleware.js";
 import geocodingApi from "./geocodingApi.js";
 import offersReducer from "../routes/offers/offers-slice.js";
@@ -18,7 +17,7 @@ export const store = configureStore({
     meetings: meetingsReducer,
     slots: slotsReducer,
     companies: companiesReducer,
-    sectors : sectorReducer
+    sectors: sectorReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiMiddleware.middleware, geocodingApi.middleware),
