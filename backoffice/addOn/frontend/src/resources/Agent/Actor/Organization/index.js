@@ -43,7 +43,8 @@ export default {
         'pair:documentedBy': 'Documenté par',
         'pair:hasLocation': 'Adresse',
         'pair:membershipActor': 'Membre',
-        'pair:membershipRole': 'Role'
+        'pair:membershipRole': 'Role',
+        'ep:siret': 'Siret'
       }
     }
   }

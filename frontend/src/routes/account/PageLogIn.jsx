@@ -12,6 +12,7 @@ import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded.js";
 import * as React from "react";
 
 export default function PageLogIn() {
+  console.log('PageLogIn!');
   const {t} = useTranslation();
   const {loggedOut} = queryString.parse(window.location.search);
 
@@ -52,13 +53,13 @@ export default function PageLogIn() {
             Créer un compte
           </Button>
 
-          <Button
+          {/* <Button
             variant={"soft"}
             color={"neutral"}
             component={ReactRouterLink}
             to={"/company/signup"}>
             Je suis une entreprise
-          </Button>
+          </Button> */}
         </Stack>
       </Card>
     </PageAuthStructure>

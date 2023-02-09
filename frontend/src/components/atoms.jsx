@@ -212,8 +212,6 @@ export const CheckboxGroup = React.memo(
 
 export const CheckboxGroupSemantic = function ({options, value = [], onChange, color, ...props}) {
   const [val, setVal] = useState(value);
-  console.log("options", options);
-  console.log("value", value);
   return (
     <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
       <List size="sm" {...props}>
@@ -225,7 +223,6 @@ export const CheckboxGroupSemantic = function ({options, value = [], onChange, c
                 label={option.label}
                 checked={checked}
                 onChange={(event) => {
-                  console.log("val", val);
                   const newVal = event.target.checked
                     ? [...val, option.id]
                     : val.filter((checkedOption) => option.id !== checkedOption);
@@ -247,6 +244,18 @@ export function RadioGroup({options, color, ...props}) {
       <MuiRadioGroup {...props}>
         {options.map((option) => (
           <Radio value={option} key={option} label={option} />
+        ))}
+      </MuiRadioGroup>
+    </Card>
+  );
+}
+
+export function RadioGroupSemantic({options, color, ...props}) {
+  return (
+    <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2, boxShadow: "none"}}>
+      <MuiRadioGroup {...props}>
+        {options.map((option) => (
+          <Radio value={option.id} key={option.id} label={option.label} />
         ))}
       </MuiRadioGroup>
     </Card>
@@ -458,8 +467,8 @@ export function ParagraphWithTitle({title, children, sx}) {
 
 export function StatusChip({status, options}) {
   return (
-    <Chip color={options[status].color} startDecorator={options[status].icon}>
-      {options[status].label}
+    <Chip color={options[status]?.color} startDecorator={options[status]?.icon}>
+      {options[status]?.label}
     </Chip>
   );
 }

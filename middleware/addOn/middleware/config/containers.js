@@ -127,7 +127,8 @@ module.exports = [
       'pair:EventStatus',
       'pair:IdeaStatus',
       'pair:ProjectStatus',
-      'pair:TaskStatus'
+      'pair:TaskStatus',
+      'ep:JobStatus'
     ]
   },
   {

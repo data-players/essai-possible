@@ -296,7 +296,7 @@ export const AuthButton = {
     const handleClose = () => setAnchorEl(null);
 
     const handleNavigateToCompany = (id) => () => {
-      navigate(`/company/${encodeURIComponent(id)}`);
+      navigate(`/company/${id}`);
       handleClose();
     };
     const open = !!anchorEl;
@@ -315,7 +315,7 @@ export const AuthButton = {
 
     const Item = ({companyId}) => {
       const company = useSelector((state) => selectCompanyById(state, companyId));
-      const selected = currentCompanyId === companyId;
+      const selected = encodeURIComponent(currentCompanyId) === companyId;
       return (
         <MenuItem
           {...(selected && {selected: true, variant: "soft"})}
@@ -393,15 +393,13 @@ export const AuthButton = {
     );
   },
   LogInShort: ({sx, currentUser}) => {
-    const isCompanyAccount = currentUser?.companies?.length > 0;
+
     return (
       <ReactRouterLink
         to={
-          currentUser
-            ? isCompanyAccount
-              ? `/company/${currentUser.companies[0]}`
-              : "/account/my-meetings"
-            : "/login"
+          currentUser 
+          ? "/account/my-meetings"
+          : "/login"
         }>
         <IconButton sx={sx} variant={"solid"}>
           <PersonRoundedIcon />

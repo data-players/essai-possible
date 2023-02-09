@@ -42,7 +42,7 @@ export const PersonEdit = props => (
         </ReferenceArrayInput>
 
         <ReferenceArrayInput
-          source="pair:concernesBy"
+          source="pair:concernedBy"
           reference="TimeSlot"
           fullWidth
         >

@@ -12,10 +12,10 @@ export default function DefinedOfferProtection() {
 
   // Fetch the full offer
   useFetchOfferQuery(id);
-  const offer = useSelector((state) => selectOfferById(state, id)) || {};
+  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
 
   // Fetch the offer slots
-  useFetchSlotsQuery({offer: id});
+  useFetchSlotsQuery({offer: encodeURIComponent(id)});
 
   // Fetch the full company when we have its id from the offer
   const [launchFetchCompanyQuery] = useLazyFetchCompanyQuery();

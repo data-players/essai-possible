@@ -45,7 +45,7 @@ export default function EditFormComponent({
       {pageBanner}
 
       <Form
-        initialValues={initialValues}
+        initialValues={initialValues||{}}
         validationSchema={validationSchema}
         successText={successText || (isEditMode ? "Modifications réussies" : "Création réussie")}
         onSubmit={onSubmit}>

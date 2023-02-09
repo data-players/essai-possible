@@ -90,7 +90,12 @@
   "edit": "Modifier",
   "company": {
     "myCompany": "Mon Entreprise",
-    "myCompany_other": "Mes Entreprises"
+    "myCompany_other": "Mes Entreprises",
+    "askAffiliation":{
+      "title" : "Espace entreprise",
+      "button": "Demander un rattachement",
+      "more":"à une entreprise pour publier des offres"
+    }
   },
   "tousTesPossibles": "Tous Tes Possibles",
   "companies": {

@@ -22,6 +22,7 @@ const OrganizationShow = props => (
         <Hero image="image">
           <TextField source="pair:comment" />
           <TextField source="pair:homePage" />
+          <TextField source="ep:siret" />
           <ReferenceArrayField reference="Status" source="pair:hasStatus">
             <SeparatedListField linkType={false}>
               <TextField source="pair:label" />

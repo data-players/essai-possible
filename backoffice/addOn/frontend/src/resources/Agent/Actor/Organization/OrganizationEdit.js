@@ -30,6 +30,7 @@ export const OrganizationEdit = props => (
           <SelectInput optionText="pair:label" />
         </ReferenceInput>
         <TextInput source="pair:homePage" fullWidth />
+        <TextInput source="ep:siret" fullWidth />
         <LocationInput source="pair:hasLocation" fullWidth />
         <ImageInput source="image" accept="image/*">
           <ImageField source="src" />

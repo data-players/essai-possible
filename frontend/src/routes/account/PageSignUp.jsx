@@ -19,7 +19,7 @@ export default function PageSignUp({companyMode = false}) {
         </Stack>
       </Card>
 
-      <Card size={"lg"}>
+      {/* <Card size={"lg"}>
         <Stack gap={3}>
           <Typography level={"h5"} textAlign={"center"}>
             {companyMode ? "Vous êtes candidat·e ?" : "Vous êtes une entreprise ?"}
@@ -32,7 +32,7 @@ export default function PageSignUp({companyMode = false}) {
             Nouveau compte {!companyMode ? " entreprise" : " candidat·e"}
           </Button>
         </Stack>
-      </Card>
+      </Card> */}
     </PageAuthStructure>
   );
 }

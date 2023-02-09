@@ -20,8 +20,7 @@ export default function PageCompanyOffersList() {
   // console.log("PageCompanyOffersList");
   const {t} = useTranslation();
   const {companyId} = useParams();
-  useFetchCompanyQuery(companyId);
-  const offersForCompany = useSelector((state) => selectOfferIdsForCompany(state, companyId));
+  const offersForCompany = useSelector((state) => selectOfferIdsForCompany(state, encodeURIComponent(companyId)));
   const company = useSelector((state) => selectCompanyById(state, encodeURIComponent(companyId)));
   const offersReady = useSelector(selectOffersReady);
 

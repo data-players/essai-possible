@@ -3,11 +3,12 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import {
-  CheckboxGroup,
+  CheckboxGroupSemantic,
   ExternalLink,
   HelpBox,
   LocationSearchBar,
   RadioGroup,
+  RadioGroupSemantic,
   SimpleBanner,
 } from "../../../components/atoms.jsx";
 import {FormInput, FormStep} from "../../../components/forms.jsx";
@@ -15,11 +16,15 @@ import Textarea from "@mui/joy/Textarea";
 import {
   offerDefaultValues,
   offerValidationSchema,
+  selectAllSkills,
+  selectAllStatus,
   selectOfferById,
   selectOfferReady,
   useAddOfferMutation,
   useDeleteOfferMutation,
   useUpdateOfferMutation,
+  useFetchSkillsQuery,
+  useFetchStatusQuery,
 } from "../offers-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
@@ -57,15 +62,20 @@ export default function PageEditOffer({mode, isCopying}) {
   const [openCompanyForm, setOpenCompanyForm] = useState(null);
   const [openSlotsGenerator, setOpenSlotsGenerator] = useState(null);
 
-  const offer = useSelector((state) => (isEditMode ? selectOfferById(state, id) : undefined));
+  const offer = useSelector((state) => (isEditMode ? selectOfferById(state, encodeURIComponent(id)) : undefined));
   const company = useSelector((state) =>
-    selectCompanyById(state, isEditMode ? offer.company : companyId)
+    selectCompanyById(state, isEditMode ? offer.company : encodeURIComponent(companyId))
   );
-  const slots = useSelector((state) => (isEditMode ? selectSlotsForOffer(state, id) : []));
+  const slots = useSelector((state) => (isEditMode ? selectSlotsForOffer(state, encodeURIComponent(id)) : []));
 
   const companyReady = useSelector(selectCompanyReady);
   const offerReady = useSelector(selectOfferReady);
   const slotsReady = useSelector(selectSlotsReady);
+  useFetchSkillsQuery();
+  const skills = useSelector(selectAllSkills);
+  useFetchStatusQuery();
+  const status = useSelector(selectAllStatus);
+
 
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
@@ -221,13 +231,13 @@ export default function PageEditOffer({mode, isCopying}) {
                 help={"4 recommandées"}
               />
               <FormInput
-                component={CheckboxGroup}
+                component={CheckboxGroupSemantic}
                 wrapperComponent={Box}
                 label={"Savoir-être"}
                 name={"offer.softSkills"}
                 register={register}
                 onChange={(value) => setFieldValue("offer.softSkills", value)}
-                options={softSkillsOptions}
+                options={skills}
                 help={"3 recommandées"}
               />
               <FormInput
@@ -416,8 +426,8 @@ export default function PageEditOffer({mode, isCopying}) {
             <Stack gap={3}>
               <FormInput
                 name={"offer.status"}
-                component={RadioGroup}
-                options={statusOptions}
+                component={RadioGroupSemantic}
+                options={status}
                 register={register}
               />
             </Stack>
@@ -443,7 +453,7 @@ export default function PageEditOffer({mode, isCopying}) {
                   liste des offres et dans le détail des offres. Vous pouvez également modifier
                   votre entreprise sur{" "}
                   <Link
-                    to={`/company/${encodeURIComponent(company.id)}/edit`}
+                    to={`/company/${encodeURIComponent(company?.id)}/edit`}
                     component={ReactRouterLink}>
                     cette page dédiée
                   </Link>

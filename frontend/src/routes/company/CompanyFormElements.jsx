@@ -33,6 +33,12 @@ export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
       />
 
       <FormInput
+        label={"Siret"}
+        register={register}
+        name={base + "siret"}
+      />
+
+      <FormInput
         label={"Site internet de l'entreprise"}
         placeholder={"https://mon-entreprise.com"}
         register={register}

@@ -34,6 +34,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 };
 
 export default function CompanyAccountProtection(props) {
+  console.log('CompanyAccountProtection')
   return (
     <ConnectedUserProtection>
       <Protection {...props} />

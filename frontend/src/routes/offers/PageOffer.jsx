@@ -21,7 +21,7 @@ export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
 
-  const offer = useSelector((state) => selectOfferById(state, id)) || {};
+  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
 
   function MeetingCard() {

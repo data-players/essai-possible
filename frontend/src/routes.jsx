@@ -19,6 +19,7 @@ import CompanyAccountProtection from "./components/routingProtections/CompanyAcc
 import PageEditCompany from "./routes/company/PageEditCompany";
 import PageSignUp from "./routes/account/PageSignUp.jsx";
 import PageLogIn from "./routes/account/PageLogIn.jsx";
+import PageAskAffilition from "./routes/account/PageAskAffiliation.jsx";
 
 export default function Router() {
   const currentUser = useSelector(selectCurrentUser);
@@ -85,17 +86,22 @@ export default function Router() {
             },
           ],
         },
-
         {
           path: "account",
           element: <ConnectedUserProtection />,
           children: [
             {index: true, element: <PageAccount />},
-
-            !isACompanyAccount && {
+            {
               path: "my-meetings",
               element: <PageMyMeetings />,
             },
+          ],
+        },
+        {
+          path: "account/affiliation",
+          element: <ConnectedUserProtection />,
+          children: [
+            {index: true, element: <PageAskAffilition />},
           ],
         },
 

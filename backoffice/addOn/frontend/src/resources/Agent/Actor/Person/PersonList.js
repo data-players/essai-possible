@@ -16,18 +16,18 @@ const PersonList = props => (
     ListComponent={List}
     aside={<PersonFilterSidebar />}
     views={{
-      avatar: {
-        label: 'Trombinoscope',
-        icon: AccountCircleIcon,
-        sort: { field: 'pair:lastName', order: 'DESC' },
-        perPage: 500,
-        pagination: false,
-        list: (
-          <GridList xs={2} linkType="show" externalLinks>
-            <AvatarWithLabelField label="pair:label" image="image" />
-          </GridList>
-        )
-      },
+      // avatar: {
+      //   label: 'Trombinoscope',
+      //   icon: AccountCircleIcon,
+      //   sort: { field: 'pair:lastName', order: 'DESC' },
+      //   perPage: 500,
+      //   pagination: false,
+      //   list: (
+      //     <GridList xs={2} linkType="show" externalLinks>
+      //       <AvatarWithLabelField label="pair:label" image="image" />
+      //     </GridList>
+      //   )
+      // },
       list: {
         label: 'Liste',
         icon: ListIcon,
@@ -46,21 +46,21 @@ const PersonList = props => (
           />
         )
       },
-      map: {
-        label: 'Carte',
-        icon: MapIcon,
-        perPage: 500,
-        pagination: false,
-        list: (
-          <MapList
-            latitude={record => record?.['pair:hasLocation']?.['pair:latitude']}
-            longitude={record => record?.['pair:hasLocation']?.['pair:longitude']}
-            label={record => record['pair:label']}
-            description={record => record['pair:comment']}
-            scrollWheelZoom
-          />
-        )
-      }
+      // map: {
+      //   label: 'Carte',
+      //   icon: MapIcon,
+      //   perPage: 500,
+      //   pagination: false,
+      //   list: (
+      //     <MapList
+      //       latitude={record => record?.['pair:hasLocation']?.['pair:latitude']}
+      //       longitude={record => record?.['pair:hasLocation']?.['pair:longitude']}
+      //       label={record => record['pair:label']}
+      //       description={record => record['pair:comment']}
+      //       scrollWheelZoom
+      //     />
+      //   )
+      // }
     }}
     {...props}
   />

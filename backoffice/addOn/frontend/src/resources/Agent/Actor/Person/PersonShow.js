@@ -39,7 +39,7 @@ const PersonShow = props => (
           <ReferenceArrayField reference="Organization" source="ep:askedAffiliation">
             <ChipList primaryText="pair:label" linkType="show" externalLinks />
           </ReferenceArrayField>
-          <ReferenceArrayField reference="TimeSlot" source="pair:concernesBy">
+          <ReferenceArrayField reference="TimeSlot" source="pair:concernedBy">
             <ChipList primaryText="pair:label" linkType="show" externalLinks />
           </ReferenceArrayField>
         </SideList>

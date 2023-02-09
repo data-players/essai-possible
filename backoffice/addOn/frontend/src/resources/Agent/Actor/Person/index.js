@@ -37,7 +37,7 @@ export default {
         'pair:hasTopic': 'A pour intérêt',
         'pair:hasLocation': 'Adresse',
         'ep:askedAffiliation':'demande de rattachemen entreprise',
-        'pair:concernesBy':'rendez vous',
+        'pair:concernedBy':'rendez vous',
         'pair:affilitedBy':'rattachment entreprise',
         'pair:email':'email'
       }

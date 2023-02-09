@@ -55,6 +55,7 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
   const meetingsReady = useSelector(selectMeetingsReady);
 
   const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
+  // const currentUserIsComplete = false;
 
   // Redirect user to the offers page if it is a basic user, to its meetings
   // if it has already meetings, and to the company offers if it is a pro account
@@ -64,8 +65,8 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
         currentUser.companies?.length > 0
           ? `/company/${encodeURIComponent(currentUser.companies[0])}`
           : meetings.length > 0
-          ? "/account/my-meetings"
-          : "/offers"
+            ? "/account/my-meetings"
+            : "/offers"
       );
     }
   }, [currentUserIsComplete, currentUser, redirect, meetingsReady, meetings]);
@@ -87,8 +88,6 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
     }
     await updateUser(values.user).unwrap();
   }
-
-  console.log(currentUserIsComplete, currentUser);
 
   // If we are waiting for the user to be loaded, show loading
   if (authTokenExists && !currentUser) return <LoadingSpinner />;
@@ -255,7 +254,7 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
         </EditFormComponent>
       ) : (
         // USER NOT IDENTIFIED --> Ask for identification with Les Communs
-        <ButtonWithLoading size="lg" color="primary" onClick={connectToLesCommuns}>
+        <ButtonWithLoading size="lg" color="primary" onClick={(e)=>{connectToLesCommuns(`${window.location.origin}/account`)}}>
           S'identifier avec Les Communs
         </ButtonWithLoading>
       )}

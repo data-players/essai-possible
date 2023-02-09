@@ -81,11 +81,13 @@ export default function Root() {
 
   const connectionButtons = currentUser ? (
     <>
-      {isCompanyAccount ? (
-        <AuthButton.CompanyOffersList currentUser={currentUser} />
-      ) : (
+      { currentUser?.concernedBy?.length > 0 && (
         <AuthButton.MyMeetings />
       )}
+      { currentUser?.companies?.length > 0 && (
+        <AuthButton.CompanyOffersList currentUser={currentUser} />
+      )}
+  
       <AuthButton.Account currentUser={currentUser} />
     </>
   ) : (
@@ -109,6 +111,7 @@ export default function Root() {
         }}
       />
       <Layout.Root>
+        {/* isCompanyAccount param used to display help heder to company accont*/}
         <Layout.Navigation
           mobileDrawerContent={
             <>

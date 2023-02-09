@@ -15,6 +15,7 @@ const dataServers = {
         'pair:Skill':['/skills'],
         'pair:Challenge':['/Challenges'],
         'aurba:DataSource': ['/data-sources'],
+        'ep:JobStatus': ['/status'],
       }
     },
   }

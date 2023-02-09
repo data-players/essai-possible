@@ -20,6 +20,7 @@ const api = createApi({
       const token = getState().auth.token;
       if (token) headers.set("authorization", `Bearer ${token}`);
       headers.set("accept", "application/ld+json");
+      // headers.set("content-type", "application/ld+json");
       return headers;
     },
   }),
@@ -86,15 +87,28 @@ export function baseUpdateMutation(marshaller) {
 export function baseCreateMutation(marshaller, container) {
   const func = async (args, {getState}, extraOptions, baseQuery) => {
     const body = marshaller.unmarshall(args);
+    body.id=undefined;
+    body['@context']="https://data.essai-possible.data-players.com/context.json"
     const postResponse = await baseQuery({
       url: container,
       method: "POST",
       body: body,
     });
-    const newId = postResponse.headers.location;
-    const data = (await baseQuery(newId)).data;
-    const marshallData = marshaller.marshall(data);
-    return {data: marshallData};
+    if(postResponse.error==undefined){
+      const status = postResponse.meta.response.status;
+      if (status==201){
+        const newId = postResponse.meta.response.headers.get('location');
+        const data = (await baseQuery(newId)).data;
+        const marshallData = marshaller.marshall(data);
+        return {data: marshallData};
+      } else {
+        return {error: `bas status ${status}`};
+      }
+
+    } else {
+      return {error: postResponse.error};
+    }
+
   };
   return func;
 }

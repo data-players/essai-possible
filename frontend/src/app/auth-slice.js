@@ -27,6 +27,7 @@ const slice = createSlice({
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
       state.webId = tockenData.webId;
+      console.log('tockenData',tockenData.webId)
       state.token = payload;
     },
     setUser: (state, {payload: user}) => {
@@ -75,10 +76,12 @@ const userMarshaller = createJsonLDMarshaller(
     companies: "pair:affiliatedBy",
     askedCompanies: "ep:askedAffiliation",
     phone: "pair:phone",
+    label: "pair:label",
+    concernedBy:"pair:concernedBy"
   },
   {
-    objectArrayFields: ["companies", "askedCompanies"],
-    encodeUriFields: ["companies", "askedCompanies"],
+    objectArrayFields: ["companies", "askedCompanies","concernesBy"],
+    encodeUriFields: ["companies", "askedCompanies","concernesBy"],
   }
 );
 
@@ -87,9 +90,15 @@ api.injectEndpoints({
     fetchUser: builder.query({
       queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
-        const result = await baseQuery(webId);
-        const marshallData = userMarshaller.marshall(result.data);
-        return {data: marshallData};
+        console.log('fetchUser',webId)
+        if(webId){
+          const result = await baseQuery(webId);
+          const marshallData = userMarshaller.marshall(result.data);
+          return {data: marshallData};
+        }else{
+          return {error:"fetch user without token"};
+        }
+
       },
     }),
 
@@ -140,7 +149,10 @@ export const userDefaultValues = {
 };
 
 export function connectToLesCommuns(redirectUrl) {
+  console.log('redirectUrl',redirectUrl)
   const safeRedirectUrl = typeof redirectUrl === "string" && redirectUrl;
+  console.log('safeRedirectUrl',safeRedirectUrl)
+
   window.location.assign(
     `${import.meta.env.VITE_MIDDLEWARE_URL}/auth?redirectUrl=${
       safeRedirectUrl || window.location.href

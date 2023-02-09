@@ -84,12 +84,19 @@ const marshaller = createJsonLDMarshaller(
     offers: "pair:offers",
     website: "pair:homePage",
     sectors: "pair:hasSectors",
+    siret: "ep:siret",
     type: "type",
     image: "image",
   },
   {
     objectArrayFields: ["offers", "affiliates", "sectors"],
     encodeUriFields: ["offers", "affiliates", "sectors"],
+    defaultValues:[
+      {
+        key : "type",
+        value : "pair:Organization" 
+      }
+    ]
   }
 );
 

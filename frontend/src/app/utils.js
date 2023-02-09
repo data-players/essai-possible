@@ -137,7 +137,7 @@ export function getDeepValue(obj, splitName) {
  */
 export function createJsonLDMarshaller(
   renamingsSchema,
-  {oldFieldName = undefined, objectArrayFields = [], encodeUriFields = []} = {}
+  {oldFieldName = undefined, objectArrayFields = [], encodeUriFields = [], defaultValues = []} = {}
 ) {
   const isObjectMarshaller = (obj) =>
     typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
@@ -217,6 +217,15 @@ export function createJsonLDMarshaller(
           // outObject[objectArrayField] = outObject[objectArrayField].map(decodeURIComponent);
         }
       }
+      
+      for (const defaultValue of defaultValues) {
+        if (!outObject[defaultValue.key]) {
+          outObject[defaultValue.key]=defaultValue.value
+        }
+      }
+
+
+      defaultValues
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {
