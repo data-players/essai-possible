@@ -23,16 +23,6 @@ const OrganizationShow = props => (
           <TextField source="pair:comment" />
           <TextField source="pair:homePage" />
           <TextField source="ep:siret" />
-          <ReferenceArrayField reference="Status" source="pair:hasStatus">
-            <SeparatedListField linkType={false}>
-              <TextField source="pair:label" />
-            </SeparatedListField>
-          </ReferenceArrayField>
-          <ReferenceArrayField reference="Type" source="pair:hasType">
-            <SeparatedListField linkType={false}>
-              <TextField source="pair:label" />
-            </SeparatedListField>
-          </ReferenceArrayField>
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />

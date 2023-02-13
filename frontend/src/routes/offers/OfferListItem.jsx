@@ -1,6 +1,10 @@
 import {usePrefetch} from "../../app/api.js";
 import {useSelector} from "react-redux";
-import {selectOfferById} from "./offers-slice.js";
+import {
+  selectOfferById,
+  useFetchStatusQuery,
+  selectAllStatus
+} from "./offers-slice.js";
 import {selectCompanyById} from "./companies-slice.js";
 import ListItem from "@mui/joy/ListItem";
 import Card from "@mui/joy/Card";
@@ -135,6 +139,8 @@ export function OfferListItemForCompany({value: offerId}) {
   const {t, tDate} = useTranslationWithDates();
 
   const offer = useSelector((state) => selectOfferById(state, offerId));
+  useFetchStatusQuery();
+  const status = useSelector(selectAllStatus);
 
   return (
     <OfferListItemRoot offer={offer}>
@@ -152,23 +158,7 @@ export function OfferListItemForCompany({value: offerId}) {
           <Grid md={6} xs={12}>
             <StatusChip
               status={offer.status}
-              options={{
-                [statusOptions[0]]: {
-                  label: statusOptions[0],
-                  icon: <VisibilityOffRoundedIcon />,
-                  color: "warning",
-                },
-                [statusOptions[1]]: {
-                  label: statusOptions[1],
-                  icon: <VisibilityRoundedIcon />,
-                  color: "neutral",
-                },
-                [statusOptions[2]]: {
-                  label: statusOptions[2],
-                  icon: <CheckIcon />,
-                  color: "success",
-                },
-              }}
+              options={status}
             />
           </Grid>
         </Grid>

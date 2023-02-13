@@ -12,7 +12,7 @@ module.exports = {
   settings: {
     baseUrl: CONFIG.HOME_URL,
     baseDir: path.resolve(__dirname, '..'),
-    jsonContext: urlJoin(CONFIG.HOME_URL,'context.json'),
+    jsonContext: urlJoin('https://data.essai-possible.data-players.com/','context.json'),
     triplestore: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,

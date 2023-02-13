@@ -12,20 +12,20 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   const {id, companyId} = useParams();
   const navigate = useNavigate();
 
-  const offer = useSelector((state) => selectOfferById(state, id));
-  const encodedCompanyId = encodeURIComponent(companyId || offer.company);
-  // console.log('finalCompanyId',finalCompanyId);
+  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id)));
+  const encodedCompanyId = companyId ? encodeURIComponent(companyId): offer?.company ? offer?.company: undefined 
 
   useFetchCompanyQuery(encodedCompanyId);
 
   const currentUser = useSelector(selectCurrentUser);
   const company = useSelector((state) => selectCompanyById(state, encodedCompanyId));
-  // console.log('Protection company',company);
   // console.log('Protection currentUser',currentUser);
 
   // User not belonging to the company bump out
   useEffect(() => {
-    if (!currentUser?.companies.includes(encodedCompanyId)) navigate(redirectTo);
+    if (currentUser && encodedCompanyId  && !currentUser?.companies.includes(encodedCompanyId)){
+      navigate(redirectTo);
+    }
   }, [encodedCompanyId, currentUser?.companies]);
 
   if (!company?.id) return <LoadingSpinner />;
@@ -34,7 +34,6 @@ const Protection = ({children, redirectTo = "/offers"}) => {
 };
 
 export default function CompanyAccountProtection(props) {
-  console.log('CompanyAccountProtection')
   return (
     <ConnectedUserProtection>
       <Protection {...props} />

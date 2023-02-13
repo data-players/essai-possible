@@ -73,6 +73,7 @@ export default function PageEditOffer({mode, isCopying}) {
   const slotsReady = useSelector(selectSlotsReady);
   useFetchSkillsQuery();
   const skills = useSelector(selectAllSkills);
+  console.log('skills',skills)
   useFetchStatusQuery();
   const status = useSelector(selectAllStatus);
 

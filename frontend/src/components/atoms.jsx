@@ -211,6 +211,7 @@ export const CheckboxGroup = React.memo(
 );
 
 export const CheckboxGroupSemantic = function ({options, value = [], onChange, color, ...props}) {
+  // console.log('CheckboxGroupSemantic',options)
   const [val, setVal] = useState(value);
   return (
     <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
@@ -466,9 +467,11 @@ export function ParagraphWithTitle({title, children, sx}) {
 }
 
 export function StatusChip({status, options}) {
+  console.log(status,options);
+  const statusObect=options.find(s=>s.id==status);
   return (
-    <Chip color={options[status]?.color} startDecorator={options[status]?.icon}>
-      {options[status]?.label}
+    <Chip >
+      {statusObect?.label}
     </Chip>
   );
 }

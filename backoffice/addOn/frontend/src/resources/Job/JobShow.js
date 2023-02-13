@@ -1,6 +1,6 @@
 import React from 'react';
 import Edit from "../../layout/edit/Edit";
-import {ReferenceField, ReferenceArrayField} from '@semapps/field-components';
+import {ReferenceField, ReferenceArrayField,SeparatedListField} from '@semapps/field-components';
 import JobTitle from "./JobTitle";
 import { MarkdownField } from '@semapps/markdown-components';
 import Show from "../../layout/show/Show";
@@ -24,6 +24,12 @@ const DataSourceShow = props => (
       <ReferenceArrayField reference="Theme" source="pair:hasTopic">
         <ChipList primaryText="pair:label" linkType="show" />
       </ReferenceArrayField>
+      <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
+
     </MainList>
   </Show>
 );

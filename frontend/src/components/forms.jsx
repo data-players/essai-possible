@@ -109,6 +109,7 @@ const MemoizedFormInput = React.memo(
     registration,
     ...props
   }) => {
+    // console.log('MemoizedFormInput',label,props.options)
     return (
       <WrapperComponent>
         <FormLabel>{label}</FormLabel>
@@ -119,9 +120,15 @@ const MemoizedFormInput = React.memo(
       </WrapperComponent>
     );
   },
-  (pp, np) =>
-    JSON.stringify([pp.registration?.value, pp.registration.errors, pp.deps]) ===
-    JSON.stringify([np.registration?.value, np.registration.errors, np.deps])
+  (pp, np) => {
+    const renderVariation = JSON.stringify([pp.registration?.value, pp.registration.errors, pp.deps, pp.options]) ===
+    JSON.stringify([np.registration?.value, np.registration.errors, np.deps, np.options]);
+    if(renderVariation){
+      // console.log('VARIATON','pp',pp,'np',np)
+    }
+    return renderVariation
+  }
+    
 );
 
 export const FormInput = ({

@@ -128,7 +128,7 @@ api.injectEndpoints({
     fetchCompany: builder.query({
       query: (id) => {
         //log volontaire de controle, suspition que l'id arrive parfait pas encodé
-        console.log("fetchCompany id", id);
+        // console.log("fetchCompany id", id);
         return decodeURIComponent(id);
       },
       transformResponse(baseResponse, meta, arg) {

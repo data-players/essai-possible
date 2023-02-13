@@ -8,7 +8,7 @@ const dataProvider = semanticDataProvider({
   httpClient,
   resources: Object.fromEntries(Object.entries(resources).map(([k, v]) => [k, v.dataModel])),
   ontologies,
-  jsonContext: process.env.REACT_APP_MIDDLEWARE_URL + 'context.json'
+  jsonContext: "https://data.essai-possible.data-players.com/" + 'context.json'
 });
 
 export default dataProvider;

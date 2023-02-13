@@ -123,6 +123,7 @@ const marshaller = createJsonLDMarshaller(
     hasLocation: "pair:hasLocation",
     company : "pair:offeredBy",
     skills: "pair:hasSkills",
+    status: "pair:hasStatus",
     type: "type",
   },
   {
