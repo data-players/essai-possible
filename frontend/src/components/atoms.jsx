@@ -39,6 +39,7 @@ import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded.j
 import {useTranslationWithDates} from "../app/i18n.js";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
 import {CircularProgress} from "@mui/joy";
+import * as Muicon from '@mui/icons-material';
 
 /**
  * INPUTS
@@ -467,10 +468,22 @@ export function ParagraphWithTitle({title, children, sx}) {
 }
 
 export function StatusChip({status, options}) {
-  console.log(status,options);
   const statusObect=options.find(s=>s.id==status);
+  console.log('statusObect',statusObect);
+  let IconComponent 
+  if(statusObect?.icon){
+    const muiIcon =  Muicon[statusObect?.icon];
+    console.log('muiIcon',muiIcon)
+    if(muiIcon){
+      IconComponent=muiIcon;
+    }
+  }
+  if(!IconComponent){
+    IconComponent= Muicon['QuestionMark'];
+  }
+  console.log('IconComponent',IconComponent)
   return (
-    <Chip >
+    <Chip color={statusObect?.color} startDecorator={<IconComponent/>}>
       {statusObect?.label}
     </Chip>
   );

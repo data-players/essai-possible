@@ -51,7 +51,17 @@ module.exports = {
       preferredViewForResource: async (resourceUri, containerPreferredView) => {
         if (!containerPreferredView) return resourceUri;
         return urlJoin(CONFIG.FRONT_URL, containerPreferredView, encodeURIComponent(resourceUri), 'show')
-      }
+      },
+      remoteContextFiles: [
+        {
+          uri: 'https://www.w3.org/ns/activitystreams',
+          file: path.resolve(__dirname, './config/context-as.json')
+        },
+        {
+          uri: 'https://data.essai-possible.data-players.com',
+          file: path.resolve(__dirname, './context.json')
+        }
+      ],
     },
     void: {
       title: CONFIG.INSTANCE_NAME,

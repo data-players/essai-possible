@@ -57,7 +57,7 @@ export const JobEdit = props => {
             }}/>
         </ReferenceInput>
         <MarkdownInput source="pair:description" multiline fullWidth readOnly={lock}/>
-        <ReferenceInput reference="Status" source="pair:hasStatus" filter={{ a: 'ep:JobStatus' }}>
+        <ReferenceInput reference="Status" source="pair:hasStatus">
           <SelectInput optionText="pair:label" />
         </ReferenceInput>
         <ThemesInput source="pair:hasTopic" />

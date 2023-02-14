@@ -128,7 +128,7 @@ const marshaller = createJsonLDMarshaller(
   },
   {
     objectArrayFields: ["skills"],
-    encodeUriFields: ["skills","company"],
+    encodeUriFields: ["skills","company","status"],
     defaultValues:[
       {
         key : "type",
@@ -142,7 +142,7 @@ const marshaller = createJsonLDMarshaller(
  * Skills Mashaller
  */
 const skillMarshaller = createJsonLDMarshaller({
-  label: "pair:label",
+  label: "pair:label"
 });
 
 /**
@@ -150,6 +150,8 @@ const skillMarshaller = createJsonLDMarshaller({
  */
 const statusMarshaller = createJsonLDMarshaller({
   label: "pair:label",
+  icon : "ep:icon",
+  color : "ep:color"
 });
 
 

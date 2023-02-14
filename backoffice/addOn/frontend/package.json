@@ -2,7 +2,11 @@
   "name": "archipelago-frontend",
   "version": "1.0.0",
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@fullcalendar/core": "^5.7.2",
+    "@mui/icons-material": "^5.3.0",
+    "@mui/material": "^5.3.0",
     "@semapps/auth-provider": "0.4.0-rc.0",
     "@semapps/date-components": "0.4.0-rc.0",
     "@semapps/field-components": "0.4.0-rc.0",
@@ -21,12 +25,9 @@
     "ra-language-french": "^3.19.10",
     "react": "^18.1.0",
     "react-admin": "^3.19.10",
-    "react-dom": "^18.1.0",
-    "@mui/icons-material": "^5.3.0",
+    "react-admin-color-input": "^3.0.0-beta.0",
     "react-admin-json-view": "^1.2.1",
-    "@mui/material": "^5.3.0",
-    "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0"
+    "react-dom": "^18.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
