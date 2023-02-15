@@ -52,14 +52,15 @@ module.exports = {
         if (!containerPreferredView) return resourceUri;
         return urlJoin(CONFIG.FRONT_URL, containerPreferredView, encodeURIComponent(resourceUri), 'show')
       },
+      
       remoteContextFiles: [
         {
           uri: 'https://www.w3.org/ns/activitystreams',
-          file: path.resolve(__dirname, './config/context-as.json')
+          file: path.resolve(__dirname, './node_modules/@seampps/core/config/context-as.json')
         },
         {
-          uri: 'https://data.essai-possible.data-players.com',
-          file: path.resolve(__dirname, './context.json')
+          uri: 'https://data.essai-possible.data-players.com/context.json',
+          file: path.resolve(__dirname, './public/context.json')
         }
       ],
     },

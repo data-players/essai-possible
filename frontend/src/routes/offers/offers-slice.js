@@ -120,15 +120,28 @@ const marshaller = createJsonLDMarshaller(
   {
     title : "pair:label",
     description: "pair:description",
-    hasLocation: "pair:hasLocation",
     company : "pair:offeredBy",
-    skills: "pair:hasSkills",
+    softSkills: "pair:hasSkills",
     status: "pair:hasStatus",
     type: "type",
+    location: "pair:hasLocation",
+    workEnvironment: "ep:workEnvironment",
+    timeSchedule :"ep:timeSchedule",
+    duration: "ep:duration",
+    meetingDuration: "ep:meetingDuration",
+    meetingDetails: "ep:meetingDetails",
+    mentorEmail: "pair:e-mail",
+    mentorPhone: "pair:phone",
+    tasks: "ep:tasks",
+    skills: "ep:skills",
+    particularConditions:"ep:particularConditions",
+    possibleArrangements:"ep:possibleArrangements",
+    slots:"ep:subjectOf"
+
   },
   {
-    objectArrayFields: ["skills"],
-    encodeUriFields: ["skills","company","status"],
+    objectArrayFields: ["softSkills","slots"],
+    encodeUriFields: ["softSkills","company","status","slots"],
     defaultValues:[
       {
         key : "type",
@@ -243,28 +256,49 @@ api.injectEndpoints({
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
-    // addOffer: builder.mutation({
-    //   query: (offer) => {
-    //     return "/jobs";
-    //   },
-    //   // query: ({slot, comments}) => ({
-    //   //   url: "offers",
-    //   //   method: "POST",
-    //   //   body: {slot, comments},
-    //   // }),
-    //   transformResponse(baseResponse, meta, offer) {
-    //     // Mock data
-    //     const res = {...offer, id: fullOffers.length + 1};
-    //     return res;
-    //   },
-    // }),
 
     addOffer: builder.mutation({
       queryFn: baseCreateMutation(marshaller, "jobs"),
     }),
 
     updateOffer: builder.mutation({
-      queryFn: baseUpdateMutation(marshaller),
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+
+        const state= getState();
+        const existing=state.offers.entities[args.id];
+        console.log('existing',existing);
+        const oldSlots=existing.slots;
+        console.log ('new',args)
+        const newSlots = args.slots;
+
+        for (const newSlot of newSlots) {
+          // console.log('newSlot',newSlot);
+          // console.log('state.slots',state.slots);
+          if (!newSlot.id){
+            const createdSlot= await dispatch(api.endpoints.addSlot.initiate({
+              start : newSlot.start,
+              offer : args.id
+            }));
+            console.log('createdSlot',createdSlot)
+          }
+        }
+
+        const newSlotWithId = newSlots.fiter(s=>s.id!=undefined).map(s=>s.id);
+        const slotsToDelete=existing.slots.map(s=>s.id).filter(s=>!newSlotWithId.includes(s));
+        for (const slotToDelete of slotsToDelete) {
+          const deletedSlot= await dispatch(api.endpoints.removeSlot.initiate(slotToDelete));
+        }
+
+        const body = marshaller.unmarshall(args);
+        await baseQuery({
+          url: body.id,
+          method: "PUT",
+          body: body,
+        });
+        const data = (await baseQuery(body.id)).data;
+        const marshallData = marshaller.marshall(data);
+        return {data: marshallData};
+      }
     }),
 
     deleteOffer: builder.mutation({

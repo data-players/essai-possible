@@ -1,6 +1,6 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector} from "../../../app/apiMiddleware.js";
-import {sorter} from "../../../app/utils.js";
+import api, {addStatusForEndpoints, matchAny, readySelector, baseCreateMutation} from "../../../app/apiMiddleware.js";
+import {sorter,createJsonLDMarshaller} from "../../../app/utils.js";
 import {slots} from "./slots-slice-data.js";
 
 /**
@@ -47,6 +47,28 @@ export const selectSlotsForOffer = (state, offerId) => {
 };
 
 /**
+ * slot Mashaller
+ */
+
+const marshaller = createJsonLDMarshaller(
+  {
+    start : "pair:label",
+    type: "type",
+    start: "pair:starDate",
+    offer: "pair:about",
+  },
+  {
+    encodeUriFields: ["offer"],
+    defaultValues:[
+      {
+        key : "type",
+        value : "ep:TimeSlot" 
+      }
+    ]
+  }
+);
+
+/**
  * SLOTS API ENDPOINTS
  */
 
@@ -57,28 +79,15 @@ const getCounter = () => counter++;
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchSlots: builder.query({
-      query: ({offer} = {}) => "/timeSlot",
-      // query: ({offer}) => "slots",
-      transformResponse(baseQueryReturnValue, meta, {offer} = {}) {
-        // Mock data
-        return offer ? slots.filter((slot) => slot.offer === offer) : slots;
+      query: () => `/timeSlot`,
+      transformResponse(baseResponse, meta) {
+        return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
       },
+      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
     addSlot: builder.mutation({
-      query: (val) => {
-        return "/timeSlot";
-      },
-      // query: ({slot, comments}) => ({
-      //   url: "slots",
-      //   method: "POST",
-      //   body: {slot, comments},
-      // }),
-      transformResponse(baseResponse, meta, {slot, comments}) {
-        // Mock data
-        const res = {id: getCounter(), slot, comments};
-        return res;
-      },
+      queryFn: baseCreateMutation(marshaller, "timeSlot"),
     }),
 
     deleteSlot: builder.mutation({

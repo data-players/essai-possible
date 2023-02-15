@@ -73,7 +73,7 @@ export default function PageEditOffer({mode, isCopying}) {
   const slotsReady = useSelector(selectSlotsReady);
   useFetchSkillsQuery();
   const skills = useSelector(selectAllSkills);
-  console.log('skills',skills)
+  // console.log('skills',skills)
   useFetchStatusQuery();
   const status = useSelector(selectAllStatus);
 
@@ -92,6 +92,7 @@ export default function PageEditOffer({mode, isCopying}) {
     : t("offers.createANewOffer");
 
   async function onSubmit(values) {
+    console.log('raw values',values);
     const method = isEditMode && !isCopying ? updateOffer : addOffer;
 
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
@@ -109,6 +110,7 @@ export default function PageEditOffer({mode, isCopying}) {
       ...values.offer,
       id: offer?.id,
       company: company.id,
+      slots:values.slots
     }).unwrap();
     navigate(`/offers/${encodeURIComponent(manipulatedOffer.id)}`);
   }

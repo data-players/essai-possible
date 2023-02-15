@@ -15,7 +15,7 @@ services:
     healthcheck:
       test: curl --fail http://localhost:3030 || exit 1
       interval: 1s
-      timeout: 1s
+      timeout: 5s
       start_period: 5s
 
   middleware:
