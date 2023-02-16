@@ -26,7 +26,7 @@ export default function OfferInfoPills({offer, company}) {
   const sectorsReady = useSelector(selectSectorsReady);
   const sectors = useSelector(selectAllSectors);
   const sectorCompanyLabels = company.sectors.map(cs=>sectors.find(s=>s.id==cs)?.label);
-  console.log('sectorCompanyLabels',sectorCompanyLabels);
+  // console.log('sectorCompanyLabels',sectorCompanyLabels);
   return (
     <Grid container columnSpacing={4} rowSpacing={3} p={0}>
       <Grid xs={12} sm={6} md={4}>

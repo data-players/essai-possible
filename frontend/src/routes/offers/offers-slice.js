@@ -265,39 +265,54 @@ api.injectEndpoints({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
 
         const state= getState();
-        const existing=state.offers.entities[args.id];
+        console.log("state",state.offers.entities)
+        const existing={...state.offers.entities[args.id]};
         console.log('existing',existing);
-        const oldSlots=existing.slots;
         console.log ('new',args)
-        const newSlots = args.slots;
+        const slotsToCreate = args.slots.filter(s=>s.id==undefined);
+        const slotsWithId = args.slots.filter(s=>s.id!=undefined);
+        console.log('slotsWithId',slotsWithId)
+        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.includes(s.id));
+        console.log("slotsToDelete",slotsToDelete)
 
-        for (const newSlot of newSlots) {
-          // console.log('newSlot',newSlot);
-          // console.log('state.slots',state.slots);
-          if (!newSlot.id){
-            const createdSlot= await dispatch(api.endpoints.addSlot.initiate({
-              start : newSlot.start,
-              offer : args.id
-            }));
-            console.log('createdSlot',createdSlot)
+        const createdSlotsId = [];
+        for (const slotToCreate of slotsToCreate) {
+          const createdSlot= await dispatch(api.endpoints.addSlot.initiate({
+            start : slotToCreate.start,
+            offer : args.id
+          }));
+          console.log('createdSlot',createdSlot);
+          createdSlotsId.push(createdSlot.data.id);
+        }
+        for (const slotToDelete of slotsToDelete) {
+          if(slotToDelete!=undefined && slotToDelete!='undefined'){
+            console.log("slotToDelete",slotToDelete)
+            // const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete));
           }
         }
 
-        const newSlotWithId = newSlots.fiter(s=>s.id!=undefined).map(s=>s.id);
-        const slotsToDelete=existing.slots.map(s=>s.id).filter(s=>!newSlotWithId.includes(s));
-        for (const slotToDelete of slotsToDelete) {
-          const deletedSlot= await dispatch(api.endpoints.removeSlot.initiate(slotToDelete));
-        }
+        const allSlotsIds= slotsWithId.map(s=>s.id).concat(createdSlotsId);
+        let dataToUpdate = {...args};
+        dataToUpdate.slots=allSlotsIds;
+        console.log("updateOffer",dataToUpdate)
 
-        const body = marshaller.unmarshall(args);
-        await baseQuery({
-          url: body.id,
-          method: "PUT",
-          body: body,
-        });
-        const data = (await baseQuery(body.id)).data;
-        const marshallData = marshaller.marshall(data);
-        return {data: marshallData};
+
+        const body = marshaller.unmarshall(dataToUpdate);
+        console.log("updateOffer body",body)
+
+
+        return {data:args}
+
+
+        // await baseQuery({
+        //   url: body.id,
+        //   method: "PUT",
+        //   body: body,
+        // });
+        // const data = (await baseQuery(body.id)).data;
+        // const marshallData = marshaller.marshall(data);
+        // console.log("updated Offer",marshallData)
+        // return {data: marshallData};
       }
     }),
 

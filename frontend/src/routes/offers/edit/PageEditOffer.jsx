@@ -63,6 +63,7 @@ export default function PageEditOffer({mode, isCopying}) {
   const [openSlotsGenerator, setOpenSlotsGenerator] = useState(null);
 
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, encodeURIComponent(id)) : undefined));
+  console.log("offer Edit",offer)
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : encodeURIComponent(companyId))
   );
@@ -390,7 +391,7 @@ export default function PageEditOffer({mode, isCopying}) {
               </HelpBox>
 
               <MeetingSlotsGenerator
-                offerId={id}
+                offerId={encodeURIComponent(id)}
                 values={values}
                 register={register}
                 slots={slots}

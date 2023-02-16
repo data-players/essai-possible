@@ -189,7 +189,7 @@ export function createJsonLDMarshaller(
     unmarshall: function (outObjectInit) {
       const outObject = {...outObjectInit};
       const inObject = {};
-      console.log(outObject);
+      // console.log(outObject);
 
       // Decode ID
       inObject.id = decodeURIComponent(outObject.id);

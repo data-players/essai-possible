@@ -22,13 +22,22 @@
       "@id": "as:image",
       "@type": "@id"
     },
+
     "aurba:hasDataSource": {
       "@type": "@id"
     },
     "aurba:dataSourceOf": {
       "@type": "@id"
     },
-
+    "ep:subjectOf": {
+      "@type": "@id"
+    },
+    "ep:askedAffiliation": {
+      "@type": "@id"
+    },
+    "ep:hasAskedAffiliation": {
+      "@type": "@id"
+    },
     "pair:image": {
       "@type": "@id"
     },

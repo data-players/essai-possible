@@ -87,6 +87,7 @@ export function baseUpdateMutation(marshaller) {
 export function baseCreateMutation(marshaller, container) {
   const func = async (args, {getState}, extraOptions, baseQuery) => {
     const body = marshaller.unmarshall(args);
+    // console.log('baseCreateMutation body POST',body)
     body.id=undefined;
     body['@context']="https://data.essai-possible.data-players.com/context.json"
     const postResponse = await baseQuery({
@@ -99,6 +100,7 @@ export function baseCreateMutation(marshaller, container) {
       if (status==201){
         const newId = postResponse.meta.response.headers.get('location');
         const data = (await baseQuery(newId)).data;
+        // console.log('baseCreateMutation body GET',data)
         const marshallData = marshaller.marshall(data);
         return {data: marshallData};
       } else {
@@ -112,6 +114,27 @@ export function baseCreateMutation(marshaller, container) {
   };
   return func;
 }
+
+export function baseDeleteMutation() {
+  const func = async (args, {getState}, extraOptions, baseQuery) => {
+    // const body = marshaller.unmarshall(args);
+    // body.id=undefined;
+    // body['@context']="https://data.essai-possible.data-players.com/context.json"
+    const postResponse = await baseQuery({
+      url: decodeURIComponent(args),
+      method: "DELETE"
+    });
+    if(postResponse.error==undefined){
+      return {data: `${args.id} removed`};
+
+    } else {
+      return {error: postResponse.error};
+    }
+
+  };
+  return func;
+}
+
 
 export function baseFetchEntitiesQuery(endpoint) {
   return (fetchParams = {}) => ({
