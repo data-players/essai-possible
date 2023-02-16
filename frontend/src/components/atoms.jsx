@@ -218,7 +218,9 @@ export const CheckboxGroupSemantic = function ({options, value = [], onChange, c
     <Card variant={"soft"} color={color} size={"sm"} sx={{my: 1, boxShadow: "none"}}>
       <List size="sm" {...props}>
         {options.map((option, index) => {
+          // console.log('checked',val,option.id)
           const checked = val && val.includes(option.id);
+          // console.log('checked',checked)
           return (
             <ListItem key={index}>
               <Checkbox

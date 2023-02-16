@@ -6,7 +6,10 @@ import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
-import {selectOfferById} from "./offers-slice.js";
+import {selectOfferById,
+  selectAllSkills,
+  useFetchSkillsQuery,
+} from "./offers-slice.js";
 import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
@@ -23,6 +26,11 @@ export default function PageOffer() {
 
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
+
+  useFetchSkillsQuery();
+  const skills = useSelector(selectAllSkills);
+
+  const skillsOfferLabels = offer.softSkills.map(cs=>skills.find(s=>s.id==cs)?.label);
 
   function MeetingCard() {
     return meetingForOffer ? (
@@ -84,7 +92,7 @@ export default function PageOffer() {
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.softSkills")}>
-                <BasicList elements={offer.softSkills} />
+                <BasicList elements={skillsOfferLabels} />
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.workEnvironment")}>

@@ -13,7 +13,7 @@ const dataServers = {
         'pair:Person': ['/users'],
         'pair:Sector':['/sectors'],
         'pair:Skill':['/skills'],
-        'pair:Challenge':['/Challenges'],
+        'pair:Challenge':['/challenges'],
         'aurba:DataSource': ['/data-sources'],
         'ep:JobStatus': ['/status'],
       }

@@ -76,6 +76,24 @@ const statusSlice = createSlice({
 export const statusReducer = statusSlice.reducer;
 
 /**
+ * Goals SLICE
+ */
+const goalsAdapter = createEntityAdapter();
+const goalsInitialState = goalsAdapter.getInitialState({
+  status: {},
+});
+const goalsSlice = createSlice({
+  name: "goals",
+  initialState: goalsInitialState,
+  extraReducers(builder) {
+    builder.addMatcher(matchAny("matchFulfilled", ["fetchGoals"]), goalsAdapter.upsertMany);
+    addStatusForEndpoints(builder, ["fetchGoals"]);
+  },
+});
+export const goalsReducer = goalsSlice.reducer;
+
+
+/**
  * OFFERS SELECTORS
  */
 
@@ -111,6 +129,16 @@ export const selectStatussReady = readySelector("status", "fetchStatus");
 
 export const {selectAll: selectAllStatus} = statusAdapter.getSelectors((state) => state.status);
 
+/**
+ * Goals SELECTORS
+ */
+export const selectGoalsReady = readySelector("goals", "fetchGoals");
+
+export const {selectAll: selectAllGoals} = goalsAdapter.getSelectors((state) => {
+  // console.log('state',state)
+  return state.goals
+});
+
 
 /**
  * Offers Mashaller
@@ -121,7 +149,7 @@ const marshaller = createJsonLDMarshaller(
     title : "pair:label",
     description: "pair:description",
     company : "pair:offeredBy",
-    softSkills: "pair:hasSkills",
+    softSkills: "pair:hasSkill",
     status: "pair:hasStatus",
     type: "type",
     location: "pair:hasLocation",
@@ -134,6 +162,7 @@ const marshaller = createJsonLDMarshaller(
     mentorPhone: "pair:phone",
     tasks: "ep:tasks",
     skills: "ep:skills",
+    goal: "pair:hasChallenge",
     particularConditions:"ep:particularConditions",
     possibleArrangements:"ep:possibleArrangements",
     slots:"ep:subjectOf"
@@ -141,7 +170,7 @@ const marshaller = createJsonLDMarshaller(
   },
   {
     objectArrayFields: ["softSkills","slots"],
-    encodeUriFields: ["softSkills","company","status","slots"],
+    encodeUriFields: ["softSkills","company","status","slots","goal"],
     defaultValues:[
       {
         key : "type",
@@ -165,6 +194,13 @@ const statusMarshaller = createJsonLDMarshaller({
   label: "pair:label",
   icon : "ep:icon",
   color : "ep:color"
+});
+
+/**
+ * Goals Mashaller
+ */
+const goalMarshaller = createJsonLDMarshaller({
+  label: "pair:label"
 });
 
 
@@ -265,15 +301,10 @@ api.injectEndpoints({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
 
         const state= getState();
-        console.log("state",state.offers.entities)
         const existing={...state.offers.entities[args.id]};
-        console.log('existing',existing);
-        console.log ('new',args)
         const slotsToCreate = args.slots.filter(s=>s.id==undefined);
         const slotsWithId = args.slots.filter(s=>s.id!=undefined);
-        console.log('slotsWithId',slotsWithId)
-        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.includes(s.id));
-        console.log("slotsToDelete",slotsToDelete)
+        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.map(swid=>swid.id).includes(s));
 
         const createdSlotsId = [];
         for (const slotToCreate of slotsToCreate) {
@@ -287,7 +318,7 @@ api.injectEndpoints({
         for (const slotToDelete of slotsToDelete) {
           if(slotToDelete!=undefined && slotToDelete!='undefined'){
             console.log("slotToDelete",slotToDelete)
-            // const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete));
+            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete));
           }
         }
 
@@ -296,23 +327,19 @@ api.injectEndpoints({
         dataToUpdate.slots=allSlotsIds;
         console.log("updateOffer",dataToUpdate)
 
-
         const body = marshaller.unmarshall(dataToUpdate);
         console.log("updateOffer body",body)
 
 
-        return {data:args}
-
-
-        // await baseQuery({
-        //   url: body.id,
-        //   method: "PUT",
-        //   body: body,
-        // });
-        // const data = (await baseQuery(body.id)).data;
-        // const marshallData = marshaller.marshall(data);
-        // console.log("updated Offer",marshallData)
-        // return {data: marshallData};
+        await baseQuery({
+          url: body.id,
+          method: "PUT",
+          body: body,
+        });
+        const data = (await baseQuery(body.id)).data;
+        const marshallData = marshaller.marshall(data);
+        console.log("updated Offer",marshallData)
+        return {data: marshallData};
       }
     }),
 
@@ -366,6 +393,24 @@ api.injectEndpoints({
   }),
 });
 
+/**
+ * Goals API ENDPOINTS
+ */
+
+api.injectEndpoints({
+  endpoints: (builder) => ({
+    fetchGoals: builder.query({
+      query() {
+        return `/challenges`;
+      },
+      transformResponse(baseResponse, meta) {
+        return baseResponse["ldp:contains"].map(goalMarshaller.marshall);
+      },
+      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
+    }),
+  }),
+});
+
 
 export const {
   useFetchOffersQuery,
@@ -375,6 +420,7 @@ export const {
   useDeleteOfferMutation,
   useFetchSkillsQuery,
   useFetchStatusQuery,
+  useFetchGoalsQuery,
 } = api;
 
 /**

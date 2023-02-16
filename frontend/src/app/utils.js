@@ -173,7 +173,7 @@ export function createJsonLDMarshaller(
       for (const encodeUriField of encodeUriFields) {
         if (outObject[encodeUriField]) {
           if (Array.isArray(outObject[encodeUriField])) {
-            outObject[encodeUriField] = outObject[encodeUriField].map((v) => encodeURIComponent(v));
+            outObject[encodeUriField] = outObject[encodeUriField].map((v) => v.id?encodeURIComponent(v.id):encodeURIComponent(v));
           } else {
             outObject[encodeUriField] = encodeURIComponent(outObject[encodeUriField]);
           }

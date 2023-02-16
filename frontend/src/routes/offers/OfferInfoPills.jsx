@@ -15,6 +15,12 @@ import {
   useFetchSectorsQuery,
 } from "../offers/companies-slice.js";
 
+import {
+  selectAllGoals,
+  selectGoalsReady,
+  useFetchGoalsQuery,
+} from "../offers/offers-slice.js";
+
 export default function OfferInfoPills({offer, company}) {
   const {t, tDate} = useTranslationWithDates();
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
@@ -26,6 +32,12 @@ export default function OfferInfoPills({offer, company}) {
   const sectorsReady = useSelector(selectSectorsReady);
   const sectors = useSelector(selectAllSectors);
   const sectorCompanyLabels = company.sectors.map(cs=>sectors.find(s=>s.id==cs)?.label);
+
+  useFetchGoalsQuery();
+  const gaolsReady = useSelector(selectGoalsReady);
+  const goals = useSelector(selectAllGoals);
+  const goalLabel = goals.find(g=>g.id==offer.goal)?.label;
+
   // console.log('sectorCompanyLabels',sectorCompanyLabels);
   return (
     <Grid container columnSpacing={4} rowSpacing={3} p={0}>
@@ -40,7 +52,7 @@ export default function OfferInfoPills({offer, company}) {
         <Chip color={"primary"} startDecorator={<FlagRoundedIcon />}>
           {t("offers.goal")}
         </Chip>
-        <Box sx={{mt: 1, ml: 2}}>{offer.goal}</Box>
+        <Box sx={{mt: 1, ml: 2}}>{goalLabel}</Box>
       </Grid>
       {slotsForOffer.length > 0 && (
         <Grid xs={12} sm={12} md={4}>

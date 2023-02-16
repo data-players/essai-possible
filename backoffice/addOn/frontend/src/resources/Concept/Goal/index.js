@@ -16,7 +16,7 @@ export default {
   },
   dataModel: {
     types: [
-      'pair:Chanllenge',
+      'pair:Challenge',
     ],
     fieldsMapping: {
       title: 'pair:label'

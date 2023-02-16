@@ -18,6 +18,7 @@ import {
   offerValidationSchema,
   selectAllSkills,
   selectAllStatus,
+  selectAllGoals,
   selectOfferById,
   selectOfferReady,
   useAddOfferMutation,
@@ -25,6 +26,7 @@ import {
   useUpdateOfferMutation,
   useFetchSkillsQuery,
   useFetchStatusQuery,
+  useFetchGoalsQuery,
 } from "../offers-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
@@ -77,6 +79,9 @@ export default function PageEditOffer({mode, isCopying}) {
   // console.log('skills',skills)
   useFetchStatusQuery();
   const status = useSelector(selectAllStatus);
+
+  useFetchGoalsQuery();
+  const goals = useSelector(selectAllGoals);
 
 
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
@@ -205,11 +210,10 @@ export default function PageEditOffer({mode, isCopying}) {
               />
               <FormInput
                 label={"Objectif"}
-                component={RadioGroup}
+                component={RadioGroupSemantic}
                 name={"offer.goal"}
-                value={values.offer.goal}
+                options={goals}
                 register={register}
-                options={goalOptions}
               />
               <FormInput
                 component={Textarea}

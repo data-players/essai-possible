@@ -56,13 +56,16 @@ export const JobEdit = props => {
               return value && value.length > 1
             }}/>
         </ReferenceInput>
-        <MarkdownInput source="pair:description" multiline fullWidth readOnly={lock}/>
+        <MarkdownInput source="pair:description" multiline fullWidth/>
         <ReferenceInput reference="Status" source="pair:hasStatus">
           <SelectInput optionText="pair:label" />
         </ReferenceInput>
         <ThemesInput source="pair:hasTopic" />
-        <ReferenceInput reference="DataSource" fullWidth source="aurba:hasDataSource" allowEmpty disabled={lock}>
-          <SelectInput optionText="pair:label" disabled={lock}/>
+        <ReferenceInput reference="DataSource" fullWidth source="aurba:hasDataSource" allowEmpty>
+          <SelectInput optionText="pair:label"/>
+        </ReferenceInput>
+        <ReferenceInput reference="Goal" fullWidth source="pair:hasChallenge" allowEmpty>
+          <SelectInput optionText="pair:label"/>
         </ReferenceInput>
         {lock &&
           <BooleanInput source="aurba:externalDeleted" disabled={true} />

@@ -11,7 +11,7 @@ export const ThemeEdit = props => (
       <TextInput label="Icone du thème" source="ep:icon" fullWidth/>
       <a href='https://mui.com/material-ui/material-icons/' style={{fontSize: "12px", paddingLeft: "15px"}}>Liste des icones disponibles ici, copiez son nom dans le champ</a>
       <TextInput label="Couleur du thème" source="ep:color" />
-      <a href='Global variant tokens' style={{fontSize: "12px", paddingLeft: "15px"}}>Liste des couleurs disponibles ici, copiez son nom dans le champ; (primary, neutral, danger, info, success, and warning) </a>
+      <a href='https://mui.com/joy-ui/customization/theme-colors/' style={{fontSize: "12px", paddingLeft: "15px"}}>Liste des couleurs disponibles ici, copiez son nom dans le champ; (primary, neutral, danger, info, success, and warning) </a>
     </SimpleForm>
   </Edit>
 );
