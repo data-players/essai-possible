@@ -3,6 +3,7 @@ import api, {addStatusForEndpoints, matchAny, readySelector,  baseCreateMutation
 import {normalize, sorter} from "../../app/utils.js";
 import {fullOffers, lightOffersList, statusOptions} from "./offers-slice-data.js";
 import {selectAllCompaniesById} from "./companies-slice.js";
+import {selectAllStatus} from "../../app/concepts-slice.js";
 import * as yup from "yup";
 import {
   required,
@@ -107,15 +108,18 @@ const marshaller = createJsonLDMarshaller(
 // More on selector memoization : https://react-redux.js.org/api/hooks#using-memoizing-selectors / https://github.com/reduxjs/reselect#createselectorinputselectors--inputselectors-resultfunc-selectoroptions
 export const selectFilteredOffersIds = createSelector(
   [
-    (state) => selectAllOffers(state).filter((offer) => offer.status === statusOptions[1]),
+    (state) => selectAllOffers(state),
     selectAllCompaniesById,
     (state, {search}) => search,
     (state, {location}) => location,
     (state, {radius}) => radius,
     (state, {sectors}) => sectors,
     (state, {goals}) => goals,
+    selectAllStatus
   ],
-  (offers, companiesById, search, location, radius, sectors, goals) => {
+  (allOffers, companiesById, search, location, radius, sectors, goals,status) => {
+    const publishedStatus = status.find(s=>s.id.includes('publiee'))?.id;
+    const offers = allOffers.filter(o=>o.status==publishedStatus);
     const hasSearch = search !== "";
     const hasLocationData = location?.lat && location?.long;
     const hasSectors = sectors?.length > 0;
@@ -146,6 +150,7 @@ export const selectFilteredOffersIds = createSelector(
     const matchInArray = (elementArray, filterArray) => {
       return filterArray.find((option) => elementArray.includes(option));
     };
+    console.log('hasAnyFilter',hasAnyFilter,offers)
     const filteredOffers = hasAnyFilter
       ? offers.filter((offer) => {
           const company = companiesById[offer.company] || {};
@@ -172,6 +177,23 @@ api.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch the list of all offers
     fetchOffers: builder.query({
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        const baseResponse = await baseQuery({
+          url: `/jobs`,
+        });
+        const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
+        // console.log('fetchOffers',data)
+        return {
+          data
+        }
+      },
+      // query: () => `/jobs`,
+      // transformResponse(baseResponse, meta) {
+      //   return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
+      // },
+      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
+    }),
+    findOffers: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
         const baseResponse = await baseQuery({
           url: `/jobs`,
@@ -243,33 +265,32 @@ api.injectEndpoints({
             start : slotToCreate.start,
             offer : args.id
           }));
-          // console.log('createdSlot',createdSlot);
           createdSlotsId.push(createdSlot.data.id);
         }
         for (const slotToDelete of slotsToDelete) {
           if(slotToDelete!=undefined && slotToDelete!='undefined'){
-            console.log("slotToDelete",slotToDelete)
-            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(decodeURIComponent(slotToDelete.id)));
+            // console.log("slotToDelete",slotToDelete)
+            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
           }
         }
 
         const allSlotsIds= slotsWithId.map(s=>s.id).concat(createdSlotsId);
         let dataToUpdate = {...args};
         dataToUpdate.slots=allSlotsIds;
-        console.log("updateOffer",dataToUpdate)
+        // console.log("updateOffer",dataToUpdate)
 
         const body = marshaller.unmarshall(dataToUpdate);
-        console.log("updateOffer body",body)
-
+        // console.log("updateOffer body",body)
 
         await baseQuery({
           url: body.id,
           method: "PUT",
           body: body,
         });
-        const data = (await baseQuery(body.id)).data;
-        const marshallData = marshaller.marshall(data);
-        console.log("updated Offer",marshallData)
+        const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(args.id));
+        const marshallData=fetchResponse.data;
+
+        // console.log("updated Offer",marshallData)
         return {data: marshallData};
       }
     }),
@@ -291,6 +312,7 @@ api.injectEndpoints({
 
 export const {
   useFetchOffersQuery,
+  useFindOffersQuery,
   useFetchOfferQuery,
   useAddOfferMutation,
   useUpdateOfferMutation,

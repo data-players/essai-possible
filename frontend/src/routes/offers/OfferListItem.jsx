@@ -51,7 +51,7 @@ function OfferListItemRoot({offer, children}) {
   return (
     <ListItem
       onMouseEnter={(e) => {
-        console.log("onMouseEnter", e);
+        // console.log("onMouseEnter", e);
         // launchOfferPrefetch(offer.id);
         // launchSlotsPrefetch({offer: offer.id});
         // launchCompanyPrefetch(offer.company);
@@ -80,8 +80,8 @@ export default function OfferListItem({
   sideElement: SideElement = OfferDescriptionSideElement,
 }) {
   const {t, tDate} = useTranslationWithDates();
-
   const offer = useSelector((state) => selectOfferById(state, offerId));
+  // console.log('offer',offer)
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
   return (
@@ -112,7 +112,7 @@ export default function OfferListItem({
                 variant={"plain"}
                 startDecorator={<PlaceRoundedIcon />}
                 sx={{p: 0, opacity: 0.6}}>
-                {offer.location.city}
+                {offer.location?.city}
               </Chip>
             </Stack>
             <Typography

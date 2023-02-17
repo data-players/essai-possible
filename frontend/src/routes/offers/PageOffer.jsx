@@ -31,20 +31,21 @@ export default function PageOffer() {
 
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   console.log('offer',offer)
-  const meetingForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
-  // const meetingForOffer=[];
+  // const meetingForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  // console.log('meetingForOffer',meetingForOffer)
+  const meetingForOffer=[];
   const skillsStatus = useSelector(selectSkillsStatus);
-  useFetchSkillsQuery();
+  // useFetchSkillsQuery();
   
 
   const skills = useSelector(selectAllSkills);
   // const skillsOfferLabels=['dummy']
-  const skillsOfferLabels = offer.softSkills.map(cs=>skills.find(s=>s.id==cs)?.label);
+  const skillsOfferLabels = offer.softSkills?.map(cs=>skills.find(s=>s.id==cs)?.label);
 
 
   function MeetingCard() {
-    return meetingForOffer ? (
-      <MeetingCardContent offer={offer} meeting={meetingForOffer} />
+    return meetingForOffer?.length>0 ? (
+      <MeetingCardContent offer={offer} meeting={offer?.slots} />
     ) : (
       <Stack gap={3}>
         <Typography color={"neutral"} level="h3">
@@ -53,7 +54,7 @@ export default function PageOffer() {
         <Typography fontSize="xl" textColor={"neutral.800"}>
           {t("offers.chooseASlotToExchangeWithTheCompany")}
         </Typography>
-        {/* <Typography textColor={"text.tertiary"}>
+        <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer?.slots?.length || 0})}
         </Typography>
         {offer?.slots?.length > 0 && (
@@ -66,7 +67,7 @@ export default function PageOffer() {
             startDecorator={<CalendarMonthRoundedIcon />}>
             {t("offers.bookAMeetingSlot", {context: "short"})}
           </Button>
-        )} */}
+        )}
       </Stack>
     );
   }
@@ -109,11 +110,11 @@ export default function PageOffer() {
                 <Typography textAlign={"justify"}>{offer.workEnvironment}</Typography>
               </ParagraphWithTitle>
 
-              {/* {offer?.slots?.length > 0 && (
+              {offer?.slots?.length > 0 && (
                 <Card variant={"soft"}>
                   <MeetingCard />
                 </Card>
-              )} */}
+              )}
             </Stack>
           </Grid>
 

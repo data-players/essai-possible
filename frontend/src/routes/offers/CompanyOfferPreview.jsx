@@ -17,11 +17,12 @@ import {selectCurrentUser, selectCurrentUserReady} from "../../app/auth-slice.js
 import {selectCompanyById} from "./companies-slice.js";
 import CheckIcon from "@mui/icons-material/Check.js";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import {
+  selectAllStatus,
+} from "../../app/concepts-slice.js";
 
 export default function CompanyOfferPreview({offer, children}) {
-  const isDraft = offer.status === statusOptions[0];
-  const isPublished = offer.status === statusOptions[1];
-  const isFulfilled = offer.status === statusOptions[2];
+
   const navigate = useNavigate();
 
   // console.log('offer',offer)
@@ -29,7 +30,13 @@ export default function CompanyOfferPreview({offer, children}) {
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
   const currentUser = useSelector(selectCurrentUser);
   const currentUserReady = useSelector(selectCurrentUserReady);
+  const status = useSelector(selectAllStatus);
+  // console.log('status',status)
+  const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
+  const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
+  const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
 
+  // console.log('offer status',offer.status,isDraft,isPublished,isFulfilled)
   const isConnected = currentUserReady && currentUser?.id;
   const isMemberOfTheCompany = isConnected && currentUser.companies?.includes(company.id);
 

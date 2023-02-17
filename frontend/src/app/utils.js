@@ -177,6 +177,8 @@ export function createJsonLDMarshaller(
           } else {
             outObject[encodeUriField] = encodeURIComponent(outObject[encodeUriField]);
           }
+        }else{
+          outObject[encodeUriField]=[];
         }
       }
 

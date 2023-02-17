@@ -215,11 +215,13 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
                 // if (meetingForOffer.start === key) return {outline: "3px solid red"};
               }}
               deletable
-              onChange={(key) =>
-                setFieldValue(
-                  "slots",
-                  values.slots.filter((slot) => slot.start !== key)
-                )
+              onChange={(key) =>{
+                console.log('onChange',key,values.slots)
+                  setFieldValue(
+                    "slots",
+                    values.slots.filter((slot) => slot.start !== key)
+                  )
+                }
               }
             />
           ) : (
@@ -227,13 +229,13 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               Pas de créneaux pour l'instant. Vous pouvez en créer avec le générateur ci-dessus.
             </Typography>
           )}
-          {(values.slots.length > 0 || slotsForOffer.length > 0) && (
+          {(values.slots.length > 0 || values?.offer?.slots?.length > 0) && (
             <Button
               sx={{mt: 2}}
               variant={"soft"}
               color={"danger"}
               size={"sm"}
-              onClick={() => setFieldValue("slots", slotsForOffer)}>
+              onClick={() => setFieldValue("slots", values?.offer?.slots)}>
               Réinitialiser les créneaux
             </Button>
           )}

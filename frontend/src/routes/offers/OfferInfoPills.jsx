@@ -24,16 +24,16 @@ import { useEffect } from "react";
 
 export default function OfferInfoPills({offer, company}) {
   const {t, tDate} = useTranslationWithDates();
-  const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  const slotsForOffer = offer?.slots;
   const nextAvailableSlotDate =
-    slotsForOffer.length > 0 &&
+    slotsForOffer?.length > 0 &&
     [...slotsForOffer].sort((a, b) => sorter.date(a.start, b.start))[0].start;
   
   // useFetchSectorsQuery();
   const sectorsReady = useSelector(selectSectorsReady);
   const sectorsStatus =useSelector(selectSectorsStatus);
   const sectors = useSelector(selectAllSectors);
-  const sectorCompanyLabels = company.sectors.map(cs=>sectors.find(s=>s.id==cs)?.label);
+  const sectorCompanyLabels = company.sectors?.map(cs=>sectors.find(s=>s.id==cs)?.label);
   // if(sectorsStatus==undefined){
   //   useFetchSectorsQuery();
   // }
@@ -66,7 +66,7 @@ export default function OfferInfoPills({offer, company}) {
         </Chip>
         <Box sx={{mt: 1, ml: 2}}>{goalLabel}</Box>
       </Grid>
-      {slotsForOffer.length > 0 && (
+      {slotsForOffer?.length > 0 && (
         <Grid xs={12} sm={12} md={4}>
           <Chip color={"primary"} startDecorator={<CalendarMonthRoundedIcon />}>
             {t("offers.startDate")}

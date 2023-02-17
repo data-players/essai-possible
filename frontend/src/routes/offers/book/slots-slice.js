@@ -94,6 +94,7 @@ api.injectEndpoints({
         return decodeURIComponent(id);
       },
       transformResponse(baseResponse, meta, arg) {
+        // console.log('transformResponse',baseResponse)
         return marshaller.marshall(baseResponse);
       },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.

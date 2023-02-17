@@ -51,6 +51,7 @@ export const RadioChips = ({options, name, value, onChange, deletable, itemSx, .
     <Stack direction="row" columnGap={2} rowGap={2} flexWrap="wrap">
       {options.map(({key, label, title, icon: Icon}) => {
         const checked = value === key;
+        // console.log('RadioChips',value,key, label, title,checked)
         return (
           <Chip
             key={key}
@@ -104,22 +105,25 @@ export function SlotsList({
 }) {
   const {tDate, tTime} = useTranslationWithDates();
   let slotsReadyToSort = [...slots];
+  // console.log('slotsReadyToSort',slots)
   const slotsByDate = groupBy(
     slotsReadyToSort?.sort((a, b) => sorter.date(a.start, b.start)),
     (slot) => tDate(slot.start, "long")
   );
   const slotsByDateArray= Object.entries(slotsByDate);
+  console.log('slotsByDateArray',slotsByDateArray)
 
   return (
     <List>
-      {slotsByDateArray.map(([date, slots]) => (
+      {slotsByDateArray.map(([date, slots],index) => (
         <React.Fragment key={date}>
           <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
           <ListItem sx={{mb: 3}}>
             <RadioChips
+              key={index}
               itemSx={itemSx}
               deletable={deletable}
-              options={slots.map((slot) => ({
+              options={slots.map((slot,index) => ({
                 label: tTime(slot.start),
                 icon: CalendarMonthRoundedIcon,
                 key: slot[itemKey],
@@ -248,8 +252,8 @@ export function RadioGroup({options, color, ...props}) {
   return (
     <Card variant={"soft"} color={color} size={"sm"} sx={{mt: 1, p: 2, boxShadow: "none"}}>
       <MuiRadioGroup {...props}>
-        {options.map((option) => (
-          <Radio value={option} key={option} label={option} />
+        {options.map((option,index) => (
+          <Radio value={option} key={index} label={option} />
         ))}
       </MuiRadioGroup>
     </Card>

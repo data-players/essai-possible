@@ -23,11 +23,12 @@ export default function DefinedOfferProtection() {
     if (offer.company) launchFetchCompanyQuery(offer.company);
   }, [offer.company]);
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
+  // console.log('company',company)
 
   // Don't use the ready status because sometimes the objects are partially loaded and can be displayed already.
   // Instead, if the id is present is a good test to see if we can display stuff.
-  // console.log('DefinedOfferProtection',!(offer.id && company.id));
-  if (!(offer.id && company.id)) return <LoadingSpinner />;
+  // console.log('DefinedOfferProtection',!(offer.id));
+  if (!(offer.id)) return <LoadingSpinner />;
 
   return <Outlet />;
 }
