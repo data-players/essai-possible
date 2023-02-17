@@ -9,17 +9,18 @@ import {useTranslationWithDates} from "../../app/i18n.js";
 import {sorter} from "../../app/utils.js";
 import {useSelector} from "react-redux";
 import {selectSlotsForOffer} from "./book/slots-slice.js";
-import {
-  selectAllSectors,
-  selectSectorsReady,
-  useFetchSectorsQuery,
-} from "../offers/companies-slice.js";
 
 import {
   selectAllGoals,
   selectGoalsReady,
+  selectGoalsStatus,
   useFetchGoalsQuery,
-} from "../offers/offers-slice.js";
+  selectAllSectors,
+  selectSectorsReady,
+  selectSectorsStatus,
+  useFetchSectorsQuery,
+} from "../../app/concepts-slice.js";
+import { useEffect } from "react";
 
 export default function OfferInfoPills({offer, company}) {
   const {t, tDate} = useTranslationWithDates();
@@ -28,15 +29,26 @@ export default function OfferInfoPills({offer, company}) {
     slotsForOffer.length > 0 &&
     [...slotsForOffer].sort((a, b) => sorter.date(a.start, b.start))[0].start;
   
-  useFetchSectorsQuery();
+  // useFetchSectorsQuery();
   const sectorsReady = useSelector(selectSectorsReady);
+  const sectorsStatus =useSelector(selectSectorsStatus);
   const sectors = useSelector(selectAllSectors);
   const sectorCompanyLabels = company.sectors.map(cs=>sectors.find(s=>s.id==cs)?.label);
+  // if(sectorsStatus==undefined){
+  //   useFetchSectorsQuery();
+  // }
 
-  useFetchGoalsQuery();
-  const gaolsReady = useSelector(selectGoalsReady);
+
+  // useFetchGoalsQuery();
+  const goalsReady = useSelector(selectGoalsReady);
+  const goalsStatus =useSelector(selectGoalsStatus);
   const goals = useSelector(selectAllGoals);
   const goalLabel = goals.find(g=>g.id==offer.goal)?.label;
+  // if(goalsStatus==undefined){
+  //   useFetchGoalsQuery();
+  // }
+
+
 
   // console.log('sectorCompanyLabels',sectorCompanyLabels);
   return (

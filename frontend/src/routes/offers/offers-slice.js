@@ -41,59 +41,6 @@ const offersSlice = createSlice({
 export default offersSlice.reducer;
 
 /**
- * Skills SLICE
- */
-const skillsAdapter = createEntityAdapter();
-const skillsInitialState = skillsAdapter.getInitialState({
-  status: {},
-});
-const skillsSlice = createSlice({
-  name: "skills",
-  initialState: skillsInitialState,
-  extraReducers(builder) {
-    builder.addMatcher(matchAny("matchFulfilled", ["fetchSkills"]), skillsAdapter.upsertMany);
-    addStatusForEndpoints(builder, ["fetchSkills"]);
-  },
-});
-export const skillReducer = skillsSlice.reducer;
-
-
-/**
- * Status SLICE
- */
-const statusAdapter = createEntityAdapter();
-const statusInitialState = statusAdapter.getInitialState({
-  status: {},
-});
-const statusSlice = createSlice({
-  name: "status",
-  initialState: statusInitialState,
-  extraReducers(builder) {
-    builder.addMatcher(matchAny("matchFulfilled", ["fetchStatus"]), statusAdapter.upsertMany);
-    addStatusForEndpoints(builder, ["fetchStatus"]);
-  },
-});
-export const statusReducer = statusSlice.reducer;
-
-/**
- * Goals SLICE
- */
-const goalsAdapter = createEntityAdapter();
-const goalsInitialState = goalsAdapter.getInitialState({
-  status: {},
-});
-const goalsSlice = createSlice({
-  name: "goals",
-  initialState: goalsInitialState,
-  extraReducers(builder) {
-    builder.addMatcher(matchAny("matchFulfilled", ["fetchGoals"]), goalsAdapter.upsertMany);
-    addStatusForEndpoints(builder, ["fetchGoals"]);
-  },
-});
-export const goalsReducer = goalsSlice.reducer;
-
-
-/**
  * OFFERS SELECTORS
  */
 
@@ -113,31 +60,6 @@ export const selectOfferIdsForCompany = (state, companyId) =>
     .map((offer) => offer.id);
   return offers
 }
-/**
- * Skills SELECTORS
- */
-
-export const selectSkillsReady = readySelector("skills", "fetchSkills");
-
-export const {selectAll: selectAllSkills} = skillsAdapter.getSelectors((state) => state.skills);
-
-/**
- * Status SELECTORS
- */
-
-export const selectStatussReady = readySelector("status", "fetchStatus");
-
-export const {selectAll: selectAllStatus} = statusAdapter.getSelectors((state) => state.status);
-
-/**
- * Goals SELECTORS
- */
-export const selectGoalsReady = readySelector("goals", "fetchGoals");
-
-export const {selectAll: selectAllGoals} = goalsAdapter.getSelectors((state) => {
-  // console.log('state',state)
-  return state.goals
-});
 
 
 /**
@@ -179,29 +101,6 @@ const marshaller = createJsonLDMarshaller(
     ]
   }
 );
-
-/**
- * Skills Mashaller
- */
-const skillMarshaller = createJsonLDMarshaller({
-  label: "pair:label"
-});
-
-/**
- * Status Mashaller
- */
-const statusMarshaller = createJsonLDMarshaller({
-  label: "pair:label",
-  icon : "ep:icon",
-  color : "ep:color"
-});
-
-/**
- * Goals Mashaller
- */
-const goalMarshaller = createJsonLDMarshaller({
-  label: "pair:label"
-});
 
 
 // Apply the filter selection to the offers list
@@ -273,22 +172,54 @@ api.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch the list of all offers
     fetchOffers: builder.query({
-      query: () => `/jobs`,
-      transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        const baseResponse = await baseQuery({
+          url: `/jobs`,
+        });
+        const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
+        // console.log('fetchOffers',data)
+        return {
+          data
+        }
       },
+      // query: () => `/jobs`,
+      // transformResponse(baseResponse, meta) {
+      //   return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
+      // },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
     // Fetch one offer by id
     fetchOffer: builder.query({
-      query: (id) => {
-        return decodeURIComponent(id);
-      },
-      transformResponse(baseResponse, meta, arg) {
-        // Mock data with companies
-        return marshaller.marshall(baseResponse);
-      },
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        // console.log('fetchOffer',args);
+        const baseResponse = await baseQuery({
+          url: decodeURIComponent(args),
+        });
+        const data = marshaller.marshall(baseResponse.data);
+        const slots= [];
+        for (const slot of data.slots) {
+          // console.log('get slot',slot)
+          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+          slots.push(slotResult.data)
+          // console.log(slotData.data);
+        }
+        const finalData = {
+          ...data,
+          slots, 
+        }
+        // console.log('finalData',finalData)
+        return {
+          data:finalData
+        }
+      },     
+      // query: (id) => {
+      //   return decodeURIComponent(id);
+      // },
+      // transformResponse(baseResponse, meta, arg) {
+      //   // Mock data with companies
+      //   return marshaller.marshall(baseResponse);
+      // },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
@@ -304,7 +235,7 @@ api.injectEndpoints({
         const existing={...state.offers.entities[args.id]};
         const slotsToCreate = args.slots.filter(s=>s.id==undefined);
         const slotsWithId = args.slots.filter(s=>s.id!=undefined);
-        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.map(swid=>swid.id).includes(s));
+        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.map(swid=>swid.id).includes(s.id));
 
         const createdSlotsId = [];
         for (const slotToCreate of slotsToCreate) {
@@ -312,13 +243,13 @@ api.injectEndpoints({
             start : slotToCreate.start,
             offer : args.id
           }));
-          console.log('createdSlot',createdSlot);
+          // console.log('createdSlot',createdSlot);
           createdSlotsId.push(createdSlot.data.id);
         }
         for (const slotToDelete of slotsToDelete) {
           if(slotToDelete!=undefined && slotToDelete!='undefined'){
             console.log("slotToDelete",slotToDelete)
-            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete));
+            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(decodeURIComponent(slotToDelete.id)));
           }
         }
 
@@ -357,60 +288,6 @@ api.injectEndpoints({
   }),
 });
 
-/**
- * Skills API ENDPOINTS
- */
-
-api.injectEndpoints({
-  endpoints: (builder) => ({
-    fetchSkills: builder.query({
-      query() {
-        return `/skills`;
-      },
-      transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map(skillMarshaller.marshall);
-      },
-      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
-    }),
-  }),
-});
-
-/**
- * Status API ENDPOINTS
- */
-
-api.injectEndpoints({
-  endpoints: (builder) => ({
-    fetchStatus: builder.query({
-      query() {
-        return `/status`;
-      },
-      transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map(statusMarshaller.marshall);
-      },
-      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
-    }),
-  }),
-});
-
-/**
- * Goals API ENDPOINTS
- */
-
-api.injectEndpoints({
-  endpoints: (builder) => ({
-    fetchGoals: builder.query({
-      query() {
-        return `/challenges`;
-      },
-      transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map(goalMarshaller.marshall);
-      },
-      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
-    }),
-  }),
-});
-
 
 export const {
   useFetchOffersQuery,
@@ -418,9 +295,6 @@ export const {
   useAddOfferMutation,
   useUpdateOfferMutation,
   useDeleteOfferMutation,
-  useFetchSkillsQuery,
-  useFetchStatusQuery,
-  useFetchGoalsQuery,
 } = api;
 
 /**

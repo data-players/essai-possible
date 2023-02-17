@@ -16,18 +16,24 @@ import Textarea from "@mui/joy/Textarea";
 import {
   offerDefaultValues,
   offerValidationSchema,
-  selectAllSkills,
-  selectAllStatus,
-  selectAllGoals,
   selectOfferById,
   selectOfferReady,
   useAddOfferMutation,
   useDeleteOfferMutation,
   useUpdateOfferMutation,
+} from "../offers-slice.js";
+
+import {
+  selectAllSkills,
+  selectAllStatus,
+  selectAllGoals,
+  selectStatusStatus,
+  selectSkillsStatus,
+  selectGoalsStatus,
   useFetchSkillsQuery,
   useFetchStatusQuery,
   useFetchGoalsQuery,
-} from "../offers-slice.js";
+} from "../../../app/concepts-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
@@ -69,20 +75,19 @@ export default function PageEditOffer({mode, isCopying}) {
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : encodeURIComponent(companyId))
   );
-  const slots = useSelector((state) => (isEditMode ? selectSlotsForOffer(state, encodeURIComponent(id)) : []));
+  // const slots = useSelector((state) => (isEditMode ? selectSlotsForOffer(state, encodeURIComponent(id)) : []));
 
   const companyReady = useSelector(selectCompanyReady);
   const offerReady = useSelector(selectOfferReady);
-  const slotsReady = useSelector(selectSlotsReady);
-  useFetchSkillsQuery();
-  const skills = useSelector(selectAllSkills);
-  // console.log('skills',skills)
-  useFetchStatusQuery();
-  const status = useSelector(selectAllStatus);
+  // const slotsReady = useSelector(selectSlotsReady);
 
-  useFetchGoalsQuery();
+  // const skillsStatus = useSelector(selectSkillsStatus);
+  // const statusStatus = useSelector(selectStatusStatus);
+  // const goalsStatus = useSelector(selectGoalsStatus);
+
   const goals = useSelector(selectAllGoals);
-
+  const status = useSelector(selectAllStatus);
+  const skills = useSelector(selectAllSkills);
 
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
@@ -90,6 +95,21 @@ export default function PageEditOffer({mode, isCopying}) {
   // TODO Update slots for offer
   // const [updateSlotsForOffer, {isLoading: isUpdatingSlotsForOffer}] = useUpdateSlotsForOfferMutation();
   const [deleteOffer, {isLoading: isDeletingOffer}] = useDeleteOfferMutation();
+
+
+  // if (skillsStatus==undefined){
+  //   useFetchSkillsQuery();
+  // }
+  // if (statusStatus==undefined){
+  //   useFetchStatusQuery();
+  // }
+
+  // if (goalsStatus==undefined){
+  //   useFetchGoalsQuery();
+  // }
+
+  
+
 
   const pageTitle = isEditMode
     ? isCopying
@@ -104,7 +124,7 @@ export default function PageEditOffer({mode, isCopying}) {
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
 
-    const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(slots);
+    const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(offer?.slots);
     if (shouldUpdateSlots) {
       // TODO Update slots for offer
     }
@@ -126,10 +146,13 @@ export default function PageEditOffer({mode, isCopying}) {
     navigate(`/company/${encodeURIComponent(company.id)}`);
   }
 
+  // console.log(offerReady, slotsReady)
+
   return (
+
     <EditFormComponent
       // ready when the company is ready + if edit mode, the offer and the slots are ready
-      ready={companyReady && (!isEditMode || (offerReady && slotsReady))}
+      ready={companyReady && (!isEditMode || (offerReady))}
       pageBanner={
         isEditMode && !isCopying ? (
           <OfferBanner
@@ -151,12 +174,12 @@ export default function PageEditOffer({mode, isCopying}) {
           ? {
               offer: {...offerDefaultValues, ...offer},
               company,
-              slots,
+              slots:offer?.slots,
             }
           : {
               offer: offerDefaultValues,
               company: {...companyDefaultValues, ...company},
-              slots,
+              slots:offer?.slots,
             }
       }
       validationSchema={validationSchema}
@@ -398,7 +421,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 offerId={encodeURIComponent(id)}
                 values={values}
                 register={register}
-                slots={slots}
+                slots={offer?.slots}
                 setFieldValue={setFieldValue}
               />
 

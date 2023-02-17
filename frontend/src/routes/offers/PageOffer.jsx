@@ -6,15 +6,20 @@ import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
-import {selectOfferById,
-  selectAllSkills,
+import {selectAllSkills,
   useFetchSkillsQuery,
+  selectSkillsStatus
+} from "../../app/concepts-slice.js";
+import {selectOfferById
 } from "./offers-slice.js";
+import {
+  selectSlotsForOffer
+} from "./book/slots-slice.js";
+// import {selectMeetingForOffer} from "./book/meetings-slice.js";
 import OfferBanner from "./OfferBanner.jsx";
 import {useSelector} from "react-redux";
 import Grid from "@mui/joy/Grid";
 import {MeetingCardContent} from "../account/PageMyMeetings.jsx";
-import {selectMeetingForOffer} from "./book/meetings-slice.js";
 import Card from "@mui/joy/Card";
 import React from "react";
 import CompanyOfferPreview from "./CompanyOfferPreview.jsx";
@@ -25,12 +30,17 @@ export default function PageOffer() {
   const {id} = useParams();
 
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
-  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
-
+  console.log('offer',offer)
+  const meetingForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  // const meetingForOffer=[];
+  const skillsStatus = useSelector(selectSkillsStatus);
   useFetchSkillsQuery();
-  const skills = useSelector(selectAllSkills);
+  
 
+  const skills = useSelector(selectAllSkills);
+  // const skillsOfferLabels=['dummy']
   const skillsOfferLabels = offer.softSkills.map(cs=>skills.find(s=>s.id==cs)?.label);
+
 
   function MeetingCard() {
     return meetingForOffer ? (
@@ -43,10 +53,10 @@ export default function PageOffer() {
         <Typography fontSize="xl" textColor={"neutral.800"}>
           {t("offers.chooseASlotToExchangeWithTheCompany")}
         </Typography>
-        <Typography textColor={"text.tertiary"}>
-          {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+        {/* <Typography textColor={"text.tertiary"}>
+          {t("offers.xMeetingSlotsAvailable", {count: offer?.slots?.length || 0})}
         </Typography>
-        {offer.slots?.length > 0 && (
+        {offer?.slots?.length > 0 && (
           <Button
             variant={"solid"}
             color="primary"
@@ -56,7 +66,7 @@ export default function PageOffer() {
             startDecorator={<CalendarMonthRoundedIcon />}>
             {t("offers.bookAMeetingSlot", {context: "short"})}
           </Button>
-        )}
+        )} */}
       </Stack>
     );
   }
@@ -99,11 +109,11 @@ export default function PageOffer() {
                 <Typography textAlign={"justify"}>{offer.workEnvironment}</Typography>
               </ParagraphWithTitle>
 
-              {offer.slots?.length > 0 && (
+              {/* {offer?.slots?.length > 0 && (
                 <Card variant={"soft"}>
                   <MeetingCard />
                 </Card>
-              )}
+              )} */}
             </Stack>
           </Grid>
 

@@ -103,14 +103,16 @@ export function SlotsList({
   ...props
 }) {
   const {tDate, tTime} = useTranslationWithDates();
+  let slotsReadyToSort = [...slots];
   const slotsByDate = groupBy(
-    slots?.sort((a, b) => sorter.date(a.start, b.start)),
+    slotsReadyToSort?.sort((a, b) => sorter.date(a.start, b.start)),
     (slot) => tDate(slot.start, "long")
   );
+  const slotsByDateArray= Object.entries(slotsByDate);
 
   return (
     <List>
-      {Object.entries(slotsByDate).map(([date, slots]) => (
+      {slotsByDateArray.map(([date, slots]) => (
         <React.Fragment key={date}>
           <ListSubheader sx={{fontSize: "md"}}>{date}</ListSubheader>
           <ListItem sx={{mb: 3}}>
@@ -391,8 +393,8 @@ export function LoadingSpinner(props) {
 export function BasicList({elements, component = "ul"}) {
   return (
     <Box component={component} sx={{mt: 1, ml: -1}}>
-      {elements?.map((el) => (
-        <Box component={"li"} key={el}>
+      {elements?.map((el,index) => (
+        <Box component={"li"} key={index}>
           {el}
         </Box>
       ))}
@@ -471,11 +473,11 @@ export function ParagraphWithTitle({title, children, sx}) {
 
 export function StatusChip({status, options}) {
   const statusObect=options.find(s=>s.id==status);
-  console.log('statusObect',statusObect);
+  // console.log('statusObect',statusObect);
   let IconComponent 
   if(statusObect?.icon){
     const muiIcon =  Muicon[statusObect?.icon];
-    console.log('muiIcon',muiIcon)
+    // console.log('muiIcon',muiIcon)
     if(muiIcon){
       IconComponent=muiIcon;
     }

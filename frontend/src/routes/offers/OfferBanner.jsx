@@ -17,6 +17,7 @@ export default function OfferBanner({
   showPills = true,
 }) {
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
+
   return (
     <>
       <Breadcrumbs breadcrumbs={breadcrumbs} />

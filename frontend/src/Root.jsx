@@ -17,11 +17,17 @@ import {
   selectCurrentUserReady,
   useLazyFetchUserQuery,
 } from "./app/auth-slice.js";
+import {
+  useFetchSkillsQuery,
+  useFetchStatusQuery,
+  useFetchGoalsQuery,
+  useFetchSectorsQuery,
+} from "./app/concepts-slice.js";
 import {useDispatch, useSelector} from "react-redux";
 import {SearchBar} from "./components/atoms.jsx";
 import {useFetchCompaniesQuery} from "./routes/offers/companies-slice.js";
-import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
-import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
+// import {useLazyFetchMeetingsQuery} from "./routes/offers/book/meetings-slice.js";
+// import {useFetchSlotsQuery} from "./routes/offers/book/slots-slice.js";
 import queryString from "query-string";
 
 export default function Root() {
@@ -35,7 +41,12 @@ export default function Root() {
   // - prefetch the full offers, slots and companies lists directly so it's ready to be displayed.
   useFetchOffersQuery();
   useFetchCompaniesQuery();
-  useFetchSlotsQuery();
+  // useFetchSlotsQuery();
+
+  useFetchSkillsQuery();
+  useFetchStatusQuery();
+  useFetchGoalsQuery();
+  useFetchSectorsQuery();
 
   // - prefetch the user if the user was already logged in
   const [launchFetchUserQuery] = useLazyFetchUserQuery();
@@ -70,12 +81,12 @@ export default function Root() {
   const currentUser = useSelector(selectCurrentUser);
 
   // - prefetch the user meetings as soon as the user is available
-  const currentUserReady = useSelector(selectCurrentUserReady);
+  // const currentUserReady = useSelector(selectCurrentUserReady);
 
-  const [launchFetchMeetingsQuery] = useLazyFetchMeetingsQuery();
-  useEffect(() => {
-    if (currentUserReady) launchFetchMeetingsQuery();
-  }, [currentUserReady, launchFetchMeetingsQuery]);
+  // const [launchFetchMeetingsQuery] = useLazyFetchMeetingsQuery();
+  // useEffect(() => {
+  //   if (currentUserReady) launchFetchMeetingsQuery();
+  // }, [currentUserReady, launchFetchMeetingsQuery]);
 
   const isCompanyAccount = currentUser?.companies?.length > 0;
 

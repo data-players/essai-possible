@@ -24,7 +24,7 @@ export default function CompanyOfferPreview({offer, children}) {
   const isFulfilled = offer.status === statusOptions[2];
   const navigate = useNavigate();
 
-  console.log('offer',offer)
+  // console.log('offer',offer)
 
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
   const currentUser = useSelector(selectCurrentUser);

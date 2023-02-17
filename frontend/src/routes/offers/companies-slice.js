@@ -34,23 +34,6 @@ const companiesSlice = createSlice({
 export default companiesSlice.reducer;
 
 /**
- * Sectors SLICE
- */
-const sectorsAdapter = createEntityAdapter();
-const sectorsInitialState = sectorsAdapter.getInitialState({
-  status: {},
-});
-const sectorsSlice = createSlice({
-  name: "sectors",
-  initialState: sectorsInitialState,
-  extraReducers(builder) {
-    builder.addMatcher(matchAny("matchFulfilled", ["fetchSectors"]), sectorsAdapter.upsertMany);
-    addStatusForEndpoints(builder, ["fetchSectors"]);
-  },
-});
-export const sectorReducer = sectorsSlice.reducer;
-
-/**
  * COMPANIES SELECTORS
  */
 
@@ -63,14 +46,6 @@ export const {
   selectById: selectCompanyById,
   selectIds: selectCompanyIds,
 } = companiesAdapter.getSelectors((state) => state.companies);
-
-/**
- * Sectors SELECTORS
- */
-
-export const selectSectorsReady = readySelector("sectors", "fetchSectors");
-
-export const {selectAll: selectAllSectors} = sectorsAdapter.getSelectors((state) => state.sectors);
 
 /**
  * Companies Mashaller
@@ -99,13 +74,6 @@ const marshaller = createJsonLDMarshaller(
     ]
   }
 );
-
-/**
- * Sectors Mashaller
- */
-const sectorMarshaller = createJsonLDMarshaller({
-  label: "pair:label",
-});
 
 /**
  * COMPANIES API ENDPOINTS
@@ -170,24 +138,6 @@ api.injectEndpoints({
   }),
 });
 
-/**
- * SECTORS API ENDPOINTS
- */
-
-api.injectEndpoints({
-  endpoints: (builder) => ({
-    // Fetch the list of all companies
-    fetchSectors: builder.query({
-      query() {
-        return `/sectors`;
-      },
-      transformResponse(baseResponse, meta) {
-        return baseResponse["ldp:contains"].map(sectorMarshaller.marshall);
-      },
-      keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
-    }),
-  }),
-});
 
 /**
  * export api hooks
@@ -200,7 +150,6 @@ export const {
   useAddCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
-  useFetchSectorsQuery,
 } = api;
 
 /**

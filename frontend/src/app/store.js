@@ -1,11 +1,12 @@
 import {configureStore} from "@reduxjs/toolkit";
 import apiMiddleware from "./apiMiddleware.js";
 import geocodingApi from "./geocodingApi.js";
-import {default as offersReducer , skillReducer, statusReducer, goalsReducer} from "../routes/offers/offers-slice.js";
-import {default as companiesReducer, sectorReducer} from "../routes/offers/companies-slice.js";
+import {default as offersReducer} from "../routes/offers/offers-slice.js";
+import {default as companiesReducer} from "../routes/offers/companies-slice.js";
 import meetingsReducer from "../routes/offers/book/meetings-slice.js";
 import slotsReducer from "../routes/offers/book/slots-slice.js";
 import authReducer from "./auth-slice.js";
+import {skillReducer, statusReducer, goalsReducer,sectorReducer} from "./concepts-slice.js";
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +18,6 @@ export const store = configureStore({
     skills: skillReducer,
     status : statusReducer,
     goals : goalsReducer,
-    meetings: meetingsReducer,
     slots: slotsReducer,
     companies: companiesReducer,
     sectors: sectorReducer,

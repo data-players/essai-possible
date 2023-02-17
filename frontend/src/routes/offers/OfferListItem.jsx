@@ -1,9 +1,12 @@
 import {usePrefetch} from "../../app/api.js";
 import {useSelector} from "react-redux";
 import {
-  selectOfferById,
   useFetchStatusQuery,
-  selectAllStatus
+  selectAllStatus,
+  selectStatusStatus
+} from "../../app/concepts-slice.js";
+import {
+  selectOfferById,
 } from "./offers-slice.js";
 import {selectCompanyById} from "./companies-slice.js";
 import ListItem from "@mui/joy/ListItem";
@@ -139,7 +142,11 @@ export function OfferListItemForCompany({value: offerId}) {
   const {t, tDate} = useTranslationWithDates();
 
   const offer = useSelector((state) => selectOfferById(state, offerId));
-  useFetchStatusQuery();
+  const statusState = useSelector(selectStatusStatus);
+  // if(statusState==undefined){
+  //   useFetchStatusQuery();
+  // }
+
   const status = useSelector(selectAllStatus);
 
   return (

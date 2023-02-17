@@ -44,6 +44,10 @@ export const matchAny = (matcherKey, endpoints = []) =>
 export const readySelector = (sliceName, apiEndpointName) => (state) =>
   state[sliceName].status[apiEndpointName] === "ready";
 
+// Shorthand for status related selector
+export const stateSelector = (sliceName, apiEndpointName) => (state) =>
+  state[sliceName].status[apiEndpointName];
+
 // Manages the status field properly and consistently for everybody.
 export const addStatusForEndpoints = (builder, endpoints = []) => {
   const setStatusReducer = (status, endpoint) => (state) => {
@@ -52,7 +56,7 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
   for (const endpoint of endpoints) {
     builder
       .addMatcher(api.endpoints[endpoint].matchPending, setStatusReducer("pending", endpoint))
-      .addMatcher(api.endpoints[endpoint].matchRejected, setStatusReducer(undefined, endpoint))
+      .addMatcher(api.endpoints[endpoint].matchRejected, setStatusReducer("error", endpoint))
       .addMatcher(api.endpoints[endpoint].matchFulfilled, setStatusReducer("ready", endpoint));
   }
 };

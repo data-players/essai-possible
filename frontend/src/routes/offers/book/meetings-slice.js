@@ -45,19 +45,20 @@ export const meetingsActions = meetingsSlice.actions;
  * MEETINGS SELECTORS
  */
 
-export const selectMeetingsReady = readySelector("meetings", "fetchMeetings");
-export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
-export const {
-  selectAll: selectAllMeetings,
-  selectById: selectMeetingBySlotId,
-  selectIds: selectMeetingSlotIds,
-} = meetingsAdapter.getSelectors((state) => state.meetings);
+// export const selectMeetingsReady = readySelector("meetings", "fetchMeetings");
+// export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
+// export const {
+//   selectAll: selectAllMeetings,
+//   selectById: selectMeetingBySlotId,
+//   selectIds: selectMeetingSlotIds,
+// } = meetingsAdapter.getSelectors((state) => state.meetings);
 
-export const selectMeetingForOffer = (state, offerId) => {
-  const slotsForOffer = selectSlotsForOffer(state, offerId);
-  const meetings = selectAllMeetings(state);
-  return meetings.find((meeting) => slotsForOffer.find((slot) => slot.id === meeting.slot));
-};
+// export const selectMeetingForOffer = (state, offerId) => {
+//   // const slotsForOffer = selectSlotsForOffer(state, offerId);
+//   const slotsForOffer = [];
+//   const meetings = selectAllMeetings(state);
+//   return meetings.find((meeting) => slotsForOffer.find((slot) => slot.id === meeting.slot));
+// };
 
 /**
  * MEETINGS API ENDPOINTS
@@ -123,8 +124,8 @@ api.injectEndpoints({
 });
 
 export const {
-  useLazyFetchMeetingsQuery,
-  useAddMeetingMutation,
-  useUpdateMeetingMutation,
-  useDeleteMeetingMutation,
+  // useLazyFetchMeetingsQuery,
+  // useAddMeetingMutation,
+  // useUpdateMeetingMutation,
+  // useDeleteMeetingMutation,
 } = api;

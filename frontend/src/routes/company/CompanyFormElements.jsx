@@ -7,12 +7,12 @@ import {
   selectAllSectors,
   selectSectorsReady,
   useFetchSectorsQuery,
-} from "../offers/companies-slice.js";
+} from "../../app/concepts-slice.js";
 import {useSelector} from "react-redux";
 
 export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
   const base = baseFormPath ? `${baseFormPath}.` : "";
-  useFetchSectorsQuery();
+  // useFetchSectorsQuery();
   const sectorsReady = useSelector(selectSectorsReady);
   const sectors = useSelector(selectAllSectors);
   return (

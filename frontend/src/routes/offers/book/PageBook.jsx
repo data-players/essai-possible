@@ -16,12 +16,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {
-  meetingsActions,
-  selectMeetingForOffer,
-  selectSavedFormData,
-  useAddMeetingMutation,
-} from "./meetings-slice.js";
+// import {
+//   meetingsActions,
+//   selectMeetingForOffer,
+//   selectSavedFormData,
+//   useAddMeetingMutation,
+// } from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
 import {selectSlotsForOffer} from "./slots-slice.js";
 import CompanyOfferPreview from "../CompanyOfferPreview.jsx";
@@ -38,28 +38,33 @@ export default function PageBook() {
 
   const currentUser = useSelector(selectCurrentUser);
 
-  const {selectedSlotId, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
+  // const {selectedSlotId, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
+  const selectedSlotId =0;
+  const comments=[];
   const [currentFormStep, setCurrentFormStep] = useState(
     selectedSlotIdFormQueryParams || selectedSlotId ? 2 : 1
   );
 
   const offer = useSelector((state) => selectOfferById(state, id)) || {};
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
-  const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
-  const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
+  // const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
+  const meetingForOffer =[];
+  // const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
+  const isAddingMeeting = false;
 
   // If a meeting is already booked for the offer, go back to the offer page
   useEffect(() => {
     if (meetingForOffer) navigate("..");
   }, [meetingForOffer]);
 
-  const setFormData = (data) =>
-    dispatch(
-      meetingsActions.saveFormData({
-        offerId: id,
-        data,
-      })
-    );
+  const setFormData = (data) => {
+    // dispatch(
+    //   meetingsActions.saveFormData({
+    //     offerId: id,
+    //     data,
+    //   })
+    // );
+  }
 
   // TODO not tested at all @Simon
   // If a selectedSlotFormQueryParams is found in the query params, reselect it
@@ -136,10 +141,10 @@ export default function PageBook() {
         initialValues={{comments}}
         successText={"Rendez-vous réservé avec succès"}
         onSubmit={async ({comments}) => {
-          await addMeeting({
-            slot: selectedSlotId,
-            comments,
-          }).unwrap();
+          // await addMeeting({
+          //   slot: selectedSlotId,
+          //   comments,
+          // }).unwrap();
           navigate("/account/my-meetings");
         }}>
         {(register) => (

@@ -16,7 +16,7 @@ import {FormInput} from "../../components/forms.jsx";
 import * as yup from "yup";
 import {requiredString, requiredTrueBoolean} from "../../app/fieldValidation.js";
 import Typography from "@mui/joy/Typography";
-import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
+// import {selectAllMeetings, selectMeetingsReady} from "../offers/book/meetings-slice.js";
 import {UserFormElements} from "./UserFormElements.jsx";
 import LesCommunsLogo from "../../assets/les-communs-logo.png";
 import Box from "@mui/joy/Box";
@@ -51,25 +51,25 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
   const currentUser = useSelector(selectCurrentUser);
   const companies = useSelector(selectAllCompanies);
   const authTokenExists = useSelector(selectAuthTokenExists);
-  const meetings = useSelector(selectAllMeetings);
-  const meetingsReady = useSelector(selectMeetingsReady);
+  // const meetings = useSelector(selectAllMeetings);
+  // const meetingsReady = useSelector(selectMeetingsReady);
 
   const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
   // const currentUserIsComplete = false;
 
   // Redirect user to the offers page if it is a basic user, to its meetings
   // if it has already meetings, and to the company offers if it is a pro account
-  useEffect(() => {
-    if (currentUserIsComplete && redirect && meetingsReady) {
-      navigate(
-        currentUser.companies?.length > 0
-          ? `/company/${encodeURIComponent(currentUser.companies[0])}`
-          : meetings.length > 0
-            ? "/account/my-meetings"
-            : "/offers"
-      );
-    }
-  }, [currentUserIsComplete, currentUser, redirect, meetingsReady, meetings]);
+  // useEffect(() => {
+  //   if (currentUserIsComplete && redirect && meetingsReady) {
+  //     navigate(
+  //       currentUser.companies?.length > 0
+  //         ? `/company/${encodeURIComponent(currentUser.companies[0])}`
+  //         : meetings.length > 0
+  //           ? "/account/my-meetings"
+  //           : "/offers"
+  //     );
+  //   }
+  // }, [currentUserIsComplete, currentUser, redirect, meetingsReady, meetings]);
 
   async function onSubmit(values) {
     if (companyMode) {

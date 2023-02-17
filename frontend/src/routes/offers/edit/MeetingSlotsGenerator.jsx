@@ -24,6 +24,8 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
   const [endTime, setEndTime] = useState(dayjs());
   const [daysOfWeek, setDaysOfWeek] = useState(["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"]);
 
+  // console.log('MeetingSlotsGenerator',values)
+
   function handleSetDateTimeFn(isSettingStart, setStart, setEnd, otherDate) {
     const setDateTime = isSettingStart ? setStart : setEnd;
     const setOtherDateTime = isSettingStart ? setEnd : setStart;
@@ -38,10 +40,10 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
     };
   }
 
-  const slotsForOffer = useSelector((state) =>
-    offerId ? selectSlotsForOffer(state, offerId) : []
-  );
-  const existingOfferSlotsKeys = slotsForOffer.map((slot) => slot.start);
+  // const slotsForOffer = useSelector((state) =>
+  //   offerId ? selectSlotsForOffer(state, offerId) : []
+  // );
+  const existingOfferSlotsKeys = values?.offer?.slots?.map((slot) => slot.start);
 
   function generateSlots() {
     let currentDate = startDate.startOf("day");

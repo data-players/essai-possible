@@ -6,9 +6,9 @@ import {useTranslation} from "react-i18next";
 import Grid from "@mui/joy/Grid";
 import Container from "@mui/joy/Container";
 import {
-  selectAllMeetings,
-  selectMeetingsReady,
-  useDeleteMeetingMutation,
+  // selectAllMeetings,
+  // selectMeetingsReady,
+  // useDeleteMeetingMutation,
 } from "../offers/book/meetings-slice.js";
 import {selectOfferById, selectOffersReady} from "../offers/offers-slice.js";
 import OfferListItem from "../offers/OfferListItem.jsx";
@@ -26,7 +26,8 @@ export function MeetingCardContent({meeting, offer}) {
   const {t} = useTranslation();
   const [openSnackbar] = useSnackbar();
   const {tDateTime} = useTranslationWithDates();
-  const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
+  // const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
+  const isDeletingMeeting = false;
 
   const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
   const slot = slotsForOffer?.find((slot) => slot.id === meeting.slot) || {};
@@ -62,7 +63,7 @@ export function MeetingCardContent({meeting, offer}) {
           loading={isDeletingMeeting}
           onClick={async (event) => {
             event.stopPropagation();
-            await deleteMeeting(meeting.id).unwrap();
+            // await deleteMeeting(meeting.id).unwrap();
             openSnackbar("Suppression du rendez-vous réussie");
           }}
           areYouSureText={
@@ -79,8 +80,10 @@ export default function PageMyMeetings() {
   const {t} = useTranslation();
 
   const offersReady = useSelector(selectOffersReady);
-  const meetings = useSelector(selectAllMeetings);
-  const meetingsReady = useSelector(selectMeetingsReady);
+  // const meetings = useSelector(selectAllMeetings);
+  const meetings =[];
+  // const meetingsReady = useSelector(selectMeetingsReady);
+  const meetingsReady = true;
 
   function OfferListItemWithMeetingInfo({value: meeting}) {
     const slot = useSelector((state) => selectSlotById(state, meeting.slot));

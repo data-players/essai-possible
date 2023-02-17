@@ -42,9 +42,11 @@ export const {
 } = slotsAdapter.getSelectors((state) => state.slots);
 
 export const selectSlotsForOffer = (state, offerId) => {
-  const slots = selectAllSlots(state);
+  // const slots = selectAllSlots(state);
+  const slots=[];
+  return slots;
   // console.log('selectSlotsForOffer',slots,offerId)
-  return slots.filter((slot) => slot.offer === offerId);
+  // return slots.filter((slot) => slot.offer === offerId);
 };
 
 /**
@@ -87,6 +89,17 @@ api.injectEndpoints({
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
+    fetchSlot: builder.query({
+      query: (id) => {
+        return decodeURIComponent(id);
+      },
+      transformResponse(baseResponse, meta, arg) {
+        return marshaller.marshall(baseResponse);
+      },
+      keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
+
+    }),
+
     addSlot: builder.mutation({
       queryFn: baseCreateMutation(marshaller, "timeSlot"),
     }),
@@ -98,7 +111,7 @@ api.injectEndpoints({
 });
 
 export const {
-  useFetchSlotsQuery,
+  // useFetchSlotsQuery,
   useAddSlotMutation,
   useUpdateSlotMutation,
   useDeleteSlotMutation,
