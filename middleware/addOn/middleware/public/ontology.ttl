@@ -1,12 +1,12 @@
-@prefix : <https://data.essaipossible.fr/ontology#> .
+@prefix : <https://data.essai-possible.data-players.com/ontology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <https://data.essaipossible.fr/ontology> .
+@base <https://data.essai-possible.data-players.com/ontology> .
 
-<https://data.essaipossible.fr/ontology> rdf:type owl:Ontology ;
+<https://data.essai-possible.data-players.com/ontology> rdf:type owl:Ontology ;
                                           owl:imports <http://virtual-assembly.org/ontologies/pair> ;
                                           <http://purl.org/vocab/vann/preferredNamespacePrefix> "EP" .
 
@@ -18,18 +18,18 @@
 <http://virtual-assembly.org/ontologies/pair#about> owl:inverseOf :subjectOf .
 
 
-###  https://data.essaipossible.fr/ontology#askedAffiliation
+###  https://data.essai-possible.data-players.com/ontology#askedAffiliation
 :askedAffiliation rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliatedBy> ;
                   owl:inverseOf :hasAskedAffilition .
 
 
-###  https://data.essaipossible.fr/ontology#hasAskedAffilition
+###  https://data.essai-possible.data-players.com/ontology#hasAskedAffilition
 :hasAskedAffilition rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliates> .
 
 
-###  https://data.essaipossible.fr/ontology#subjectOf
+###  https://data.essai-possible.data-players.com/ontology#subjectOf
 :subjectOf rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#interSubjectProperty> .
 
@@ -38,12 +38,12 @@
 #    Classes
 #################################################################
 
-###  https://data.essaipossible.fr/ontology#Job
+###  https://data.essai-possible.data-players.com/ontology#Job
 :Job rdf:type owl:Class ;
      rdfs:subClassOf <http://virtual-assembly.org/ontologies/pair#Resource> .
 
 
-###  https://data.essaipossible.fr/ontology#TimeSlot
+###  https://data.essai-possible.data-players.com/ontology#TimeSlot
 :TimeSlot rdf:type owl:Class ;
           rdfs:subClassOf <http://virtual-assembly.org/ontologies/pair#Event> .
 
