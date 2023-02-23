@@ -174,6 +174,8 @@ async function disassemblySlots(state, args, dispatch) {
   const slotsToCreate = args.slots.filter(s => s.id == undefined);
   const slotsWithId = args.slots.filter(s => s.id != undefined);
   const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
+  console.log('slotsToCreate',slotsToCreate);
+  console.log('slotsToDelete',slotsToDelete);
 
   const createdSlotsId = [];
   for (const slotToCreate of slotsToCreate) {
@@ -248,7 +250,7 @@ api.injectEndpoints({
         const slots= [];
         for (const slot of data.slots) {
           // console.log('get slot',slot)
-          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+          const slotResult = await dispatch(api.endpoints.fetchUser.initiate(slot));
           slots.push(slotResult.data)
           // console.log(slotData.data);
         }

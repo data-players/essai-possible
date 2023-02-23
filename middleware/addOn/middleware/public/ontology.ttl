@@ -7,8 +7,8 @@
 @base <https://data.essai-possible.data-players.com/ontology> .
 
 <https://data.essai-possible.data-players.com/ontology> rdf:type owl:Ontology ;
-                                          owl:imports <http://virtual-assembly.org/ontologies/pair> ;
-                                          <http://purl.org/vocab/vann/preferredNamespacePrefix> "EP" .
+                                                         owl:imports <http://virtual-assembly.org/ontologies/pair> ;
+                                                         <http://purl.org/vocab/vann/preferredNamespacePrefix> "EP" .
 
 #################################################################
 #    Object Properties
@@ -21,12 +21,12 @@
 ###  https://data.essai-possible.data-players.com/ontology#askedAffiliation
 :askedAffiliation rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliatedBy> ;
-                  owl:inverseOf :hasAskedAffilition .
+                  owl:inverseOf :hasAskedAffiliation .
 
 
-###  https://data.essai-possible.data-players.com/ontology#hasAskedAffilition
-:hasAskedAffilition rdf:type owl:ObjectProperty ;
-                    rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliates> .
+###  https://data.essai-possible.data-players.com/ontology#hasAskedAffiliation
+:hasAskedAffiliation rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf <http://virtual-assembly.org/ontologies/pair#affiliates> .
 
 
 ###  https://data.essai-possible.data-players.com/ontology#subjectOf

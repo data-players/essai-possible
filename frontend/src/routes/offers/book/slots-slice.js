@@ -107,7 +107,19 @@ api.injectEndpoints({
     }),
 
     updateSlot: builder.mutation({
-      queryFn: baseUpdateMutation(marshaller, "timeSlot"),
+      queryFn: async (args, {getState}, extraOptions, baseQuery) => {
+        const body = marshaller.unmarshall(args);
+        await baseQuery({
+          url: body.id,
+          method: "PUT",
+          body: body,
+        });
+        const data = (await baseQuery(body.id)).data;
+        const marshallData = marshaller.marshall(data);
+        await dispatch(api.endpoints.fetchUser.initiate(marshallData.user,{forceRefetch: true}));
+
+        return {data: marshallData};
+      }
     }),
 
     deleteSlot: builder.mutation({

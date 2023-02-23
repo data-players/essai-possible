@@ -53,6 +53,7 @@ export const {
 const marshaller = createJsonLDMarshaller(
   {
     affiliates: "pair:affiliates",
+    askedAffiliation : "ep:hasAskedAffiliation",
     description: "pair:description",
     hasLocation: "pair:hasLocation",
     name: "pair:label",

@@ -37,7 +37,7 @@ export const OrganizationEdit = props => (
             shouldRenderSuggestions={value => value && value.length > 1}
             />
           </ReferenceArrayInput>
-          <ReferenceArrayInput reference="Person" source="pair:hasAskedAffilitation" fullWidth>
+          <ReferenceArrayInput reference="Person" source="ep:hasAskedAffiliation" fullWidth>
             <AutocompleteArrayInput optionText="pair:label"
             shouldRenderSuggestions={value => value && value.length > 1}
             />
