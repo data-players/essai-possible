@@ -77,11 +77,18 @@ const userMarshaller = createJsonLDMarshaller(
     askedCompanies: "ep:askedAffiliation",
     phone: "pair:phone",
     label: "pair:label",
-    slots:"pair:concernedBy"
+    slots:"pair:concernedBy",
+    type:"type"
   },
   {
     objectArrayFields: ["companies", "askedCompanies","slots"],
     encodeUriFields: ["companies", "askedCompanies","slots"],
+    defaultValues:[
+      {
+        key : "type",
+        value : "pair:Person" 
+      }
+    ]
   }
 );
 

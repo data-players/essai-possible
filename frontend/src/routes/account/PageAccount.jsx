@@ -212,7 +212,9 @@ export default function PageAccount() {
                       <Stack gap={0}>
                       { currentUser.askedCompanies && 
                         <>
-                          <Typography level={"h4"}>{"Vous avez déjà demandé à etre rattaché à ces entreprises"}</Typography>
+                          {(currentUser.askedCompanies||[]).length>0 &&
+                            <Typography level={"h4"}>{"Vous avez déjà demandé à etre rattaché à ces entreprises"}</Typography>
+                          }
                           {(currentUser.askedCompanies||[]).map((askedAffiliation,index)=>(
                             <ItemAskedAffiliations companyId={askedAffiliation} key={index}></ItemAskedAffiliations>
                           ))}

@@ -20,18 +20,20 @@ import dayjs from "dayjs";
 import Link from "@mui/joy/Link";
 import {ButtonWithConfirmation, ListPageContent} from "../../components/atoms.jsx";
 import {useSnackbar} from "../../components/snackbar.jsx";
-import {selectSlotById, selectSlotsForOffer} from "../offers/book/slots-slice.js";
+import {useUpdateSlotMutation} from "../offers/book/slots-slice.js";
 import {selectCurrentUser} from "../../app/auth-slice.js";
 
-export function MeetingCardContent({meeting, offer}) {
+export function MeetingCardContent({slot, offer}) {
   const {t} = useTranslation();
   const [openSnackbar] = useSnackbar();
   const {tDateTime} = useTranslationWithDates();
   // const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
-  const isDeletingMeeting = false;
+  // const isDeletingMeeting = false;
 
-  const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
-  const slot = slotsForOffer?.find((slot) => slot.id === meeting.slot) || {};
+  // const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+
+  // const slot = slotsForOffer?.find((slot) => slot.id === meeting.slot) || {};
+  const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
 
   const addToCalendarUrl =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
@@ -48,7 +50,7 @@ export function MeetingCardContent({meeting, offer}) {
         Vous avez réservé le créneau suivant :
       </Typography>
       <Typography level="h3">{tDateTime(slot.start)}</Typography>
-      <Typography>{meeting.comments}</Typography>
+      <Typography>{slot.comments}</Typography>
       <Stack gap={2} onClick={(event) => event.stopPropagation()}>
         <Button
           component={Link}
@@ -61,9 +63,12 @@ export function MeetingCardContent({meeting, offer}) {
         </Button>
         <ButtonWithConfirmation
           color={"primary"}
-          loading={isDeletingMeeting}
+          loading={isUpdatingSlotx}
           onClick={async (event) => {
             event.stopPropagation();
+            let slotToUpdate= {...slot};
+            slotToUpdate.user=undefined;
+            const newSlot = await updateSlot(slotToUpdate).unwrap();
             // await deleteMeeting(meeting.id).unwrap();
             openSnackbar("Suppression du rendez-vous réussie");
           }}
@@ -96,7 +101,7 @@ export default function PageMyMeetings() {
     return (
       <OfferListItem
         value={offer.id}
-        sideElement={() => <MeetingCardContent offer={offer} meeting={slot} />}
+        sideElement={() => <MeetingCardContent offer={offer} slot={slot}/>}
       />
     );
   }

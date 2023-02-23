@@ -171,6 +171,7 @@ export const selectFilteredOffersIds = createSelector(
 
 async function disassemblySlots(state, args, dispatch) {
   const existing = { ...state.offers.entities[args.id] };
+  console.log(existing);
   const slotsToCreate = args.slots.filter(s => s.id == undefined);
   const slotsWithId = args.slots.filter(s => s.id != undefined);
   const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
@@ -250,7 +251,7 @@ api.injectEndpoints({
         const slots= [];
         for (const slot of data.slots) {
           // console.log('get slot',slot)
-          const slotResult = await dispatch(api.endpoints.fetchUser.initiate(slot));
+          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
           slots.push(slotResult.data)
           // console.log(slotData.data);
         }

@@ -107,7 +107,7 @@ api.injectEndpoints({
     }),
 
     updateSlot: builder.mutation({
-      queryFn: async (args, {getState}, extraOptions, baseQuery) => {
+      queryFn: async (args, {getState, dispatch}, extraOptions, baseQuery) => {
         const body = marshaller.unmarshall(args);
         await baseQuery({
           url: body.id,
