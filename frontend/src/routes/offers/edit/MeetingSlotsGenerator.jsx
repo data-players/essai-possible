@@ -53,20 +53,20 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
 
     const slots = [];
 
-    console.log("STARTING SLOTS GENERATION");
+    // console.log("STARTING SLOTS GENERATION");
 
     while (currentDate.isBefore(maxDate) || currentDate.isSame(maxDate)) {
-      console.log(" DAY :", currentDate.format("DD/MM"));
+      // console.log(" DAY :", currentDate.format("DD/MM"));
 
       const dayOfWeek = currentDate.format("dddd").toLowerCase();
       if (daysOfWeek.find((day) => day.toLowerCase() === dayOfWeek)) {
         let currentTime = realStartTime;
         while (currentTime.isBefore(realEndTime) || currentTime.isSame(realEndTime)) {
-          console.log("  TIME :", currentTime.format("HH:mm"));
+          // console.log("  TIME :", currentTime.format("HH:mm"));
 
           const slotStart = currentDate.minute(currentTime.minute()).hour(currentTime.hour());
           slots.push({start: slotStart.toISOString()});
-          console.log("   >>>", slotStart.toString());
+          // console.log("   >>>", slotStart.toString());
 
           currentTime = currentTime.add(values.offer.meetingDuration, "minutes");
         }
@@ -77,10 +77,10 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
       currentDate = currentDate.add(1, "day");
     }
 
-    const existingSlotsKeys = values.slots.map((slot) => slot.start);
+    const existingSlotsKeys = values.slots?.map((slot) => slot.start)||[];
     const dedoubledNewSlots = slots.filter((slot) => !existingSlotsKeys.includes(slot.start));
-    console.log([...values.slots, ...dedoubledNewSlots]);
-    setFieldValue("slots", [...values.slots, ...dedoubledNewSlots]);
+    // console.log([...(values.slots||[]), ...dedoubledNewSlots]);
+    setFieldValue("slots", [...(values.slots||[]), ...dedoubledNewSlots]);
   }
 
   return (
@@ -205,12 +205,13 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
           . Vous pouvez supprimer un créneau en cliquant sur ce dernier.
         </FormHelperText>
         <Card invertedColors variant={"soft"} sx={{boxShadow: "none"}}>
-          {values.slots.length > 0 ? (
+          {values.slots?.length > 0 ? (
             <SlotsList
               slots={values.slots}
               itemKey={"start"}
               itemSx={({key}) => {
-                if (!existingOfferSlotsKeys.includes(key)) return {outline: "2px solid lightgreen"};
+                // console.log("generateSlots SlotsList existingOfferSlotsKeys",existingOfferSlotsKeys)
+                if (!existingOfferSlotsKeys?.includes(key)) return {outline: "2px solid lightgreen"};
                 // // TODO fetch all meetings for the offer (not only for the current user) and match them
                 // if (meetingForOffer.start === key) return {outline: "3px solid red"};
               }}
@@ -229,7 +230,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               Pas de créneaux pour l'instant. Vous pouvez en créer avec le générateur ci-dessus.
             </Typography>
           )}
-          {(values.slots.length > 0 || values?.offer?.slots?.length > 0) && (
+          {(values.slots?.length > 0 || values?.offer?.slots?.length > 0) && (
             <Button
               sx={{mt: 2}}
               variant={"soft"}

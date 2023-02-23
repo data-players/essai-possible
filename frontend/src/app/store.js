@@ -17,6 +17,7 @@ export const store = configureStore({
     offers: offersReducer,
     skills: skillReducer,
     status : statusReducer,
+    meetings : meetingsReducer,
     goals : goalsReducer,
     slots: slotsReducer,
     companies: companiesReducer,

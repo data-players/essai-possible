@@ -21,6 +21,7 @@ import Link from "@mui/joy/Link";
 import {ButtonWithConfirmation, ListPageContent} from "../../components/atoms.jsx";
 import {useSnackbar} from "../../components/snackbar.jsx";
 import {selectSlotById, selectSlotsForOffer} from "../offers/book/slots-slice.js";
+import {selectCurrentUser} from "../../app/auth-slice.js";
 
 export function MeetingCardContent({meeting, offer}) {
   const {t} = useTranslation();
@@ -81,17 +82,21 @@ export default function PageMyMeetings() {
 
   const offersReady = useSelector(selectOffersReady);
   // const meetings = useSelector(selectAllMeetings);
-  const meetings =[];
+
   // const meetingsReady = useSelector(selectMeetingsReady);
+  const currentUser = useSelector(selectCurrentUser);
+  const meetings =currentUser?.slots;
   const meetingsReady = true;
 
-  function OfferListItemWithMeetingInfo({value: meeting}) {
-    const slot = useSelector((state) => selectSlotById(state, meeting.slot));
+  function OfferListItemWithMeetingInfo({value: slot}) {
+    // const slot = useSelector((state) => selectSlotById(state, meeting.slot));
+    console.log('slot.offer',slot.offer)
     const offer = useSelector((state) => selectOfferById(state, slot.offer));
+    console.log('offer',offer)
     return (
       <OfferListItem
         value={offer.id}
-        sideElement={() => <MeetingCardContent offer={offer} meeting={meeting} />}
+        sideElement={() => <MeetingCardContent offer={offer} meeting={slot} />}
       />
     );
   }

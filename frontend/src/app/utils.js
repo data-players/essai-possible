@@ -46,7 +46,7 @@ export function getUrlParam(key, urlParams, type = "string", defaultValue = "") 
 
   if (urlParamValue === null) return defaultValue;
 
-  if (type === "array" && urlParamValue.length > 0) return urlParamValue.split(";");
+  if (type === "array" && urlParamValue?.length > 0) return urlParamValue.split(";");
   else if (type === "number") return parseInt(urlParamValue);
   else if (type === "object") return JSON.parse(urlParamValue);
 
@@ -73,7 +73,7 @@ export function setURLParam(key, value, type = "string") {
   window.history.replaceState(
     null,
     null,
-    queryParamsString.length > 0 ? `/offers?${queryParamsString}` : "/offers"
+    queryParamsString?.length > 0 ? `/offers?${queryParamsString}` : "/offers"
   );
 }
 

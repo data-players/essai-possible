@@ -10,14 +10,21 @@ import queryString from "query-string";
 import {ExternalLink, HelpBox} from "../../components/atoms.jsx";
 import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded.js";
 import * as React from "react";
+import {
+  selectCurrentUser,
+} from "../../app/auth-slice.js";
+import {useSelector} from "react-redux";
+import {AuthCard} from "./AuthCard.jsx";
 
 export default function PageLogIn() {
-  console.log('PageLogIn!');
+  // console.log('PageLogIn!');
   const {t} = useTranslation();
   const {loggedOut} = queryString.parse(window.location.search);
 
   // If loggedOut is equal to something else than "undefined", then it means the query arg loggedOut was used
   const displayLoggedOutMessage = loggedOut !== undefined;
+
+  const currentUser = useSelector(selectCurrentUser);
 
   return (
     <PageAuthStructure title={t("nav.logIn")}>
@@ -37,31 +44,26 @@ export default function PageLogIn() {
         </HelpBox>
       )}
 
-      <Card size={"lg"}>
+      <AuthCard redirectComplete="/account" welcomeInfo={true} defaultConnectionMode="logIn" />
+
+      {/* <Card size={"lg"}>
         <Stack gap={3}>
           <AuthComponent logInMode redirect />
         </Stack>
       </Card>
+      {currentUser &&
+        <Card size={"lg"}>
+          <Stack gap={3}>
+            <Typography level={"h5"} textAlign={"center"}>
+              Vous êtes nouveau sur Essai Possible ?
+            </Typography>
 
-      <Card size={"lg"}>
-        <Stack gap={3}>
-          <Typography level={"h5"} textAlign={"center"}>
-            Vous êtes nouveau sur Essai Possible ?
-          </Typography>
-
-          <Button variant={"soft"} color={"primary"} component={ReactRouterLink} to={"/signup"}>
-            Créer un compte
-          </Button>
-
-          {/* <Button
-            variant={"soft"}
-            color={"neutral"}
-            component={ReactRouterLink}
-            to={"/company/signup"}>
-            Je suis une entreprise
-          </Button> */}
-        </Stack>
-      </Card>
+            <Button variant={"soft"} color={"primary"} component={ReactRouterLink} to={"/signup"}>
+              Créer un compte
+            </Button>
+          </Stack>
+        </Card>
+      } */}
     </PageAuthStructure>
   );
 }

@@ -5,6 +5,7 @@ import {Link as ReactRouterLink} from "react-router-dom";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import PageAuthStructure from "./PageAuthStructure.jsx";
+import {AuthCard} from "./AuthCard.jsx";
 
 /**
  * @param companyMode boolean true = company mode | false = candidate mode
@@ -13,11 +14,13 @@ import PageAuthStructure from "./PageAuthStructure.jsx";
 export default function PageSignUp({companyMode = false}) {
   return (
     <PageAuthStructure title={"Nouveau compte" + (companyMode ? " entreprise" : "")}>
-      <Card size={"lg"}>
+      {/* <Card size={"lg"}>
         <Stack gap={3}>
           <AuthComponent redirect companyMode={companyMode} />
         </Stack>
-      </Card>
+      </Card> */}
+
+      <AuthCard redirectComplete="/account" welcomeInfo={true} logInMode={true} defaultConnectionMode="signUp"/>
 
       {/* <Card size={"lg"}>
         <Stack gap={3}>

@@ -16,68 +16,87 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useTranslationWithDates} from "../../../app/i18n.js";
 import {AuthCard} from "../../account/AuthCard.jsx";
 import {useDispatch, useSelector} from "react-redux";
-// import {
-//   meetingsActions,
-//   selectMeetingForOffer,
-//   selectSavedFormData,
-//   useAddMeetingMutation,
-// } from "./meetings-slice.js";
+import {
+  meetingsActions,
+  // selectMeetingForOffer,
+  selectSavedFormData,
+  // useAddMeetingMutation,
+} from "./meetings-slice.js";
 import {selectCurrentUser} from "../../../app/auth-slice.js";
-import {selectSlotsForOffer} from "./slots-slice.js";
+import {selectSlotsForOffer,useUpdateSlotMutation} from "./slots-slice.js";
 import CompanyOfferPreview from "../CompanyOfferPreview.jsx";
 import queryString from "query-string";
 
 // TODO not tested at all @Simon
 // Système pour aller chercher le selectedSlotId dans l'URl qui n'a pas été testé du tout
 export default function PageBook() {
+  // console.log('PageBook')
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {t, tDate, tDateTime} = useTranslationWithDates();
-  const {id} = useParams();
-  const {selectedSlotId: selectedSlotIdFormQueryParams} = queryString.parse(window.location.search);
+  const {id,slotId} = useParams();
 
   const currentUser = useSelector(selectCurrentUser);
 
-  // const {selectedSlotId, comments} = useSelector((state) => selectSavedFormData(state, id)) || {};
-  const selectedSlotId =0;
-  const comments=[];
-  const [currentFormStep, setCurrentFormStep] = useState(
-    selectedSlotIdFormQueryParams || selectedSlotId ? 2 : 1
-  );
+  const {selectedSlotId, comments} = useSelector((state) => selectSavedFormData(state, encodeURIComponent(id))) || {};
+  // const comments=[];
+  // console.log('PageBook selectSavedFormData',selectedSlotId, comments)
 
-  const offer = useSelector((state) => selectOfferById(state, id)) || {};
-  const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  const [currentFormStep, setCurrentFormStep] = useState(
+    selectedSlotId ? 2 : 1
+  );
+  // console.log('currentFormStep',currentFormStep)
+
+  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
+  const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
+  // const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+  const slotsForOffer = offer?.slots||[];
+  const slotsForUser = currentUser?.slots||[];
+  const meetingForOffer = slotsForOffer.map(so=>so.id).filter(soId=>slotsForUser.map(su=>su.id).includes(soId)).legth>0
+
   // const meetingForOffer = useSelector((state) => selectMeetingForOffer(state, offer.id));
-  const meetingForOffer =[];
+  // const meetingForOffer =[];
   // const [addMeeting, {isLoading: isAddingMeeting}] = useAddMeetingMutation();
   const isAddingMeeting = false;
 
   // If a meeting is already booked for the offer, go back to the offer page
-  useEffect(() => {
-    if (meetingForOffer) navigate("..");
-  }, [meetingForOffer]);
+  // useEffect(() => {
+  //   if (slotsForOffer) navigate("..");
+  // }, [slotsForOffer]);
 
   const setFormData = (data) => {
-    // dispatch(
-    //   meetingsActions.saveFormData({
-    //     offerId: id,
-    //     data,
-    //   })
-    // );
+    // navigate(`./${encodeURIComponent(id)}`);
+    
+    dispatch(
+      meetingsActions.saveFormData({
+        offerId: encodeURIComponent(id),
+        data,
+      })
+    );
   }
 
   // TODO not tested at all @Simon
   // If a selectedSlotFormQueryParams is found in the query params, reselect it
   useEffect(() => {
-    if (selectedSlotIdFormQueryParams) setFormData({selectedSlotId: selectedSlotIdFormQueryParams});
-  }, [selectedSlotIdFormQueryParams]);
+    if (slotId){
+      setFormData({selectedSlotId: encodeURIComponent(slotId)});
+      setCurrentFormStep(2);
+      // navigate('../book')
+    }
+  }, [slotId]);
+
+  const selectedSlot = slotsForOffer.find((slot) => slot.id === selectedSlotId);
 
   const pageTitle = meetingForOffer
     ? t("offers.modifyAMeetingSlot", {context: "short"})
     : t("offers.bookAMeetingSlot", {context: "short"});
 
+  // const pageTitle = t("offers.bookAMeetingSlot", {context: "short"})
+
   const slotsByDate = groupBy(slotsForOffer, (slot) => tDate(slot.start));
 
+
+  // console.log('selectedSlotId',selectedSlotId,slotsForOffer)
   /**
    * Steps of the booking form
    */
@@ -99,9 +118,7 @@ export default function PageBook() {
                 <Trans
                   i18nKey="offers.youAreAboutToBookAMeetingOnThe"
                   values={{
-                    dateTime: tDateTime(
-                      slotsForOffer.find((slot) => slot.id === selectedSlotId).start
-                    ),
+                    dateTime: tDateTime(selectedSlot?.start),
                   }}
                 />
               </Typography>
@@ -110,7 +127,7 @@ export default function PageBook() {
         </>
       }>
       <SlotsList
-        selectedSlotId={selectedSlotId}
+        selectedSlot={selectedSlotId}
         onChange={(key, checked) => setFormData({selectedSlotId: checked ? key : undefined})}
         slots={slotsForOffer}
       />
@@ -136,16 +153,24 @@ export default function PageBook() {
       title={t("offers.myInformation")}
       showTitle={meetingForOffer || comments?.length > 0}
       noDivider
-      subtitle={<AuthCard />}>
+      subtitle={
+          <AuthCard
+          redirectUrl={`${window.location.href}/${selectedSlotId}`}
+          helpBoxConnected={(<>Ces informations sont celle de votre profil. Vous pouvez le modifier ici ou sur votre profil</>)}
+          />
+        }>
       <Form
         initialValues={{comments}}
         successText={"Rendez-vous réservé avec succès"}
         onSubmit={async ({comments}) => {
+          const slotToUpdate = {...selectedSlot};
+          slotToUpdate.user = currentUser.id;
+          const newSlot = await updateSlot(slotToUpdate).unwrap();
           // await addMeeting({
           //   slot: selectedSlotId,
           //   comments,
           // }).unwrap();
-          navigate("/account/my-meetings");
+          // navigate("/account/my-meetings");
         }}>
         {(register) => (
           <Stack gap={3}>
@@ -194,7 +219,7 @@ export default function PageBook() {
       />
 
       <PageContent gap={4} mt={6}>
-        {slotsForOffer.length > 0 ? (
+        {slotsForOffer?.length > 0 ? (
           steps
         ) : (
           <Typography mt={4} textColor={"text.tertiary"}>

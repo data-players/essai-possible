@@ -108,7 +108,7 @@ export function baseCreateMutation(marshaller, container) {
         const marshallData = marshaller.marshall(data);
         return {data: marshallData};
       } else {
-        return {error: `bas status ${status}`};
+        return {error: `status ${status}`};
       }
 
     } else {

@@ -7,7 +7,6 @@ import {
   ExternalLink,
   HelpBox,
   LocationSearchBar,
-  RadioGroup,
   RadioGroupSemantic,
   SimpleBanner,
 } from "../../../components/atoms.jsx";
@@ -27,12 +26,6 @@ import {
   selectAllSkills,
   selectAllStatus,
   selectAllGoals,
-  selectStatusStatus,
-  selectSkillsStatus,
-  selectGoalsStatus,
-  useFetchSkillsQuery,
-  useFetchStatusQuery,
-  useFetchGoalsQuery,
 } from "../../../app/concepts-slice.js";
 import OfferBanner from "../OfferBanner.jsx";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
@@ -45,7 +38,6 @@ import {
   selectCompanyReady,
   useUpdateCompanyMutation,
 } from "../companies-slice";
-import {goalOptions, softSkillsOptions, statusOptions} from "../offers-slice-data.js";
 import Box from "@mui/joy/Box";
 import * as yup from "yup";
 import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
@@ -54,7 +46,6 @@ import EditFormComponent from "../../../components/EditFormComponent.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
 import MeetingSlotsGenerator from "./MeetingSlotsGenerator.jsx";
-import {selectSlotsForOffer, selectSlotsReady} from "../book/slots-slice.js";
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -62,6 +53,7 @@ const validationSchema = yup.object({
 });
 
 export default function PageEditOffer({mode, isCopying}) {
+
   const isEditMode = mode === "edit";
   const navigate = useNavigate();
   const {t} = useTranslationWithDates();
@@ -118,16 +110,16 @@ export default function PageEditOffer({mode, isCopying}) {
     : t("offers.createANewOffer");
 
   async function onSubmit(values) {
-    console.log('raw values',values);
+    // console.log('raw values',values);
     const method = isEditMode && !isCopying ? updateOffer : addOffer;
 
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
 
     const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(offer?.slots);
-    if (shouldUpdateSlots) {
-      // TODO Update slots for offer
-    }
+    // if (shouldUpdateSlots) {
+    //   // TODO Update slots for offer
+    // }
 
     const offerPayload = {...values.offer, id: offer?.id, company: company.id};
     if (isCopying) delete offerPayload.id; // Delete id if we are copying from an existing offer
@@ -149,7 +141,6 @@ export default function PageEditOffer({mode, isCopying}) {
   // console.log(offerReady, slotsReady)
 
   return (
-
     <EditFormComponent
       // ready when the company is ready + if edit mode, the offer and the slots are ready
       ready={companyReady && (!isEditMode || (offerReady))}
@@ -179,7 +170,7 @@ export default function PageEditOffer({mode, isCopying}) {
           : {
               offer: offerDefaultValues,
               company: {...companyDefaultValues, ...company},
-              slots:offer?.slots,
+              slots:[],
             }
       }
       validationSchema={validationSchema}
@@ -375,7 +366,7 @@ export default function PageEditOffer({mode, isCopying}) {
             currentFormStep={openSlotsGenerator}
             setCurrentFormStep={setOpenSlotsGenerator}
             showTitle
-            showContent={!isEditMode || values.slots.length === 0}
+            showContent={false/*!isEditMode || values.slots?.length === 0*/}
             title={"Créneaux de rendez-vous"}
             subtitle={
               <>
@@ -383,7 +374,7 @@ export default function PageEditOffer({mode, isCopying}) {
                   Listez tous les créneaux de rendez-vous possibles pour rencontrer vos candidat·es.
                 </Typography>
                 <Typography fontSize={"lg"}>
-                  {t("offers.xMeetingSlotsAvailable", {count: values.slots.length})}
+                  {t("offers.xMeetingSlotsAvailable", {count:1 /*values.slots?.length*/})}
                 </Typography>
               </>
             }>

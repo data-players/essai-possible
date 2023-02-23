@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector, baseCreateMutation, baseDeleteMutation} from "../../../app/apiMiddleware.js";
+import api, {addStatusForEndpoints, matchAny, readySelector, baseCreateMutation, baseDeleteMutation, baseUpdateMutation} from "../../../app/apiMiddleware.js";
 import {sorter,createJsonLDMarshaller} from "../../../app/utils.js";
 import {slots} from "./slots-slice-data.js";
 
@@ -59,9 +59,10 @@ const marshaller = createJsonLDMarshaller(
     type: "type",
     start: "pair:startDate",
     offer: "pair:about",
+    user : "pair:concerns"
   },
   {
-    encodeUriFields: ["offer"],
+    encodeUriFields: ["offer","user"],
     defaultValues:[
       {
         key : "type",
@@ -76,7 +77,7 @@ const marshaller = createJsonLDMarshaller(
  */
 
 // Mock data
-let counter = slots.length + 1;
+let counter = slots?.length + 1;
 const getCounter = () => counter++;
 
 api.injectEndpoints({
@@ -103,6 +104,10 @@ api.injectEndpoints({
 
     addSlot: builder.mutation({
       queryFn: baseCreateMutation(marshaller, "timeSlot"),
+    }),
+
+    updateSlot: builder.mutation({
+      queryFn: baseUpdateMutation(marshaller, "timeSlot"),
     }),
 
     deleteSlot: builder.mutation({

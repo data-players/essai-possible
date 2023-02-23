@@ -92,7 +92,7 @@ export default function Root() {
 
   const connectionButtons = currentUser ? (
     <>
-      { currentUser?.concernedBy?.length > 0 && (
+      { currentUser?.slots?.length > 0 && (
         <AuthButton.MyMeetings />
       )}
       { currentUser?.companies?.length > 0 && (

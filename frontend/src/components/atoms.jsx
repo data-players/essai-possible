@@ -51,6 +51,7 @@ export const RadioChips = ({options, name, value, onChange, deletable, itemSx, .
     <Stack direction="row" columnGap={2} rowGap={2} flexWrap="wrap">
       {options.map(({key, label, title, icon: Icon}) => {
         const checked = value === key;
+        // console.log('checked',value,key)
         // console.log('RadioChips',value,key, label, title,checked)
         return (
           <Chip
@@ -103,6 +104,8 @@ export function SlotsList({
   itemKey = "id",
   ...props
 }) {
+  // console.log('slots',slots)
+  console.log('selectedSlot',selectedSlot)
   const {tDate, tTime} = useTranslationWithDates();
   let slotsReadyToSort = [...slots];
   // console.log('slotsReadyToSort',slots)
@@ -111,7 +114,7 @@ export function SlotsList({
     (slot) => tDate(slot.start, "long")
   );
   const slotsByDateArray= Object.entries(slotsByDate);
-  console.log('slotsByDateArray',slotsByDateArray)
+  // console.log('slotsByDateArray',slotsByDateArray)
 
   return (
     <List>
@@ -417,24 +420,24 @@ export function ListPageContent({
   // Pagination
   const rawUrlSearchParams = new URLSearchParams(window.location.search);
   const [page, setPage] = useState(getUrlParam("page", rawUrlSearchParams, "number", 1));
-  const numberOfPages = Math.ceil(values.length / itemsPerPage);
+  const numberOfPages = Math.ceil(values?.length / itemsPerPage);
   const handlePageChange = (event, value) => {
     setPage(value);
     setURLParam("page", value, "number");
   };
   // If the pagination is too far away reset it back to 1
   useEffect(() => {
-    values.length < itemsPerPage * (page - 1) && handlePageChange(undefined, 1);
-  }, [values.length, page, itemsPerPage]);
+    values?.length < itemsPerPage * (page - 1) && handlePageChange(undefined, 1);
+  }, [values?.length, page, itemsPerPage]);
 
   return (
     <PageContent mt={4} alignItems={"center"}>
       {ready ? (
-        values.length > 0 ? (
+        values?.length > 0 ? (
           <>
             <Typography sx={{color: "text.tertiary", opacity: 0.7}} mb={1}>
               Résultats {itemsPerPage * (page - 1) + 1} à{" "}
-              {Math.min(itemsPerPage * page, values.length)} sur {values.length}{" "}
+              {Math.min(itemsPerPage * page, values?.length)} sur {values.length}{" "}
             </Typography>
 
             <List sx={{alignSelf: "stretch"}}>
@@ -443,7 +446,7 @@ export function ListPageContent({
               ))}
             </List>
 
-            {values.length > itemsPerPage && (
+            {values?.length > itemsPerPage && (
               <Pagination
                 count={numberOfPages}
                 page={page}

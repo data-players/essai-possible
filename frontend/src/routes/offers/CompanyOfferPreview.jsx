@@ -33,6 +33,7 @@ export default function CompanyOfferPreview({offer, children}) {
   const status = useSelector(selectAllStatus);
   // console.log('status',status)
   const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
+  // console.log('offer.status',offer.status,offer,status.find(s=>s.id.includes('publiee'))?.id)
   const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
   const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
 
@@ -90,6 +91,7 @@ export default function CompanyOfferPreview({offer, children}) {
   // If the offer is not published, then a user must be connected at least.
   if (!isPublished) {
     // Wait for the user to be ready
+    console.log('isPublished',isPublished)
     if (!currentUserReady) return <LoadingSpinner />;
 
     // If ready, then check if it has the right to be there. If not allowed, redirect to the offers list

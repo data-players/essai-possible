@@ -288,7 +288,7 @@ export const AuthButton = {
     const navigate = useNavigate();
     const {companyId: currentCompanyId} = useParams();
 
-    const companiesLength = currentUser.companies.length;
+    const companiesLength = currentUser.companies?.length;
 
     const displayMenu = small || companiesLength > 1;
 

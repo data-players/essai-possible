@@ -39,14 +39,16 @@ import EditFormComponent from "../../components/EditFormComponent";
  * @param logInMode true = logIn | false = signUp
  * @param redirect true = redirect if logged in and user complete
  */
-export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
+export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcomeInfo,redirect = false, companyMode}) => {
   const navigate = useNavigate();
   const [siretNumbersVisible, setSiretNumbersVisible] = useState(false);
   const [newCompanyMode, setNewCompanyMode] = useState(false);
 
-  useFetchCompaniesQuery();
+  // useFetchCompaniesQuery();
   const [updateUser, {isLoading: isUpdatingUser}] = useUpdateUserMutation();
   const [addCompany, {isLoading: isAddingCompany}] = useAddCompanyMutation();
+  // const isUpdatingUser = false;
+  // const isAddingCompany = false;
 
   const currentUser = useSelector(selectCurrentUser);
   const companies = useSelector(selectAllCompanies);
@@ -55,6 +57,31 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
   // const meetingsReady = useSelector(selectMeetingsReady);
 
   const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
+
+  useEffect(()=>{
+    if(currentUserIsComplete && redirectComplete){
+      navigate(redirectComplete);
+    }
+  })
+
+
+  // const specificRedirections= [
+  //   {
+  //     source : 'login',
+  //     target : 'account'
+  //   }
+  // ]
+  // // let pathName = window.location.host+window.location.pathname;
+  // let pathName = window.location.href;
+  // for (const specificRedirection of specificRedirections) {
+
+  //   if (pathName.includes(specificRedirection.source)){
+  //     pathName = pathName.replace(specificRedirection.source,specificRedirection.target);
+  //   }
+  // }
+  // redirectUrl = redirectUrl||window.location
+  // console.log('pathName',pathName)
+
   // const currentUserIsComplete = false;
 
   // Redirect user to the offers page if it is a basic user, to its meetings
@@ -71,7 +98,9 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
   //   }
   // }, [currentUserIsComplete, currentUser, redirect, meetingsReady, meetings]);
 
+
   async function onSubmit(values) {
+    console.log('UPDATE')
     if (companyMode) {
       if (newCompanyMode) {
         // Create the new company
@@ -91,18 +120,25 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
 
   // If we are waiting for the user to be loaded, show loading
   if (authTokenExists && !currentUser) return <LoadingSpinner />;
+  console.log('companyMode',companyMode)
 
   return (
     <>
       {/* WELCOME MESSAGE TOP*/}
       {currentUser ? (
-        <HelpBox color={"success"}>
-          <Typography>
-            <strong>Bonjour {currentUser.firstName} !</strong> Vous êtes identifié avec Les Communs.
-          </Typography>
-        </HelpBox>
+        <>
+         {welcomeInfo &&
+                 <HelpBox color={"success"}>
+                 <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
+                 <Typography>
+                   <strong>Bonjour {currentUser.firstName} !</strong> Vous êtes identifié avec Les Communs.
+                 </Typography>
+               </HelpBox>
+         }
+        </>
       ) : (
         <>
+          <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
           <Typography textAlign={"center"} fontWeight={"lg"}>
             {logInMode
               ? "Connectez-vous à Essai Possible en vous identifiant sur le portail des Communs."
@@ -115,15 +151,13 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
           )}
         </>
       )}
-      {/* LOGO LES COMMUNS */}
-      <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
 
       {/* USER INFORMATION FORM */}
-      {currentUser && !currentUserIsComplete ? (
+      {currentUser ? (
         <EditFormComponent
           component={Stack}
           m={0}
-          validationButtonText={logInMode ? "Se connecter" : "Créer mon compte"}
+          validationButtonText={logInMode ? "Se connecter" : "Mettre à jour"}
           isEditMode={false}
           updateLoading={isUpdatingUser || isAddingCompany}
           initialValues={{
@@ -145,16 +179,9 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
                   })),
           })}
           onSubmit={onSubmit}
-          successText={logInMode ? "Connexion réussie" : "Compte créé avec succès"}>
+          successText={logInMode ? "Connexion réussie" : "Compte mis à jour avec succès"}
+          >
           {(register, {values, setFieldValue, errors}) => (
-            <Stack gap={3}>
-              {/* USER IS IDENTIFIED WITH LES COMMUNS --> Ask for missing info before creating account */}
-              <HelpBox>
-                <Typography fontWeight={"lg"}>
-                  Complétez vos informations personnelles pour finaliser votre inscription sur Essai
-                  Possible.
-                </Typography>
-              </HelpBox>
 
               <UserFormElements
                 register={register}
@@ -162,99 +189,11 @@ export const AuthComponent = ({logInMode, redirect = false, companyMode}) => {
                 baseFormPath={"user"}
               />
 
-              {companyMode && (
-                <>
-                  {/* COMPANY MODE IS ON --> Ask for the company information */}
-
-                  <Typography textAlign={"center"} color={"primary"} level={"h5"} mt={2}>
-                    {newCompanyMode ? "Inscrivez votre entreprise" : "Trouvez votre entreprise"}
-                  </Typography>
-
-                  {newCompanyMode ? (
-                    // New company --> Fill new company info
-                    <>
-                      <Typography textAlign={"center"} mt={-2}>
-                        Vous pourrez modifier les informations de votre entreprise ultérieurement.
-                      </Typography>
-                      <CompanyFormElements
-                        register={register}
-                        setFieldValue={setFieldValue}
-                        baseFormPath={"newCompany"}
-                      />
-                    </>
-                  ) : (
-                    // Existing company --> Select in the list + check verify SIRET
-                    <>
-                      <FormInput
-                        component={Autocomplete}
-                        name={"askedCompany"}
-                        label={"Votre entreprise"}
-                        placeholder={"sélectionnez votre entreprise"}
-                        getOptionLabel={(company) =>
-                          company.name + (siretNumbersVisible ? ` - ${company?.siret}` : "")
-                        }
-                        options={companies}
-                        register={register}
-                        onChange={(_, value) => setFieldValue("askedCompany", value)}
-                        help={
-                          <Checkbox
-                            size={"sm"}
-                            onChange={(event) => setSiretNumbersVisible(event.target.checked)}
-                            label={"Afficher les numéros de  SIRET"}
-                          />
-                        }
-                        errors={
-                          errors.askedCompany?.length > 0 && "Veuillez renseigner une entreprise"
-                        }
-                        deps={siretNumbersVisible}
-                      />
-
-                      <Collapse in={!!values.askedCompany} sx={{my: -1.5}}>
-                        <Stack gap={1} my={1.5}>
-                          <Typography>
-                            Le numéro de SIRET de cette entreprise est le{" "}
-                            <strong>{values.askedCompany?.siret}</strong>. Confirmez-vous que c'est
-                            bien votre entreprise ?
-                          </Typography>
-
-                          <FormInput
-                            component={({value, ...props}) => (
-                              <Stack direction={"row"}>
-                                <Checkbox
-                                  {...props}
-                                  checked={value}
-                                  sx={{fontWeight: "lg"}}
-                                  label={`Je confirme que j'ai bien vérifié le numéro de SIRET.`}
-                                />
-                              </Stack>
-                            )}
-                            register={register}
-                            name={"confirmAskedCompany"}
-                          />
-                        </Stack>
-                      </Collapse>
-                    </>
-                  )}
-
-                  {/* Switch between new or existing company */}
-                  <Stack textAlign={"center"} alignItems={"center"}>
-                    <Typography sx={{opacity: 0.7}}>
-                      {!newCompanyMode
-                        ? "Vous ne trouvez pas votre entreprise ?"
-                        : "Votre entreprise est déjà référencée ?"}
-                    </Typography>
-                    <Link onClick={() => setNewCompanyMode(!newCompanyMode)}>
-                      {newCompanyMode ? "Revenir aux entreprises existantes" : "Ajoutez la vôtre !"}
-                    </Link>
-                  </Stack>
-                </>
-              )}
-            </Stack>
           )}
         </EditFormComponent>
       ) : (
         // USER NOT IDENTIFIED --> Ask for identification with Les Communs
-        <ButtonWithLoading size="lg" color="primary" onClick={(e)=>{connectToLesCommuns(`${window.location.origin}/account`)}}>
+        <ButtonWithLoading size="lg" color="primary" onClick={(e)=>{connectToLesCommuns(redirectUrl)}}>
           S'identifier avec Les Communs
         </ButtonWithLoading>
       )}

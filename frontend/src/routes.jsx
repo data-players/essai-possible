@@ -46,7 +46,10 @@ export default function Router() {
               element: <DefinedOfferProtection />,
               children: [
                 {index: true, element: <PageOffer />},
-                {path: "book", element: <PageBook />},
+                {
+                  path: "book/:slotId?",
+                  element: <PageBook />
+                },
                 {
                   path: "edit",
                   element: (

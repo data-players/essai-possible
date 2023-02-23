@@ -169,7 +169,7 @@ export default function PageAccount() {
                     </Stack>
                   )
                 }
-                { currentUser?.concernedBy?.length > 0 &&
+                { currentUser?.slots?.length > 0 &&
                   <Stack gap={2}>
                     <Typography level={"h3"}>Mes rendez-vous</Typography>
                     <Typography>

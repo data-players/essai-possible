@@ -77,24 +77,37 @@ const userMarshaller = createJsonLDMarshaller(
     askedCompanies: "ep:askedAffiliation",
     phone: "pair:phone",
     label: "pair:label",
-    concernedBy:"pair:concernedBy"
+    slots:"pair:concernedBy"
   },
   {
-    objectArrayFields: ["companies", "askedCompanies","concernesBy"],
-    encodeUriFields: ["companies", "askedCompanies","concernesBy"],
+    objectArrayFields: ["companies", "askedCompanies","slots"],
+    encodeUriFields: ["companies", "askedCompanies","slots"],
   }
 );
 
 api.injectEndpoints({
   endpoints: (builder) => ({
     fetchUser: builder.query({
-      queryFn: async (arg, {getState}, extraOptions, baseQuery) => {
+      queryFn: async (arg, {getState,dispatch}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
         console.log('fetchUser',webId)
         if(webId){
           const result = await baseQuery(webId);
           const marshallData = userMarshaller.marshall(result.data);
-          return {data: marshallData};
+
+          const slots= [];
+          for (const slot of marshallData.slots) {
+            // console.log('get slot',slot)
+            const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+            slots.push(slotResult.data)
+            // console.log(slotData.data);
+          }
+          const finalData = {
+            ...marshallData,
+            slots, 
+          }
+
+          return {data: finalData};
         }else{
           return {error:"fetch user without token"};
         }
@@ -149,13 +162,16 @@ export const userDefaultValues = {
 };
 
 export function connectToLesCommuns(redirectUrl) {
-  console.log('redirectUrl',redirectUrl)
-  const safeRedirectUrl = typeof redirectUrl === "string" && redirectUrl;
-  console.log('safeRedirectUrl',safeRedirectUrl)
+  let safeRedirectUrl = typeof redirectUrl === "string" ? redirectUrl : undefined;
+  if(safeRedirectUrl==undefined){
+    safeRedirectUrl=window.location.href
+  }
 
+  safeRedirectUrl=encodeURI(safeRedirectUrl);
+  console.log('safeRedirectUrl',safeRedirectUrl)
   window.location.assign(
     `${import.meta.env.VITE_MIDDLEWARE_URL}/auth?redirectUrl=${
-      safeRedirectUrl || window.location.href
+      safeRedirectUrl
     }`
   );
 }

@@ -1,34 +1,35 @@
-import {HeroBanner} from "../../components/Layout.jsx";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import Box from "@mui/joy/Box";
+import Button from "@mui/joy/Button";
 import Card from "@mui/joy/Card";
 import Container from "@mui/joy/Container";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
 import Grid from "@mui/joy/Grid";
+import Option from "@mui/joy/Option";
+import Select from "@mui/joy/Select";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
-import {useTranslation} from "react-i18next";
+import Collapse from "@mui/material/Collapse";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import {
-  CheckboxGroup,
+  selectAllGoals, selectAllSectors
+} from "../../app/concepts-slice.js";
+import { debouncedSetURLParam, getUrlParam, setURLParam } from "../../app/utils.js";
+import {
+  CheckboxGroupSemantic,
   ListPageContent,
   LocationSearchBar,
-  SearchBar,
+  SearchBar
 } from "../../components/atoms.jsx";
-import React, {useState} from "react";
-import FormControl from "@mui/joy/FormControl";
-import Select from "@mui/joy/Select";
-import Option from "@mui/joy/Option";
-import {useSelector} from "react-redux";
-import {selectFilteredOffersIds, selectOffersReady} from "./offers-slice.js";
-import {selectCompaniesReady} from "./companies-slice.js";
-import {sectorsOptions} from "./companies-slice-data.js";
-import Box from "@mui/joy/Box";
-import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import FormLabel from "@mui/joy/FormLabel";
-import Collapse from "@mui/material/Collapse";
-import {goalOptions} from "./offers-slice-data.js";
+import { HeroBanner } from "../../components/Layout.jsx";
+import { selectCompaniesReady } from "./companies-slice.js";
 import OfferListItem from "./OfferListItem.jsx";
-import {debouncedSetURLParam, getUrlParam, setURLParam} from "../../app/utils.js";
-import Button from "@mui/joy/Button";
+import { selectFilteredOffersIds, selectOffersReady } from "./offers-slice.js";
 
 const defaults = {
   search: "",
@@ -84,6 +85,9 @@ export default function PageOffersList() {
 
   const offersReady = useSelector(selectOffersReady);
   const companiesReady = useSelector(selectCompaniesReady);
+
+  const goalsOptions = useSelector(selectAllGoals);
+  const sectorsOptions = useSelector(selectAllSectors);
 
   const filteredOffersIds = useSelector((state) =>
     selectFilteredOffersIds(state, {search, location, radius, sectors, goals})
@@ -193,8 +197,8 @@ export default function PageOffersList() {
                     sx={{mt: 1, opacity: expanded ? 1 : 0, transition: "opacity 0.3s ease-in-out"}}>
                     <Box>
                       <FormLabel>Objectifs de recrutement</FormLabel>
-                      <CheckboxGroup
-                        options={goalOptions}
+                      <CheckboxGroupSemantic
+                        options={goalsOptions}
                         value={goals}
                         onChange={(value) => {
                           setGoals(value);
@@ -207,7 +211,7 @@ export default function PageOffersList() {
                     <Grid xs={12}>
                       <Box>
                         <FormLabel>Secteurs d'activité</FormLabel>
-                        <CheckboxGroup
+                        <CheckboxGroupSemantic
                           options={sectorsOptions}
                           value={sectors}
                           onChange={(value) => {

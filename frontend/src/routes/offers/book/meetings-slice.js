@@ -18,6 +18,8 @@ const meetingsSlice = createSlice({
   initialState,
   reducers: {
     saveFormData: (state, {payload: {offerId, data: newFormData}}) => {
+      console.log('slice saveFormData',offerId)
+      // const newSavedFormatOffer =  {...state.savedFormData[offerId], ...newFormData};
       state.savedFormData[offerId] = {...state.savedFormData[offerId], ...newFormData};
     },
     cleanFormData: (state, {payload: offerId}) => {
@@ -46,7 +48,7 @@ export const meetingsActions = meetingsSlice.actions;
  */
 
 // export const selectMeetingsReady = readySelector("meetings", "fetchMeetings");
-// export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
+export const selectSavedFormData = (state, offerId) => state.meetings.savedFormData[offerId];
 // export const {
 //   selectAll: selectAllMeetings,
 //   selectById: selectMeetingBySlotId,
@@ -65,7 +67,7 @@ export const meetingsActions = meetingsSlice.actions;
  */
 
 // Mock data
-let counter = meetings.length + 1;
+let counter = meetings?.length + 1;
 const getCounter = () => counter++;
 
 api.injectEndpoints({

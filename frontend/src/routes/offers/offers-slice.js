@@ -169,6 +169,32 @@ export const selectFilteredOffersIds = createSelector(
   }
 );
 
+async function disassemblySlots(state, args, dispatch) {
+  const existing = { ...state.offers.entities[args.id] };
+  const slotsToCreate = args.slots.filter(s => s.id == undefined);
+  const slotsWithId = args.slots.filter(s => s.id != undefined);
+  const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
+
+  const createdSlotsId = [];
+  for (const slotToCreate of slotsToCreate) {
+    const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
+      start: slotToCreate.start,
+      offer: args.id
+    }));
+    createdSlotsId.push(createdSlot.data.id);
+  }
+  for (const slotToDelete of slotsToDelete) {
+    if (slotToDelete != undefined && slotToDelete != 'undefined') {
+      // console.log("slotToDelete",slotToDelete)
+      const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
+    }
+  }
+
+  const allSlotsIds = slotsWithId.map(s => s.id).concat(createdSlotsId);
+  let dataToUpdate = { ...args };
+  dataToUpdate.slots = allSlotsIds;
+  return dataToUpdate;
+}
 /**
  * OFFERS API ENDPOINTS
  */
@@ -214,7 +240,7 @@ api.injectEndpoints({
     // Fetch one offer by id
     fetchOffer: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        // console.log('fetchOffer',args);
+        console.log('fetchOffer',args);
         const baseResponse = await baseQuery({
           url: decodeURIComponent(args),
         });
@@ -247,36 +273,43 @@ api.injectEndpoints({
 
 
     addOffer: builder.mutation({
-      queryFn: baseCreateMutation(marshaller, "jobs"),
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+
+        const state= getState();
+        let dataToUpdate = await disassemblySlots(state, args, dispatch);
+        // console.log("updateOffer",dataToUpdate)
+
+        const body = marshaller.unmarshall(dataToUpdate);
+        body.id=undefined;
+        body['@context']="https://data.essai-possible.data-players.com/context.json"
+        // console.log("updateOffer body",body)
+
+        const postResponse = await baseQuery({
+          url: "/jobs",
+          method: "POST",
+          body: body,
+        });
+
+        const status = postResponse.meta.response.status;
+        if (status==201){
+          const newId = postResponse.meta.response.headers.get('location');
+          const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(newId));
+          const marshallData=fetchResponse.data;
+  
+          // console.log("updated Offer",marshallData)
+          return {data: marshallData};
+        } else {
+          return {error:`status ${status}`}
+        }
+
+      }
     }),
 
     updateOffer: builder.mutation({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
 
         const state= getState();
-        const existing={...state.offers.entities[args.id]};
-        const slotsToCreate = args.slots.filter(s=>s.id==undefined);
-        const slotsWithId = args.slots.filter(s=>s.id!=undefined);
-        const slotsToDelete=existing.slots.filter(s=>!slotsWithId.map(swid=>swid.id).includes(s.id));
-
-        const createdSlotsId = [];
-        for (const slotToCreate of slotsToCreate) {
-          const createdSlot= await dispatch(api.endpoints.addSlot.initiate({
-            start : slotToCreate.start,
-            offer : args.id
-          }));
-          createdSlotsId.push(createdSlot.data.id);
-        }
-        for (const slotToDelete of slotsToDelete) {
-          if(slotToDelete!=undefined && slotToDelete!='undefined'){
-            // console.log("slotToDelete",slotToDelete)
-            const deletedSlot= await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
-          }
-        }
-
-        const allSlotsIds= slotsWithId.map(s=>s.id).concat(createdSlotsId);
-        let dataToUpdate = {...args};
-        dataToUpdate.slots=allSlotsIds;
+        let dataToUpdate = await disassemblySlots(state, args, dispatch);
         // console.log("updateOffer",dataToUpdate)
 
         const body = marshaller.unmarshall(dataToUpdate);
@@ -372,6 +405,13 @@ export const offerDefaultValues = {
   mentorEmail: "",
 
   // Status
-  status: "Brouillon",
+  // status: "Brouillon", // TODO : set default in component
   publishedAt: undefined,
+
+  //Slots
+  // slots : []
+
 };
+
+
+
