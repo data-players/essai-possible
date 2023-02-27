@@ -90,6 +90,7 @@ export default function PageMyMeetings() {
 
   // const meetingsReady = useSelector(selectMeetingsReady);
   const currentUser = useSelector(selectCurrentUser);
+  console.log('currentUser',currentUser)
   const meetings =currentUser?.slots;
   const meetingsReady = true;
 
@@ -99,10 +100,14 @@ export default function PageMyMeetings() {
     const offer = useSelector((state) => selectOfferById(state, slot.offer));
     console.log('offer',offer)
     return (
-      <OfferListItem
+      <>
+      {offer&&
+        <OfferListItem
         value={offer.id}
         sideElement={() => <MeetingCardContent offer={offer} slot={slot}/>}
       />
+      }
+      </>
     );
   }
 

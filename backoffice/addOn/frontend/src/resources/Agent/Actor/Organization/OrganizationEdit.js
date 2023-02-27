@@ -25,7 +25,7 @@ export const OrganizationEdit = props => (
         <MarkdownInput multiline source="pair:description" fullWidth />
         <TextInput source="pair:homePage" fullWidth />
         <TextInput source="ep:siret" fullWidth />
-        <LocationInput source="pair:hasLocation" fullWidth />
+
         <ImageInput source="image" accept="image/*">
           <ImageField source="src" />
         </ImageInput>
@@ -45,7 +45,11 @@ export const OrganizationEdit = props => (
 
       </FormTab>
       <FormTab label="Relations">
-        <ThemesInput source="pair:hasTopic" />
+        <ReferenceArrayInput reference="Sector" source="pair:hasSectors" fullWidth>
+            <AutocompleteArrayInput optionText="pair:label"
+            shouldRenderSuggestions={value => value && value.length > 1}
+            />
+        </ReferenceArrayInput>
       </FormTab>
     </TabbedForm>
   </Edit>

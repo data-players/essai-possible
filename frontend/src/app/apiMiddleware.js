@@ -73,51 +73,83 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
 //   });
 // }
 
+
+
+export async function baseUpdateCore(args, marshaller, baseQuery, fetchMethod) {
+  const body = marshaller.unmarshall(args);
+  const existingData = (await baseQuery(body.id)).data;
+  const mixedBody = {
+    ...existingData,
+    ...body
+  };
+  await baseQuery({
+    url: body.id,
+    method: "PUT",
+    body: mixedBody,
+  });
+  let marshallData;
+  if (fetchMethod){
+    marshallData = await fetchMethod(body.id)
+  } else {
+    const data = (await baseQuery(body.id)).data;
+    marshallData = marshaller.marshall(data);
+  }
+  // const data = (await baseQuery(body.id)).data;
+  // const marshallData = marshaller.marshall(data);
+  return { data: marshallData };
+}
+
 export function baseUpdateMutation(marshaller) {
   const func = async (args, {getState}, extraOptions, baseQuery) => {
-    const body = marshaller.unmarshall(args);
-    await baseQuery({
-      url: body.id,
-      method: "PUT",
-      body: body,
-    });
-    const data = (await baseQuery(body.id)).data;
-    const marshallData = marshaller.marshall(data);
-    return {data: marshallData};
+    return await baseUpdateCore(args , marshaller, baseQuery);
   };
   return func;
 }
 
-export function baseCreateMutation(marshaller, container) {
-  const func = async (args, {getState}, extraOptions, baseQuery) => {
-    const body = marshaller.unmarshall(args);
-    // console.log('baseCreateMutation body POST',body)
-    body.id=undefined;
-    body['@context']="https://data.essai-possible.data-players.com/context.json"
-    const postResponse = await baseQuery({
-      url: container,
-      method: "POST",
-      body: body,
-    });
-    if(postResponse.error==undefined){
-      const status = postResponse.meta.response.status;
-      if (status==201){
-        const newId = postResponse.meta.response.headers.get('location');
-        const data = (await baseQuery(newId)).data;
-        // console.log('baseCreateMutation body GET',data)
-        const marshallData = marshaller.marshall(data);
-        return {data: marshallData};
+export async function baseCreateCore(args, marshaller, baseQuery, container, context, fetchMethod) {
+  const body = marshaller.unmarshall(args);
+  // console.log('baseCreateMutation body POST',body)
+  body.id = undefined;
+  body['@context'] = context;
+  const postResponse = await baseQuery({
+    url: container,
+    method: "POST",
+    body: body,
+  });
+  let out;
+  if (postResponse.error == undefined) {
+    const status = postResponse.meta.response.status;
+    if (status == 201) {
+      const newId = postResponse.meta.response.headers.get('location');
+      let marshallData;
+      if (fetchMethod){
+        marshallData = await fetchMethod(newId)
       } else {
-        return {error: `status ${status}`};
+        const data = (await baseQuery(newId)).data;
+        marshallData = marshaller.marshall(data);
       }
 
+      out = { data: marshallData };
+      // return {data: marshallData};
     } else {
-      return {error: postResponse.error};
+      out = { error: `status ${status}` };
+      // return {error: `status ${status}`};
     }
 
+  } else {
+    // return {error: postResponse.error};
+    out = { error: postResponse.error };
+  }
+  return out;
+}
+
+export function baseCreateMutation(marshaller, container, context) {
+  const func = async (args, {getState}, extraOptions, baseQuery) => {
+    return await baseCreateCore(args, marshaller, baseQuery, container, context);
   };
   return func;
 }
+
 
 export function baseDeleteMutation() {
   const func = async (args, {getState}, extraOptions, baseQuery) => {

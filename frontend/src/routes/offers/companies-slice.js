@@ -108,7 +108,7 @@ api.injectEndpoints({
     }),
 
     addCompany: builder.mutation({
-      queryFn: baseCreateMutation(marshaller, "organizations"),
+      queryFn: baseCreateMutation(marshaller, "organizations", "https://data.essai-possible.data-players.com/context.json"),
     }),
 
     updateCompany: builder.mutation({

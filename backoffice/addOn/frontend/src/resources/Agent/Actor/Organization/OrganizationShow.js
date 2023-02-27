@@ -26,12 +26,6 @@ const OrganizationShow = props => (
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />
-          <MapField
-            source="pair:hasLocation"
-            address={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:label']}
-            latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
-            longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
-          />
         </MainList>
       </Grid>
       <Grid item xs={12} sm={3}>

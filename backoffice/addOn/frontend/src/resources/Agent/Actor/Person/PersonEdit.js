@@ -16,7 +16,7 @@ export const PersonEdit = props => (
       <FormTab label="Données">
         <TextInput source="pair:firstName" fullWidth />
         <TextInput source="pair:lastName" fullWidth />
-        <TextInput source="pair:email" fullWidth />
+        <TextInput source="pair:e-mail" fullWidth />
         <TextInput source="pair:phone" fullWidth />
       </FormTab>
       <FormTab label="Relations">

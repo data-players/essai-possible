@@ -61,7 +61,7 @@ export default function EditFormComponent({
             {children(register, {values, setFieldValue, errors, dirty, showingErrors})}
 
             <Collapse in={showingErrors} sx={{mb: -2}}>
-              {console.log(errors)}
+              {/* {console.log(errors)} */}
               {Object.keys(errors)?.length > 0 ? (
                 <Card variant="soft" color="danger" sx={{mb: 3}}>
                   Oups ! votre formulaire comporte des erreurs. Remontez la page pour corrigez vos

@@ -91,7 +91,7 @@ export default function CompanyOfferPreview({offer, children}) {
   // If the offer is not published, then a user must be connected at least.
   if (!isPublished) {
     // Wait for the user to be ready
-    console.log('isPublished',isPublished)
+    // console.log('isPublished',isPublished)
     if (!currentUserReady) return <LoadingSpinner />;
 
     // If ready, then check if it has the right to be there. If not allowed, redirect to the offers list
@@ -124,7 +124,7 @@ export default function CompanyOfferPreview({offer, children}) {
         button={
           <Button
             startDecorator={<VisibilityRoundedIcon />}
-            onClick={handleChangeStatus(statusOptions[1])}
+            onClick={handleChangeStatus(status.find(s=>s.id.includes('publiee'))?.id)}
             loading={isUpdatingOffer}>
             Publier
           </Button>
@@ -145,13 +145,13 @@ export default function CompanyOfferPreview({offer, children}) {
           <>
             <Button
               startDecorator={<VisibilityOffRoundedIcon />}
-              onClick={handleChangeStatus(statusOptions[0])}
+              onClick={handleChangeStatus(status.find(s=>s.id.includes('brouillon'))?.id)}
               loading={isUpdatingOffer}>
               Repasser en brouillon
             </Button>
             <Button
               startDecorator={<CheckIcon />}
-              onClick={handleChangeStatus(statusOptions[2])}
+              onClick={handleChangeStatus(status.find(s=>s.id.includes('pourvue'))?.id)}
               loading={isUpdatingOffer}>
               Marquer pourvue
             </Button>
@@ -173,7 +173,7 @@ export default function CompanyOfferPreview({offer, children}) {
         button={
           <Button
             startDecorator={<VisibilityRoundedIcon />}
-            onClick={handleChangeStatus(statusOptions[1])}
+            onClick={handleChangeStatus(status.find(s=>s.id.includes('publiee'))?.id)}
             loading={isUpdatingOffer}>
             Republier
           </Button>

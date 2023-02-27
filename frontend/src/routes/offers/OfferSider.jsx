@@ -50,7 +50,7 @@ function ModalitiesCard({offer}) {
           variant={"plain"}
           startDecorator={<PlaceRoundedIcon />}
           sx={{p: 0, opacity: 0.6}}>
-          {offer.location?.city}
+          {offer.location?.label}
         </Chip>
       </Stack>
     </Card>

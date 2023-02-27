@@ -27,7 +27,7 @@ const PersonShow = props => (
         <Hero image="image">
           <TextField source="pair:firstName" />
           <TextField source="pair:lastName" />
-          <TextField source="pair:email" />
+          <TextField source="pair:e-mail" />
           <TextField source="pair:phone" />
         </Hero>
       </Grid>

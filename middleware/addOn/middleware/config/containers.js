@@ -25,35 +25,33 @@ const { ACTOR_TYPES } = require("@semapps/activitypub");
 //   }
 // };
 //
-// const writePermissionsToAll = creatorUri => {
-//   console.log('---------------------------- writePermissionsToAll',CONFIG.HOME_URL+'_groups/superadmins');
-//   return {
-//     anon : {
-//       read: true,
-//       read: true,
-//       write: true,
-//       control : true
-//     },
-//     anyUser: {
-//       read: true,
-//       read: true,
-//       write: true,
-//       control : true
-//     },
-//     user: {
-//       uri: creatorUri,
-//       read: true,
-//       write: true,
-//       control : true
-//     },
-//     group: {
-//       uri : CONFIG.HOME_URL+'_groups/superadmins',
-//       read: true,
-//       write: true,
-//       control : true
-//     }
-//   }
-// };
+const writePermissionsToConnected = creatorUri => {
+  console.log('---------------------------- writePermissionsToAll',CONFIG.HOME_URL+'_groups/superadmins');
+  return {
+    anon : {
+      read: true,
+      write: false,
+      control : false
+    },
+    anyUser: {
+      read: true,
+      write: true,
+      control : false
+    },
+    user: {
+      uri: creatorUri,
+      read: true,
+      write: true,
+      control : true
+    },
+    group: {
+      uri : CONFIG.HOME_URL+'_groups/superadmins',
+      read: true,
+      write: true,
+      control : true
+    }
+  }
+};
 
 module.exports = [
   {
@@ -80,11 +78,14 @@ module.exports = [
     path: '/jobs',
     acceptedTypes: ['ep:Job'],
     preferredView: '/Program',
+    newResourcesPermissions: writePermissionsToConnected,
+    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
   },
   {
     path: '/timeSlot',
     acceptedTypes: ['ep:TimeSlot'],
     preferredView: '/TimeSlot',
+    newResourcesPermissions: writePermissionsToConnected
   },
   {
     path: '/data-sources',

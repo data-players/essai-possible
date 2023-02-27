@@ -137,7 +137,7 @@ export function getDeepValue(obj, splitName) {
  */
 export function createJsonLDMarshaller(
   renamingsSchema,
-  {oldFieldName = undefined, objectArrayFields = [], encodeUriFields = [], defaultValues = []} = {}
+  {oldFieldName = undefined, objectArrayFields = [], encodeUriFields = [], defaultValues = [],transformRules = []} = {}
 ) {
   const isObjectMarshaller = (obj) =>
     typeof obj?.marshall === "function" && typeof obj?.unmarshall === "function";
@@ -182,6 +182,12 @@ export function createJsonLDMarshaller(
         }
       }
 
+      for (const transformRule of transformRules) {
+        if (outObject[transformRule.key]) {
+          outObject[transformRule.key]= transformRule.marshall(outObject[transformRule.key]);
+        }
+      }
+
       // Encode ID for use in the URL
       outObject.id = encodeURIComponent(inObject.id);
 
@@ -219,15 +225,7 @@ export function createJsonLDMarshaller(
           // outObject[objectArrayField] = outObject[objectArrayField].map(decodeURIComponent);
         }
       }
-      
-      for (const defaultValue of defaultValues) {
-        if (!outObject[defaultValue.key]) {
-          outObject[defaultValue.key]=defaultValue.value
-        }
-      }
 
-
-      defaultValues
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {
@@ -241,6 +239,20 @@ export function createJsonLDMarshaller(
             oldFieldNameOrMarshaller.unmarshall(valueToUnmarshall);
         } else {
           throw new Error("The renamings schema is incorrect");
+        }
+      }
+
+      for (const defaultValue of defaultValues) {
+        const newKey=renamingsSchema[defaultValue.key]
+        if (!outObject[newKey]) {
+          outObject[newKey]=defaultValue.value
+        }
+      }
+
+      for (const transformRule of transformRules) {
+        const newKey=renamingsSchema[transformRule.key];
+        if (inObject[newKey]) {
+          inObject[newKey]= transformRule.unmarshall(inObject[newKey]);
         }
       }
 

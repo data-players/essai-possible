@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector, baseCreateMutation, baseDeleteMutation, baseUpdateMutation} from "../../../app/apiMiddleware.js";
+import api, {addStatusForEndpoints, matchAny, readySelector, baseCreateMutation, baseDeleteMutation, baseUpdateCore} from "../../../app/apiMiddleware.js";
 import {sorter,createJsonLDMarshaller} from "../../../app/utils.js";
 import {slots} from "./slots-slice-data.js";
 
@@ -103,19 +103,20 @@ api.injectEndpoints({
     }),
 
     addSlot: builder.mutation({
-      queryFn: baseCreateMutation(marshaller, "timeSlot"),
+      queryFn: baseCreateMutation(marshaller, "timeSlot", "https://data.essai-possible.data-players.com/context.json"),
     }),
 
     updateSlot: builder.mutation({
       queryFn: async (args, {getState, dispatch}, extraOptions, baseQuery) => {
-        const body = marshaller.unmarshall(args);
-        await baseQuery({
-          url: body.id,
-          method: "PUT",
-          body: body,
-        });
-        const data = (await baseQuery(body.id)).data;
-        const marshallData = marshaller.marshall(data);
+        const marshallData =  baseUpdateCore(args,marshaller,baseQuery)
+        // const body = marshaller.unmarshall(args);
+        // await baseQuery({
+        //   url: body.id,
+        //   method: "PUT",
+        //   body: body,
+        // });
+        // const data = (await baseQuery(body.id)).data;
+        // const marshallData = marshaller.marshall(data);
         await dispatch(api.endpoints.fetchUser.initiate(marshallData.user,{forceRefetch: true}));
 
         return {data: marshallData};

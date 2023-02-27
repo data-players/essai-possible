@@ -9,6 +9,7 @@ import { ChipList } from '@semapps/list-components';
 import {
   TextField,
 } from 'react-admin';
+import { MapField } from '@semapps/geo-components';
 
 const DataSourceShow = props => (
   <Show title={<JobTitle />} {...props}>
@@ -25,10 +26,26 @@ const DataSourceShow = props => (
         <ChipList primaryText="pair:label" linkType="show" />
       </ReferenceArrayField>
       <ReferenceArrayField reference="Status" source="pair:hasStatus">
-            <SeparatedListField linkType={false}>
-              <TextField source="pair:label" />
-            </SeparatedListField>
-          </ReferenceArrayField>
+        <SeparatedListField linkType={false}>
+          <TextField source="pair:label" />
+        </SeparatedListField>
+      </ReferenceArrayField>
+      <ReferenceArrayField reference="Skill" source="pair:hasSkill">
+        <SeparatedListField linkType={false}>
+          <TextField source="pair:label" />
+        </SeparatedListField>
+      </ReferenceArrayField>
+      <ReferenceArrayField reference="Goal" source="pair:hasChallenge">
+        <SeparatedListField linkType={false}>
+          <TextField source="pair:label" />
+        </SeparatedListField>
+      </ReferenceArrayField>
+      <MapField
+        source="pair:hasLocation"
+        address={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:label']}
+        latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
+        longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
+      />
 
     </MainList>
   </Show>

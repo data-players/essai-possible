@@ -22,7 +22,7 @@ import Title from '../commons/Title';
 import Edit from "../../layout/edit/Edit";
 import { ReferenceArrayInput,ReferenceInput } from "@semapps/input-components";
 import { QuickAppendReferenceArrayField } from '@semapps/field-components';
-import { ThemesInput } from '../../common/input';
+import { ThemesInput,LocationInput } from '../../common/input';
 
 export const JobEdit = props => {
   const controllerProps = useEditController(props);
@@ -61,6 +61,7 @@ export const JobEdit = props => {
           <SelectInput optionText="pair:label" />
         </ReferenceInput>
         <ThemesInput source="pair:hasTopic" />
+        <LocationInput source="pair:hasLocation" fullWidth />
         <ReferenceInput reference="DataSource" fullWidth source="aurba:hasDataSource" allowEmpty>
           <SelectInput optionText="pair:label"/>
         </ReferenceInput>
@@ -72,9 +73,15 @@ export const JobEdit = props => {
         }
       </FormTab>
       <FormTab label="Relations">
-            <ReferenceArrayInput reference="Theme" source='pair:hasTopic'>
-              <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
+            <ReferenceArrayInput reference="Skill" source='pair:hasSkill'>
+              <AutocompleteArrayInput optionText="pair:label"
+              shouldRenderSuggestions={value => value.length > 1} fullWidth />
             </ReferenceArrayInput>
+            <ReferenceArrayInput reference="Goal" source="pair:hasChallenge" fullWidth>
+              <AutocompleteArrayInput optionText="pair:label"
+              shouldRenderSuggestions={value => value && value.length > 1}
+              />
+          </ReferenceArrayInput>
         </FormTab>
     </TabbedForm>
   </Edit>

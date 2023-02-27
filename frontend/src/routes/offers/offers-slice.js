@@ -1,5 +1,5 @@
 import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit";
-import api, {addStatusForEndpoints, matchAny, readySelector,  baseCreateMutation, baseUpdateMutation} from "../../app/apiMiddleware.js";
+import api, {addStatusForEndpoints, matchAny, readySelector,  baseUpdateCore, baseCreateCore, baseCreateMutation, baseUpdateMutation} from "../../app/apiMiddleware.js";
 import {normalize, sorter} from "../../app/utils.js";
 import {fullOffers, lightOffersList, statusOptions} from "./offers-slice-data.js";
 import {selectAllCompaniesById} from "./companies-slice.js";
@@ -99,6 +99,33 @@ const marshaller = createJsonLDMarshaller(
         key : "type",
         value : "ep:Job" 
       }
+    ],
+    transformRules :[
+      {
+        key : "location",
+        marshall : (data)=>{
+          return {
+            'city':data['pair:hasPostalAdress']?.['pair:adressLocality'],
+            'context':data['pair:label'],
+            'label':data['pair:label'],
+            'lat':data['pair:latitude'],
+            'long':data['pair:longitude']
+          }
+        },
+        unmarshall  : (data)=>{
+          return {
+            'pair:hasPostalAdress':{
+              'pair:adressCountry':'France',
+              'pair:adressLocality':data.city,
+              'type':'pair:PostalAdress'
+            },
+            'pair:label':data.label,
+            'pair:latitude':data.lat,
+            'pair:longitude':data.long,
+            'type':'pair:place'
+          }
+        }
+      }
     ]
   }
 );
@@ -121,27 +148,34 @@ export const selectFilteredOffersIds = createSelector(
     const publishedStatus = status.find(s=>s.id.includes('publiee'))?.id;
     const offers = allOffers.filter(o=>o.status==publishedStatus);
     const hasSearch = search !== "";
-    const hasLocationData = location?.lat && location?.long;
+    const hasLocation = location?.lat && location?.long;
     const hasSectors = sectors?.length > 0;
     const hasGoals = goals?.length > 0;
-    const hasAnyFilter = hasSearch || hasLocationData || hasSectors || hasGoals;
+    const hasAnyFilter = hasSearch || hasLocation || hasSectors || hasGoals;
 
     // Sur Google Maps, 1km de large c'est 0.01344481 de longitude et 0.00924511 de latitude, grosso modo pour la france
     const oneKmOf = {Latitude: 0.00924511, Longitude: 0.01344481};
-    const locationBoundaries = hasLocationData && {
+    const locationBoundaries = hasLocation && {
       north: location.lat + oneKmOf.Latitude * radius,
       south: location.lat - oneKmOf.Latitude * radius,
       east: location.long + oneKmOf.Longitude * radius,
       west: location.long - oneKmOf.Longitude * radius,
     };
 
-    const isInLocationBoundaries = ({lat, long}) => {
-      return (
-        lat < locationBoundaries.north &&
-        lat > locationBoundaries.south &&
-        long < locationBoundaries.east &&
-        long > locationBoundaries.west
-      );
+    const isInLocationBoundaries = (locationData) => {
+      const lat = locationData?.lat;
+      const long = locationData?.long;
+      if(lat& long){
+        return (
+          lat < locationBoundaries.north &&
+          lat > locationBoundaries.south &&
+          long < locationBoundaries.east &&
+          long > locationBoundaries.west
+        );
+      }else{
+        return false;
+      }
+
     };
 
     const searchInFields = (fields, search) =>
@@ -158,7 +192,7 @@ export const selectFilteredOffersIds = createSelector(
           return (
             (!hasSearch ||
               searchInFields([offer.title, company.name, offer.description], search)) &&
-            (!hasLocationData || isInLocationBoundaries(offer.location)) &&
+            (!hasLocation || isInLocationBoundaries(offer.location)) &&
             (!hasSectors || matchInArray(company.sectors, sectors)) &&
             (!hasGoals || matchInArray([offer.goal], goals))
           );
@@ -170,33 +204,40 @@ export const selectFilteredOffersIds = createSelector(
 );
 
 async function disassemblySlots(state, args, dispatch) {
-  const existing = { ...state.offers.entities[args.id] };
-  console.log(existing);
-  const slotsToCreate = args.slots.filter(s => s.id == undefined);
-  const slotsWithId = args.slots.filter(s => s.id != undefined);
-  const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
-  console.log('slotsToCreate',slotsToCreate);
-  console.log('slotsToDelete',slotsToDelete);
-
-  const createdSlotsId = [];
-  for (const slotToCreate of slotsToCreate) {
-    const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
-      start: slotToCreate.start,
-      offer: args.id
-    }));
-    createdSlotsId.push(createdSlot.data.id);
-  }
-  for (const slotToDelete of slotsToDelete) {
-    if (slotToDelete != undefined && slotToDelete != 'undefined') {
-      // console.log("slotToDelete",slotToDelete)
-      const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
+  console.log('args',args)
+  if(args.slots){
+    const existing = { ...state.offers.entities[args.id] };
+    console.log(existing);
+    const slotsToCreate = args.slots.filter(s => s.id == undefined);
+    const slotsWithId = args.slots.filter(s => s.id != undefined);
+    const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
+    console.log('slotsToCreate',slotsToCreate);
+    console.log('slotsToDelete',slotsToDelete);
+  
+    const createdSlotsId = [];
+    for (const slotToCreate of slotsToCreate) {
+      const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
+        start: slotToCreate.start,
+        offer: args.id
+      }));
+      createdSlotsId.push(createdSlot.data.id);
     }
+    for (const slotToDelete of slotsToDelete) {
+      if (slotToDelete != undefined && slotToDelete != 'undefined') {
+        // console.log("slotToDelete",slotToDelete)
+        const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
+      }
+    }
+  
+    const allSlotsIds = slotsWithId.map(s => s.id).concat(createdSlotsId);
+    let dataToUpdate = { ...args };
+    dataToUpdate.slots = allSlotsIds;
+    console.log('data after disassembly',dataToUpdate)
+    return dataToUpdate;
+  }else{
+    return { ...args };
   }
 
-  const allSlotsIds = slotsWithId.map(s => s.id).concat(createdSlotsId);
-  let dataToUpdate = { ...args };
-  dataToUpdate.slots = allSlotsIds;
-  return dataToUpdate;
 }
 /**
  * OFFERS API ENDPOINTS
@@ -216,10 +257,6 @@ api.injectEndpoints({
           data
         }
       },
-      // query: () => `/jobs`,
-      // transformResponse(baseResponse, meta) {
-      //   return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
-      // },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
     findOffers: builder.query({
@@ -233,10 +270,6 @@ api.injectEndpoints({
           data
         }
       },
-      // query: () => `/jobs`,
-      // transformResponse(baseResponse, meta) {
-      //   return baseResponse["ldp:contains"].map((company) => marshaller.marshall(company));
-      // },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
@@ -264,13 +297,6 @@ api.injectEndpoints({
           data:finalData
         }
       },     
-      // query: (id) => {
-      //   return decodeURIComponent(id);
-      // },
-      // transformResponse(baseResponse, meta, arg) {
-      //   // Mock data with companies
-      //   return marshaller.marshall(baseResponse);
-      // },
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
@@ -282,28 +308,33 @@ api.injectEndpoints({
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
         // console.log("updateOffer",dataToUpdate)
 
-        const body = marshaller.unmarshall(dataToUpdate);
-        body.id=undefined;
-        body['@context']="https://data.essai-possible.data-players.com/context.json"
-        // console.log("updateOffer body",body)
+        return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
+          const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id));
+          return fetchData.data;
+        })
 
-        const postResponse = await baseQuery({
-          url: "/jobs",
-          method: "POST",
-          body: body,
-        });
+        // const body = marshaller.unmarshall(dataToUpdate);
+        // body.id=undefined;
+        // body['@context']="https://data.essai-possible.data-players.com/context.json"
+        // // console.log("updateOffer body",body)
 
-        const status = postResponse.meta.response.status;
-        if (status==201){
-          const newId = postResponse.meta.response.headers.get('location');
-          const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(newId));
-          const marshallData=fetchResponse.data;
+        // const postResponse = await baseQuery({
+        //   url: "/jobs",
+        //   method: "POST",
+        //   body: body,
+        // });
+
+        // const status = postResponse.meta.response.status;
+        // if (status==201){
+        //   const newId = postResponse.meta.response.headers.get('location');
+        //   const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(newId));
+        //   const marshallData=fetchResponse.data;
   
-          // console.log("updated Offer",marshallData)
-          return {data: marshallData};
-        } else {
-          return {error:`status ${status}`}
-        }
+        //   // console.log("updated Offer",marshallData)
+        //   return {data: marshallData};
+        // } else {
+        //   return {error:`status ${status}`}
+        // }
 
       }
     }),
@@ -315,19 +346,26 @@ api.injectEndpoints({
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
         // console.log("updateOffer",dataToUpdate)
 
-        const body = marshaller.unmarshall(dataToUpdate);
-        // console.log("updateOffer body",body)
-
-        await baseQuery({
-          url: body.id,
-          method: "PUT",
-          body: body,
+        const out =  await baseUpdateCore(dataToUpdate,marshaller,baseQuery,async (id)=>{
+          const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id,{forceRefetch: true}));
+          return fetchData.data;
         });
-        const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(args.id));
-        const marshallData=fetchResponse.data;
+        console.log(out);
+        return out;
 
-        // console.log("updated Offer",marshallData)
-        return {data: marshallData};
+        // const body = marshaller.unmarshall(dataToUpdate);
+        // // console.log("updateOffer body",body)
+
+        // await baseQuery({
+        //   url: body.id,
+        //   method: "PUT",
+        //   body: body,
+        // });
+        // const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(args.id));
+        // const marshallData=fetchResponse.data;
+
+        // // console.log("updated Offer",marshallData)
+        // return {data: marshallData};
       }
     }),
 
