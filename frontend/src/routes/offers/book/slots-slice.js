@@ -108,7 +108,7 @@ api.injectEndpoints({
 
     updateSlot: builder.mutation({
       queryFn: async (args, {getState, dispatch}, extraOptions, baseQuery) => {
-        const marshallData =  baseUpdateCore(args,marshaller,baseQuery)
+        const marshallData = await  baseUpdateCore(args,marshaller,baseQuery)
         // const body = marshaller.unmarshall(args);
         // await baseQuery({
         //   url: body.id,
@@ -117,6 +117,7 @@ api.injectEndpoints({
         // });
         // const data = (await baseQuery(body.id)).data;
         // const marshallData = marshaller.marshall(data);
+        console.log('REFETCH',marshallData)
         await dispatch(api.endpoints.fetchUser.initiate(marshallData.user,{forceRefetch: true}));
 
         return {data: marshallData};

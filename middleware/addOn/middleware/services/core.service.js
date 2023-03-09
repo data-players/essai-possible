@@ -47,29 +47,30 @@ module.exports = {
        }
       ]
     },
-    ldp: {
-      preferredViewForResource: async (resourceUri, containerPreferredView) => {
-        if (!containerPreferredView) return resourceUri;
-        return urlJoin(CONFIG.FRONT_URL, containerPreferredView, encodeURIComponent(resourceUri), 'show')
-      },
+    ldp: false,
+    // ldp: {
+    //   preferredViewForResource: async (resourceUri, containerPreferredView) => {
+    //     if (!containerPreferredView) return resourceUri;
+    //     return urlJoin(CONFIG.FRONT_URL, containerPreferredView, encodeURIComponent(resourceUri), 'show')
+    //   },
       
-      remoteContextFiles: [
-        {
-          uri: 'https://www.w3.org/ns/activitystreams',
-          file: path.resolve(__dirname, './node_modules/@seampps/core/config/context-as.json')
-        },
-        {
-          uri: 'https://data.essai-possible.data-players.com/context.json',
-          file: path.resolve(__dirname, './public/context.json')
-        }
-      ],
-    },
+    //   remoteContextFiles: [
+    //     {
+    //       uri: 'https://www.w3.org/ns/activitystreams',
+    //       file: path.resolve(__dirname, './node_modules/@seampps/core/config/context-as.json')
+    //     },
+    //     {
+    //       uri: 'https://data.essai-possible.data-players.com/context.json',
+    //       file: path.resolve(__dirname, './public/context.json')
+    //     }
+    //   ],
+    // },
     void: {
       title: CONFIG.INSTANCE_NAME,
       description: CONFIG.INSTANCE_DESCRIPTION
     },
     webacl: {
-      superAdmins: []
+      superAdmins: ['https://data.essai-possible.data-players.com/users/simon.louvet.zen']
     }
   }
 };

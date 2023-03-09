@@ -167,16 +167,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
             confirmAskedCompany: false,
           }}
           validationSchema={yup.object({
-            user: userValidationSchema,
-            ...(companyMode &&
-              (newCompanyMode
-                ? // If creating a new company, we ask for all the company schema
-                  {newCompany: companyValidationSchema}
-                : // If selecting a company, we just ask for the id that's enough
-                  {
-                    askedCompany: yup.object({id: requiredString}),
-                    confirmAskedCompany: requiredTrueBoolean,
-                  })),
+            user: userValidationSchema
           })}
           onSubmit={onSubmit}
           successText={logInMode ? "Connexion réussie" : "Compte mis à jour avec succès"}
@@ -185,7 +176,6 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
 
               <UserFormElements
                 register={register}
-                companyMode={companyMode}
                 baseFormPath={"user"}
               />
 

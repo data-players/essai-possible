@@ -67,7 +67,7 @@ export function MeetingCardContent({slot, offer}) {
           onClick={async (event) => {
             event.stopPropagation();
             let slotToUpdate= {...slot};
-            slotToUpdate.user=undefined;
+            slotToUpdate.user=null;
             const newSlot = await updateSlot(slotToUpdate).unwrap();
             // await deleteMeeting(meeting.id).unwrap();
             openSnackbar("Suppression du rendez-vous réussie");

@@ -156,21 +156,22 @@ export default function PageBook() {
       subtitle={
           <AuthCard
           redirectUrl={`${window.location.href}/${selectedSlotId}`}
-          helpBoxConnected={(<>Ces informations sont celle de votre profil. Vous pouvez le modifier ici ou sur votre profil</>)}
+          helpBoxConnected={(<>AAACes informations sont celle de votre profil. Vous pouvez le modifier ici ou sur votre profil</>)}
           />
         }>
       <Form
         initialValues={{comments}}
         successText={"Rendez-vous réservé avec succès"}
         onSubmit={async ({comments}) => {
-          const slotToUpdate = {...selectedSlot};
-          slotToUpdate.user = currentUser.id;
-          const newSlot = await updateSlot(slotToUpdate).unwrap();
-          // await addMeeting({
-          //   slot: selectedSlotId,
-          //   comments,
-          // }).unwrap();
-          // navigate("/account/my-meetings");
+          if (currentUser.phone==undefined){
+            throw new Error('numero de telephone requis');
+          } else {
+            const slotToUpdate = {...selectedSlot};
+            slotToUpdate.user = currentUser.id;
+            slotToUpdate.comments = comments;
+            const newSlot = await updateSlot(slotToUpdate).unwrap();
+          }
+
         }}>
         {(register) => (
           <Stack gap={3}>
@@ -189,7 +190,7 @@ export default function PageBook() {
               type={"submit"}
               size={"lg"}
               loading={isAddingMeeting}
-              disabled={!currentUser}
+              disabled={!(currentUser&&currentUser.phone)}
               color={"success"}
               startDecorator={<CheckIcon />}>
               {t("offers.validateInformationAndBook")}

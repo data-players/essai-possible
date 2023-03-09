@@ -181,4 +181,5 @@ export function connectToLesCommuns(redirectUrl) {
       safeRedirectUrl
     }`
   );
+  
 }

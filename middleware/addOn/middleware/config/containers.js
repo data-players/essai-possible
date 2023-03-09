@@ -62,6 +62,8 @@ module.exports = [
     acceptedTypes: ['pair:Organization'],
     preferredView: '/Organization',
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress'],
+    newResourcesPermissions: writePermissionsToConnected,
+    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
   },
   {
     path: '/users',
