@@ -81,7 +81,7 @@ export default function OfferListItem({
 }) {
   const {t, tDate} = useTranslationWithDates();
   const offer = useSelector((state) => selectOfferById(state, offerId));
-  // console.log('offer',offer)
+  // console.log('OfferListItem offer',offer)
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
   return (

@@ -105,7 +105,7 @@ const marshaller = createJsonLDMarshaller(
         key : "location",
         marshall : (data)=>{
           return {
-            'city':data['pair:hasPostalAdress']?.['pair:adressLocality'],
+            'city':data['pair:hasPostalAddress']?.['pair:addressLocality'],
             'context':data['pair:label'],
             'label':data['pair:label'],
             'lat':data['pair:latitude'],
@@ -114,10 +114,10 @@ const marshaller = createJsonLDMarshaller(
         },
         unmarshall  : (data)=>{
           return {
-            'pair:hasPostalAdress':{
-              'pair:adressCountry':'France',
-              'pair:adressLocality':data.city,
-              'type':'pair:PostalAdress'
+            'pair:hasPostalAddress':{
+              'pair:addressCountry':'France',
+              'pair:addressLocality':data.city,
+              'type':'pair:PostalAddress'
             },
             'pair:label':data.label,
             'pair:latitude':data.lat,
@@ -207,12 +207,12 @@ async function disassemblySlots(state, args, dispatch) {
   console.log('args',args)
   if(args.slots){
     const existing = { ...state.offers.entities[args.id] };
-    console.log(existing);
+    // console.log(existing);
     const slotsToCreate = args.slots.filter(s => s.id == undefined);
     const slotsWithId = args.slots.filter(s => s.id != undefined);
     const slotsToDelete = existing?.slots?existing.slots.filter(s => !slotsWithId.map(swid => swid.id).includes(s.id)):[];
-    console.log('slotsToCreate',slotsToCreate);
-    console.log('slotsToDelete',slotsToDelete);
+    // console.log('slotsToCreate',slotsToCreate);
+    // console.log('slotsToDelete',slotsToDelete);
   
     const createdSlotsId = [];
     for (const slotToCreate of slotsToCreate) {
@@ -232,7 +232,7 @@ async function disassemblySlots(state, args, dispatch) {
     const allSlotsIds = slotsWithId.map(s => s.id).concat(createdSlotsId);
     let dataToUpdate = { ...args };
     dataToUpdate.slots = allSlotsIds;
-    console.log('data after disassembly',dataToUpdate)
+    // console.log('data after disassembly',dataToUpdate)
     return dataToUpdate;
   }else{
     return { ...args };
@@ -248,11 +248,12 @@ api.injectEndpoints({
     // Fetch the list of all offers
     fetchOffers: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        console.log("XX fetchOffers")
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
         const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
-        // console.log('fetchOffers',data)
+        console.log('fetchOffers',data)
         return {
           data
         }
@@ -261,11 +262,12 @@ api.injectEndpoints({
     }),
     findOffers: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        console.log("XX findOffers")
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
         const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
-        // console.log('fetchOffers',data)
+        console.log('fetchOffers',data)
         return {
           data
         }

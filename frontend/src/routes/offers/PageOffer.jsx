@@ -8,7 +8,8 @@ import {useTranslation} from "react-i18next";
 import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
 import {selectAllSkills,
   useFetchSkillsQuery,
-  selectSkillsStatus
+  selectSkillsStatus,
+  selectAllStatus
 } from "../../app/concepts-slice.js";
 import {selectOfferById
 } from "./offers-slice.js";
@@ -30,10 +31,17 @@ export default function PageOffer() {
   const {id} = useParams();
 
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
+  const status = useSelector(selectAllStatus);
+  const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
+  // console.log('offer.status',offer.status,offer,status.find(s=>s.id.includes('publiee'))?.id)
+  const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
+  const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
   console.log('offer',offer)
   // const meetingForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
   // console.log('meetingForOffer',meetingForOffer)
   const meetingForOffer=[];
+  const slotFulfilled = offer?.slots?.filter(s=> s.user!=undefined && !(Array.isArray(s.user) && s.user.length<1));
+  console.log('slotFulfilled',slotFulfilled)
   const skillsStatus = useSelector(selectSkillsStatus);
   // useFetchSkillsQuery();
   
@@ -44,8 +52,8 @@ export default function PageOffer() {
 
 
   function MeetingCard() {
-    return meetingForOffer?.length>0 ? (
-      <MeetingCardContent offer={offer} meeting={offer?.slots} />
+    return slotFulfilled?.length>0 && false? (
+      <MeetingCardContent offer={offer} meeting={slotFulfilled} />
     ) : (
       <Stack gap={3}>
         <Typography color={"neutral"} level="h3">
@@ -57,7 +65,7 @@ export default function PageOffer() {
         <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer?.slots?.length || 0})}
         </Typography>
-        {offer?.slots?.length > 0 && (
+        {offer?.slots?.length > 0 && isPublished && (
           <Button
             variant={"solid"}
             color="primary"

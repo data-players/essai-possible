@@ -40,9 +40,9 @@ export function MeetingCardContent({slot, offer}) {
     "&text=" +
     encodeURI(t("meeting.agendaEventTitle", {offer})) +
     "&dates=" +
-    dayjs(slot.start).format("YYYYMMDD[T]HHmm[00Z") +
+    dayjs(slot?.start).format("YYYYMMDD[T]HHmm[00Z") +
     "%2F" +
-    dayjs(slot.start).clone().add(slot.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
+    dayjs(slot?.start).clone().add(slot.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
 
   return (
     <Stack gap={3}>
