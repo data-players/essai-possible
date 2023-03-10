@@ -4,6 +4,7 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import {LoadingSpinner} from "../../components/atoms.jsx";
 import Box from "@mui/joy/Box";
+import Card from "@mui/joy/Card";
 import {statusOptions} from "./offers-slice-data.js";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded.js";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
@@ -88,18 +89,39 @@ export default function CompanyOfferPreview({offer, children}) {
     []
   );
 
-  // If the offer is not published, then a user must be connected at least.
-  if (!isPublished) {
-    // Wait for the user to be ready
-    // console.log('isPublished',isPublished)
-    if (!currentUserReady) return <LoadingSpinner />;
+  // // If the offer is not published, then a user must be connected at least.
+  // if (!isPublished) {
+  //   // Wait for the user to be ready
+  //   // console.log('isPublished',isPublished)
+  //   if (!currentUserReady){
+  //     return (
+  //       <>
+  //         <Stack gap={1}>
+  //         <Card
+  //             invertedColors
+  //             color={"primary"}
+  //             variant={"solid"}
+  //             size={"lg"}
+  //             sx={{flexBasis: "50%"}}>
+                
+  //           <Typography fontWeight={"lg"} fontSize={"lg"}>
+  //             Connection requise
+  //           </Typography>
+  //         </Card>
 
-    // If ready, then check if it has the right to be there. If not allowed, redirect to the offers list
-    if (!isMemberOfTheCompany) {
-      navigate("/offers");
-      return;
-    }
-  }
+  //         </Stack>
+  //         <LoadingSpinner />
+  //       </>
+  //     )
+  //   } 
+
+  //   // If ready, then check if it has the right to be there. If not allowed, redirect to the offers list
+  //   // if (!isMemberOfTheCompany) {
+  //   //   console.log('REDIRECT 2')
+  //   //   navigate("/offers");
+  //   //   return;
+  //   // }
+  // }
 
   return isMemberOfTheCompany ? (
     <Box

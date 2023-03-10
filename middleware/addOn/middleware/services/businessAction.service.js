@@ -124,7 +124,7 @@ module.exports = {
                   }`
                   const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
                   // const pourvuSubject = result['@graph'][0]
-                  console.log('status',status)
+                  // console.log('status',status)
                   let newJob = {
                     ...job,
                     'pair:hasStatus':status['@id']

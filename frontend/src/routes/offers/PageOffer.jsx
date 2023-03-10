@@ -6,11 +6,15 @@ import Button from "@mui/joy/Button";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
-import {selectAllSkills,
-  useFetchSkillsQuery,
-  selectSkillsStatus,
-  selectAllStatus
+import {
+  selectAllSkills,
+  selectSkillsReady,
+  selectAllStatus,
+  selectStatusReady
 } from "../../app/concepts-slice.js";
+import {
+  selectCurrentUserStatus,
+} from "../../app/auth-slice.js";
 import {selectOfferById
 } from "./offers-slice.js";
 import {
@@ -25,35 +29,31 @@ import Card from "@mui/joy/Card";
 import React from "react";
 import CompanyOfferPreview from "./CompanyOfferPreview.jsx";
 import OfferSider from "./OfferSider.jsx";
+import {LoadingSpinner} from "../../components/atoms.jsx";
 
 export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
 
-  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   const status = useSelector(selectAllStatus);
+  const statusReady = useSelector(selectStatusReady)
+  const skills = useSelector(selectAllSkills);
+  const skillsReady = useSelector(selectSkillsReady)
+  const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
+  const currentUserstatus = useSelector(selectCurrentUserStatus);
+  console.log(statusReady,skillsReady)
+
+  const skillsOfferLabels = offer.softSkills?.map(cs=>skills.find(s=>s.id==cs)?.label);
   const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
-  // console.log('offer.status',offer.status,offer,status.find(s=>s.id.includes('publiee'))?.id)
   const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
   const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
-  console.log('offer',offer)
-  // const meetingForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
-  // console.log('meetingForOffer',meetingForOffer)
-  const meetingForOffer=[];
-  const slotFulfilled = offer?.slots?.filter(s=> s.user!=undefined && !(Array.isArray(s.user) && s.user.length<1));
-  console.log('slotFulfilled',slotFulfilled)
-  const skillsStatus = useSelector(selectSkillsStatus);
-  // useFetchSkillsQuery();
-  
-
-  const skills = useSelector(selectAllSkills);
-  // const skillsOfferLabels=['dummy']
-  const skillsOfferLabels = offer.softSkills?.map(cs=>skills.find(s=>s.id==cs)?.label);
+  const slotFulfilled = offer?.slots?.find(s=> s.user!=undefined && !(Array.isArray(s.user) && s.user.length<1));
+  const renderReady =statusReady && skillsReady && currentUserstatus!='pending'
 
 
   function MeetingCard() {
-    return slotFulfilled?.length>0 && false? (
-      <MeetingCardContent offer={offer} meeting={slotFulfilled} />
+    return slotFulfilled ? (
+      <MeetingCardContent offer={offer} slot={slotFulfilled} />
     ) : (
       <Stack gap={3}>
         <Typography color={"neutral"} level="h3">
@@ -80,7 +80,9 @@ export default function PageOffer() {
     );
   }
 
-  return (
+  return !renderReady ? (
+    <LoadingSpinner />
+  ) : (
     <CompanyOfferPreview offer={offer}>
       <OfferBanner
         offer={offer}
@@ -133,5 +135,8 @@ export default function PageOffer() {
         </Grid>
       </PageContent>
     </CompanyOfferPreview>
-  );
+  )
+  // return (
+    
+  // );
 }

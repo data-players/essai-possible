@@ -4,6 +4,7 @@ import api, {
   baseUpdateMutation,
   matchAny,
   readySelector,
+  stateSelector
 } from "./apiMiddleware.js";
 import jwtDecode from "jwt-decode";
 import {createJsonLDMarshaller} from "./utils.js";
@@ -18,7 +19,7 @@ const slice = createSlice({
   name: "auth",
   initialState: {
     status: {}, // {endpoint: undefined | "pending" | "ready", endpoint2: undefined | "pending" | "ready"}
-    user: null,
+    currentUser:null,
     token: localStorage.getItem("token") || null,
     webId: localStorage.getItem("token") ? jwtDecode(localStorage.getItem("token")).webId : null,
   },
@@ -31,7 +32,7 @@ const slice = createSlice({
       state.token = payload;
     },
     setUser: (state, {payload: user}) => {
-      state.user = user;
+      state.currentUser = user;
     },
     logOut: (state) => {
       state.user = null;
@@ -42,13 +43,13 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(matchAny("matchFulfilled", ["fetchUser"]), slice.caseReducers.setUser)
+      .addMatcher(matchAny("matchFulfilled", ["fetchCurrentUser"]), slice.caseReducers.setUser)
       .addMatcher(matchAny("matchFulfilled", ["updateUser"]), slice.caseReducers.setUser)
       // If there is any problem with those ops the user, log out the user
-      .addMatcher(matchAny("matchRejected", ["fetchUser"]), slice.caseReducers.logOut)
+      .addMatcher(matchAny("matchRejected", ["fetchCurrentUser"]), slice.caseReducers.logOut)
       .addMatcher(matchAny("matchFulfilled", ["deleteUser"]), slice.caseReducers.logOut);
 
-    addStatusForEndpoints(builder, ["fetchUser"]);
+    addStatusForEndpoints(builder, ["fetchCurrentUser"]);
   },
 });
 
@@ -59,16 +60,17 @@ export default slice.reducer;
  * AUTHENTICATION SELECTORS
  */
 
-export const selectCurrentUserReady = readySelector("auth", "fetchUser");
+export const selectCurrentUserReady = readySelector("auth", "fetchCurrentUser");
+export const selectCurrentUserStatus = stateSelector("auth", "fetchCurrentUser");
 
-export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentUser = (state) => state.auth.currentUser;
 export const selectAuthTokenExists = (state) => state.auth.token != undefined;
 
 /**
  * AUTHENTICATION API ENDPOINTS
  */
 
-const userMarshaller = createJsonLDMarshaller(
+const marshaller = createJsonLDMarshaller(
   {
     email: "pair:e-mail",
     firstName: "pair:firstName",
@@ -94,13 +96,13 @@ const userMarshaller = createJsonLDMarshaller(
 
 api.injectEndpoints({
   endpoints: (builder) => ({
-    fetchUser: builder.query({
+    fetchCurrentUser: builder.query({
       queryFn: async (arg, {getState,dispatch}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
         console.log('fetchUser',webId)
         if(webId){
           const result = await baseQuery(webId);
-          const marshallData = userMarshaller.marshall(result.data);
+          const marshallData = marshaller.marshall(result.data);
 
           const slots= [];
           for (const slot of marshallData.slots) {
@@ -122,8 +124,22 @@ api.injectEndpoints({
       },
     }),
 
+    // Fetch one user by id
+    fetchUser: builder.query({
+      query: (id) => {
+        //log volontaire de controle, suspition que l'id arrive parfait pas encodé
+        // console.log("fetchUser id", id);
+        return decodeURIComponent(id);
+      },
+      transformResponse(baseResponse, meta, arg) {
+        // Mock data with companies
+        return marshaller.marshall(baseResponse);
+      },
+      keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
+    }),
+
     updateUser: builder.mutation({
-      queryFn: baseUpdateMutation(userMarshaller),
+      queryFn: baseUpdateMutation(marshaller),
       // transformResponse: userMarshaller.marshall,
     }),
 
@@ -146,8 +162,8 @@ export const {
   useLogInMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-  useFetchUserQuery,
-  useLazyFetchUserQuery,
+  useFetchCurrentUserQuery,
+  useLazyFetchCurrentUserQuery,
 } = api;
 
 /**

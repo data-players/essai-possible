@@ -8,6 +8,7 @@ import {useEffect} from "react";
 import ConnectedUserProtection from "./ConnectedUserProtection.jsx";
 import {selectOfferById} from "../../routes/offers/offers-slice.js";
 
+
 const Protection = ({children, redirectTo = "/offers"}) => {
   const {id, companyId} = useParams();
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   // User not belonging to the company bump out
   useEffect(() => {
     if (currentUser && encodedCompanyId  && !currentUser?.companies.includes(encodedCompanyId)){
+      console.log('REDIRECT1')
       navigate(redirectTo);
     }
   }, [encodedCompanyId, currentUser?.companies]);

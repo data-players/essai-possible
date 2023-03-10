@@ -15,7 +15,7 @@ import {
   selectAuthTokenExists,
   selectCurrentUser,
   selectCurrentUserReady,
-  useLazyFetchUserQuery,
+  useLazyFetchCurrentUserQuery,
 } from "./app/auth-slice.js";
 import {
   useFetchSkillsQuery,
@@ -49,7 +49,7 @@ export default function Root() {
   useFetchSectorsQuery();
 
   // - prefetch the user if the user was already logged in
-  const [launchFetchUserQuery] = useLazyFetchUserQuery();
+  const [launchFetchUserQuery] = useLazyFetchCurrentUserQuery();
   const authTokenExists = useSelector(selectAuthTokenExists);
   useEffect(() => {
     if (authTokenExists) launchFetchUserQuery();

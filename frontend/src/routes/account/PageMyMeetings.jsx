@@ -10,6 +10,9 @@ import {
   // selectMeetingsReady,
   // useDeleteMeetingMutation,
 } from "../offers/book/meetings-slice.js";
+import {
+  selectAllStatus
+} from "../../app/concepts-slice.js";
 import {selectOfferById, selectOffersReady} from "../offers/offers-slice.js";
 import OfferListItem from "../offers/OfferListItem.jsx";
 import Stack from "@mui/joy/Stack";
@@ -29,10 +32,18 @@ export function MeetingCardContent({slot, offer}) {
   const {tDateTime} = useTranslationWithDates();
   // const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
   // const isDeletingMeeting = false;
+  // console.log('MeetingCardContent',slot, offer)
+  const currentUser = useSelector(selectCurrentUser);
 
-  // const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
+    const status = useSelector(selectAllStatus);
+    const currentStatus = status.find(s=>s.id==offer.status)
+  // console.log('currentUser',currentUser)
 
-  // const slot = slotsForOffer?.find((slot) => slot.id === meeting.slot) || {};
+  const isAllowForComapny = currentUser?.companies.includes(offer.company);
+  const isAllowForUser = slot?.user==currentUser?.id
+  const isAllow = isAllowForComapny||isAllowForUser;
+  console.log('slot',slot);
+
   const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
 
   const addToCalendarUrl =
@@ -45,40 +56,60 @@ export function MeetingCardContent({slot, offer}) {
     dayjs(slot?.start).clone().add(slot.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
 
   return (
-    <Stack gap={3}>
-      <Typography level="body" sx={{color: "text.tertiary"}}>
-        Vous avez réservé le créneau suivant :
-      </Typography>
-      <Typography level="h3">{tDateTime(slot.start)}</Typography>
-      <Typography>{slot.comments}</Typography>
-      <Stack gap={2} onClick={(event) => event.stopPropagation()}>
-        <Button
-          component={Link}
-          size={"lg"}
-          sx={{textDecoration: "none"}}
-          href={addToCalendarUrl}
-          target={"_blank"}
-          startDecorator={<CalendarMonthRoundedIcon />}>
-          {t("meetings.addToCalendar")}
-        </Button>
-        <ButtonWithConfirmation
-          color={"primary"}
-          loading={isUpdatingSlotx}
-          onClick={async (event) => {
-            event.stopPropagation();
-            let slotToUpdate= {...slot};
-            slotToUpdate.user=null;
-            const newSlot = await updateSlot(slotToUpdate).unwrap();
-            // await deleteMeeting(meeting.id).unwrap();
-            openSnackbar("Suppression du rendez-vous réussie");
-          }}
-          areYouSureText={
-            "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
-          }>
-          Supprimer
-        </ButtonWithConfirmation>
+    isAllow ? (
+      <Stack gap={3}>
+        {isAllowForUser &&
+          <Typography level="body" sx={{color: "text.tertiary"}}>
+            Vous avez réservé le créneau suivant :
+           </Typography>
+        }
+        {isAllowForComapny &&
+          <>
+            <Typography level="body" sx={{color: "text.tertiary"}}>
+              Une personne à reservé ce créneau :
+            </Typography>
+            <Typography level="h3">
+              {slot.user.label}
+            </Typography>
+          </>
+        }
+        <Typography level="h3">{tDateTime(slot.start)}</Typography>
+        <Typography>{slot.comments}</Typography>
+        <Stack gap={2} onClick={(event) => event.stopPropagation()}>
+          <Button
+            component={Link}
+            size={"lg"}
+            sx={{textDecoration: "none"}}
+            href={addToCalendarUrl}
+            target={"_blank"}
+            startDecorator={<CalendarMonthRoundedIcon />}>
+            {t("meetings.addToCalendar")}
+          </Button>
+          <ButtonWithConfirmation
+            color={"primary"}
+            loading={isUpdatingSlotx}
+            onClick={async (event) => {
+              event.stopPropagation();
+              let slotToUpdate= {...slot};
+              slotToUpdate.user=null;
+              const newSlot = await updateSlot(slotToUpdate).unwrap();
+              // await deleteMeeting(meeting.id).unwrap();
+              openSnackbar("Suppression du rendez-vous réussie");
+            }}
+            areYouSureText={
+              "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
+            }>
+            Supprimer
+          </ButtonWithConfirmation>
+        </Stack>
       </Stack>
-    </Stack>
+    ) : (
+      <Stack>
+        <div>{currentStatus.label}</div>
+      </Stack>
+    )
+      
+   
   );
 }
 
@@ -90,7 +121,7 @@ export default function PageMyMeetings() {
 
   // const meetingsReady = useSelector(selectMeetingsReady);
   const currentUser = useSelector(selectCurrentUser);
-  console.log('currentUser',currentUser)
+  // console.log('currentUser',currentUser)
   const meetings =currentUser?.slots;
   const meetingsReady = true;
 

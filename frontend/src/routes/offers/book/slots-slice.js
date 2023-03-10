@@ -90,17 +90,41 @@ api.injectEndpoints({
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
-    fetchSlot: builder.query({
-      query: (id) => {
-        return decodeURIComponent(id);
-      },
-      transformResponse(baseResponse, meta, arg) {
-        // console.log('transformResponse',baseResponse)
-        return marshaller.marshall(baseResponse);
-      },
-      keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
+    // fetchSlot: builder.query({
+    //   query: (id) => {
+    //     return decodeURIComponent(id);
+    //   },
+    //   transformResponse(baseResponse, meta, arg) {
+    //     // console.log('transformResponse',baseResponse)
+    //     return marshaller.marshall(baseResponse);
+    //   },
+    //   keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
 
+    // }),
+
+    fetchSlot: builder.query({
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        // console.log('fetchOffer',args);
+        const baseResponse = await baseQuery({
+          url: decodeURIComponent(args),
+        });
+        const data = marshaller.marshall(baseResponse.data);
+        // console.log('slot',data)
+        const userResult = await dispatch(api.endpoints.fetchUser.initiate(data.user));
+        // console.log(userResult)
+        const finalData ={
+          ...data,
+          user:userResult.data
+        }
+      
+        // console.log('finalData',finalData)
+        return {
+          data:finalData
+        }
+      },     
+      keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
+
 
     addSlot: builder.mutation({
       queryFn: baseCreateMutation(marshaller, "timeSlot", "https://data.essai-possible.data-players.com/context.json"),

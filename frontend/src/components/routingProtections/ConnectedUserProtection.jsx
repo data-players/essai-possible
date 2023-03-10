@@ -1,7 +1,6 @@
 import {
   selectAuthTokenExists,
   selectCurrentUserReady,
-  useFetchUserQuery,
 } from "../../app/auth-slice.js";
 import * as React from "react";
 import {useEffect} from "react";

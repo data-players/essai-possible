@@ -262,7 +262,7 @@ api.injectEndpoints({
     }),
     findOffers: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        console.log("XX findOffers")
+
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
