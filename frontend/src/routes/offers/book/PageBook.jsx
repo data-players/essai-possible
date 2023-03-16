@@ -156,7 +156,7 @@ export default function PageBook() {
       subtitle={
           <AuthCard
           redirectUrl={`${window.location.href}/${selectedSlotId}`}
-          helpBoxConnected={(<>AAACes informations sont celle de votre profil. Vous pouvez le modifier ici ou sur votre profil</>)}
+          helpBoxConnected={(<>Ces informations sont celle de votre profil. Vous pouvez le modifier ici ou sur votre profil</>)}
           />
         }>
       <Form
@@ -169,7 +169,9 @@ export default function PageBook() {
             const slotToUpdate = {...selectedSlot};
             slotToUpdate.user = currentUser.id;
             slotToUpdate.comments = comments;
+            navigate(`/offers/${encodeURIComponent(id)}`);
             const newSlot = await updateSlot(slotToUpdate).unwrap();
+
           }
 
         }}>

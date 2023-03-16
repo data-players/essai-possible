@@ -99,10 +99,11 @@ api.injectEndpoints({
     fetchCurrentUser: builder.query({
       queryFn: async (arg, {getState,dispatch}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
-        console.log('fetchUser',webId)
+        console.log('fetchCurrentUser',webId)
         if(webId){
           const result = await baseQuery(webId);
           const marshallData = marshaller.marshall(result.data);
+          console.log('fetchCurrentUsermarshallData',marshallData)
 
           const slots= [];
           for (const slot of marshallData.slots) {
@@ -115,7 +116,7 @@ api.injectEndpoints({
             ...marshallData,
             slots, 
           }
-
+          console.log('fetchCurrentUser finalData',finalData)
           return {data: finalData};
         }else{
           return {error:"fetch user without token"};
@@ -127,6 +128,7 @@ api.injectEndpoints({
     // Fetch one user by id
     fetchUser: builder.query({
       query: (id) => {
+        console.log('---- fetch specific',id)
         //log volontaire de controle, suspition que l'id arrive parfait pas encodé
         // console.log("fetchUser id", id);
         return decodeURIComponent(id);

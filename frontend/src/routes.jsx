@@ -17,6 +17,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentUser} from "./app/auth-slice.js";
 import CompanyAccountProtection from "./components/routingProtections/CompanyAccountProtection.jsx";
 import PageEditCompany from "./routes/company/PageEditCompany";
+import PageEditCompanyUsers from "./routes/company/PageEditCompanyUsers";
 import PageSignUp from "./routes/account/PageSignUp.jsx";
 import PageLogIn from "./routes/account/PageLogIn.jsx";
 import PageAskAffilition from "./routes/account/PageAskAffiliation.jsx";
@@ -86,6 +87,10 @@ export default function Router() {
             {
               path: "edit",
               element: <PageEditCompany mode={"edit"} />,
+            },
+            {
+              path: "users",
+              element: <PageEditCompanyUsers mode={"edit"} />,
             },
           ],
         },

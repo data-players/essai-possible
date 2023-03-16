@@ -248,12 +248,12 @@ api.injectEndpoints({
     // Fetch the list of all offers
     fetchOffers: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        console.log("XX fetchOffers")
+        // console.log("XX fetchOffers")
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
         const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
-        console.log('fetchOffers',data)
+        // console.log('fetchOffers',data)
         return {
           data
         }
@@ -267,7 +267,7 @@ api.injectEndpoints({
           url: `/jobs`,
         });
         const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
-        console.log('fetchOffers',data)
+        // console.log('fetchOffers',data)
         return {
           data
         }
@@ -286,7 +286,7 @@ api.injectEndpoints({
         const slots= [];
         for (const slot of data.slots) {
           // console.log('get slot',slot)
-          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot,{forceRefetch: true}));
           slots.push(slotResult.data)
           // console.log(slotData.data);
         }
@@ -294,7 +294,7 @@ api.injectEndpoints({
           ...data,
           slots, 
         }
-        // console.log('finalData',finalData)
+        console.log('finalData fetchOffer',finalData)
         return {
           data:finalData
         }
@@ -308,35 +308,11 @@ api.injectEndpoints({
 
         const state= getState();
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
-        // console.log("updateOffer",dataToUpdate)
 
         return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
           const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id));
           return fetchData.data;
         })
-
-        // const body = marshaller.unmarshall(dataToUpdate);
-        // body.id=undefined;
-        // body['@context']="https://data.essai-possible.data-players.com/context.json"
-        // // console.log("updateOffer body",body)
-
-        // const postResponse = await baseQuery({
-        //   url: "/jobs",
-        //   method: "POST",
-        //   body: body,
-        // });
-
-        // const status = postResponse.meta.response.status;
-        // if (status==201){
-        //   const newId = postResponse.meta.response.headers.get('location');
-        //   const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(newId));
-        //   const marshallData=fetchResponse.data;
-  
-        //   // console.log("updated Offer",marshallData)
-        //   return {data: marshallData};
-        // } else {
-        //   return {error:`status ${status}`}
-        // }
 
       }
     }),
@@ -354,20 +330,6 @@ api.injectEndpoints({
         });
         console.log(out);
         return out;
-
-        // const body = marshaller.unmarshall(dataToUpdate);
-        // // console.log("updateOffer body",body)
-
-        // await baseQuery({
-        //   url: body.id,
-        //   method: "PUT",
-        //   body: body,
-        // });
-        // const fetchResponse= await dispatch(api.endpoints.fetchOffer.initiate(args.id));
-        // const marshallData=fetchResponse.data;
-
-        // // console.log("updated Offer",marshallData)
-        // return {data: marshallData};
       }
     }),
 

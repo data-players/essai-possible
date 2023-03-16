@@ -105,7 +105,7 @@ export function SlotsList({
   ...props
 }) {
   // console.log('slots',slots)
-  console.log('selectedSlot',selectedSlot)
+  // console.log('selectedSlot',selectedSlot)
   const {tDate, tTime} = useTranslationWithDates();
   let slotsReadyToSort = [...slots];
   // console.log('slotsReadyToSort',slots)
@@ -413,10 +413,13 @@ export function ListPageContent({
   ready,
   noResultsContent,
   values,
+  context,
   item: Item,
   getKey,
   itemsPerPage = 10,
 }) {
+
+  // console.log(ListPageContent,ready,values)
   // Pagination
   const rawUrlSearchParams = new URLSearchParams(window.location.search);
   const [page, setPage] = useState(getUrlParam("page", rawUrlSearchParams, "number", 1));
@@ -430,6 +433,7 @@ export function ListPageContent({
     values?.length < itemsPerPage * (page - 1) && handlePageChange(undefined, 1);
   }, [values?.length, page, itemsPerPage]);
 
+
   return (
     <PageContent mt={4} alignItems={"center"}>
       {ready ? (
@@ -442,7 +446,7 @@ export function ListPageContent({
 
             <List sx={{alignSelf: "stretch"}}>
               {values.slice(itemsPerPage * (page - 1), itemsPerPage * page).map((value, index) => (
-                <Item value={value} key={getKey ? getKey(value) : value} />
+                <Item value={value} context={context} key={getKey ? getKey(value) : value} />
               ))}
             </List>
 
@@ -492,7 +496,7 @@ export function StatusChip({status, options}) {
   if(!IconComponent){
     IconComponent= Muicon['QuestionMark'];
   }
-  console.log('IconComponent',IconComponent)
+  // console.log('IconComponent',IconComponent)
   return (
     <Chip color={statusObect?.color} startDecorator={<IconComponent/>}>
       {statusObect?.label}

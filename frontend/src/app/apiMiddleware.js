@@ -110,7 +110,6 @@ export function baseUpdateMutation(marshaller) {
 
 export async function baseCreateCore(args, marshaller, baseQuery, container, context, fetchMethod) {
   const body = marshaller.unmarshall(args);
-  // console.log('baseCreateMutation body POST',body)
   body.id = undefined;
   body['@context'] = context;
   const postResponse = await baseQuery({

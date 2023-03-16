@@ -37,7 +37,7 @@ export default function PageCompanyOffersList() {
               </Typography>
             </Grid>
             <Grid xs={12} display={"flex"} justifyContent={"center"} mt={3}>
-              <Card size={"lg"} sx={{maxWidth: 630}}>
+              <Card size={"lg"}>
                 <Stack gap={3}>
                   <Typography textAlign={"center"}>
                     Bienvenue sur la page de votre entreprise. Voici vos offres en cours.
@@ -64,6 +64,15 @@ export default function PageCompanyOffersList() {
                       sx={{flexGrow: 1}}
                       variant={"soft"}>
                       Éditer mon entreprise
+                    </Button>
+                    <Button
+                      component={ReactRouterLink}
+                      startDecorator={<CreateRoundedIcon />}
+                      to={"users"}
+                      size={"lg"}
+                      sx={{flexGrow: 1}}
+                      variant={"soft"}>
+                      Gestion des utilisateurs
                     </Button>
                   </Stack>
                 </Stack>

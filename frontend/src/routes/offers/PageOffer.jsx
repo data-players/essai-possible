@@ -35,23 +35,28 @@ export default function PageOffer() {
   const {t} = useTranslation();
   const {id} = useParams();
 
-  const status = useSelector(selectAllStatus);
-  const statusReady = useSelector(selectStatusReady)
+  // const status = useSelector(selectAllStatus);
+  // const statusReady = useSelector(selectStatusReady)
   const skills = useSelector(selectAllSkills);
   const skillsReady = useSelector(selectSkillsReady)
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   const currentUserstatus = useSelector(selectCurrentUserStatus);
-  console.log(statusReady,skillsReady)
+  // console.log(statusReady,skillsReady)
 
   const skillsOfferLabels = offer.softSkills?.map(cs=>skills.find(s=>s.id==cs)?.label);
-  const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
-  const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
-  const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
+  // const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
+  // const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
+  // const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
+  // console.log('offer?.slots',offer?.slots)
   const slotFulfilled = offer?.slots?.find(s=> s.user!=undefined && !(Array.isArray(s.user) && s.user.length<1));
-  const renderReady =statusReady && skillsReady && currentUserstatus!='pending'
+  const renderReady =skillsReady && currentUserstatus!='pending'
 
 
   function MeetingCard() {
+    const status = useSelector(selectAllStatus);
+    const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
+    const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
+    const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
     return slotFulfilled ? (
       <MeetingCardContent offer={offer} slot={slotFulfilled} />
     ) : (
@@ -65,7 +70,7 @@ export default function PageOffer() {
         <Typography textColor={"text.tertiary"}>
           {t("offers.xMeetingSlotsAvailable", {count: offer?.slots?.length || 0})}
         </Typography>
-        {offer?.slots?.length > 0 && isPublished && (
+        {offer?.slots?.length > 0 && (
           <Button
             variant={"solid"}
             color="primary"

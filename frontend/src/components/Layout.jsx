@@ -289,6 +289,7 @@ export const AuthButton = {
     const {companyId: currentCompanyId} = useParams();
 
     const companiesLength = currentUser.companies?.length;
+    const justOneComapny = companiesLength==1?useSelector((state) => selectCompanyById(state, currentUser.companies[0])):undefined;
 
     const displayMenu = small || companiesLength > 1;
 
@@ -308,8 +309,8 @@ export const AuthButton = {
         }
       : {
           startDecorator: <ApartmentRoundedIcon />,
-          endDecorator: companiesLength > 1 && <KeyboardArrowDownIcon />,
-          children: t("company.myCompany", {count: companiesLength}),
+          endDecorator: companiesLength>1 && <KeyboardArrowDownIcon />,
+          children: justOneComapny ? justOneComapny.name:  t("company.myCompany", {count: companiesLength}),
         };
     const ButtonComp = small ? IconButton : Button;
 

@@ -3,6 +3,7 @@ import api, {
   addStatusForEndpoints,
   baseCreateMutation,
   baseUpdateMutation,
+  baseUpdateCore,
   matchAny,
   readySelector,
 } from "../../app/apiMiddleware.js";
@@ -65,8 +66,8 @@ const marshaller = createJsonLDMarshaller(
     image: "image",
   },
   {
-    objectArrayFields: ["offers", "affiliates", "sectors"],
-    encodeUriFields: ["offers", "affiliates", "sectors"],
+    objectArrayFields: ["offers", "affiliates", "askedAffiliation", "sectors"],
+    encodeUriFields: ["offers", "affiliates", "askedAffiliation", "sectors"],
     defaultValues:[
       {
         key : "type",
@@ -95,24 +96,74 @@ api.injectEndpoints({
 
     // Fetch one company by id
     fetchCompany: builder.query({
-      query: (id) => {
-        //log volontaire de controle, suspition que l'id arrive parfait pas encodé
-        // console.log("fetchCompany id", id);
-        return decodeURIComponent(id);
-      },
-      transformResponse(baseResponse, meta, arg) {
-        // Mock data with companies
-        return marshaller.marshall(baseResponse);
-      },
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        // console.log('fetchOffer',args);
+        const baseResponse = await baseQuery({
+          url: decodeURIComponent(args),
+        });
+        const data = marshaller.marshall(baseResponse.data);
+        // console.log('company',data)
+        const affiliates= [];
+        for (const item of data.affiliates) {
+          // console.log('get slot',slot)
+          const result = await dispatch(api.endpoints.fetchUser.initiate(item));
+          affiliates.push(result.data)
+          // console.log(slotData.data);
+        }
+        const askedAffiliation= [];
+        for (const item of data.askedAffiliation) {
+          // console.log('get slot',slot)
+          const result = await dispatch(api.endpoints.fetchUser.initiate(item));
+          askedAffiliation.push(result.data)
+          // console.log(slotData.data);
+        }
+
+
+
+        const finalData = {
+          ...data,
+          affiliates, 
+          askedAffiliation
+        }
+        // console.log('finalData',finalData)
+        return {
+          data:finalData
+        }
+      },     
       keepUnusedDataFor: 200, // Keep cached data for X seconds after the query hook is not used anymore.
     }),
 
     addCompany: builder.mutation({
-      queryFn: baseCreateMutation(marshaller, "organizations", "https://data.essai-possible.data-players.com/context.json"),
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        let dataToUpdate ={
+          ...args,
+          affiliates:args.affiliates?.map(a=>a.id),
+          askedAffiliation: args.askedAffiliation?.map(a=>a.id)
+        }
+
+        return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
+          const fetchData= await dispatch(api.endpoints.fetchCompany.initiate(id));
+          return fetchData.data;
+        })
+
+      }
+      
     }),
 
     updateCompany: builder.mutation({
-      queryFn: baseUpdateMutation(marshaller),
+      queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
+        let dataToUpdate ={
+          ...args,
+          affiliates:args.affiliates?.map(a=>a.id),
+          askedAffiliation: args.askedAffiliation?.map(a=>a.id)
+        }
+  
+        const out =  await baseUpdateCore(dataToUpdate,marshaller,baseQuery,async (id)=>{
+          const fetchData= await dispatch(api.endpoints.fetchCompany.initiate(id,{forceRefetch: true}));
+          return fetchData.data;
+        });
+        return out;
+      }
     }),
 
     deleteCompany: builder.mutation({

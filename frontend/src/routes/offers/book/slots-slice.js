@@ -104,17 +104,15 @@ api.injectEndpoints({
 
     fetchSlot: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        // console.log('fetchOffer',args);
+        console.log('fetchSlot',args);
         const baseResponse = await baseQuery({
           url: decodeURIComponent(args),
         });
         const data = marshaller.marshall(baseResponse.data);
-        // console.log('slot',data)
-        const userResult = await dispatch(api.endpoints.fetchUser.initiate(data.user));
-        // console.log(userResult)
+        const userResult = data.user && !Array.isArray(data.user) ? await dispatch(api.endpoints.fetchUser.initiate(data.user)): undefined;
         const finalData ={
           ...data,
-          user:userResult.data
+          user:userResult?.data
         }
       
         // console.log('finalData',finalData)
@@ -132,7 +130,10 @@ api.injectEndpoints({
 
     updateSlot: builder.mutation({
       queryFn: async (args, {getState, dispatch}, extraOptions, baseQuery) => {
-        const marshallData = await  baseUpdateCore(args,marshaller,baseQuery)
+        const marshallData = await  baseUpdateCore(args,marshaller,baseQuery,async (id)=>{
+          const fetchData= await dispatch(api.endpoints.fetchSlot.initiate(id),{forceRefetch: true});
+          return fetchData.data;
+        })
         // const body = marshaller.unmarshall(args);
         // await baseQuery({
         //   url: body.id,
@@ -141,10 +142,16 @@ api.injectEndpoints({
         // });
         // const data = (await baseQuery(body.id)).data;
         // const marshallData = marshaller.marshall(data);
-        console.log('REFETCH',marshallData)
-        await dispatch(api.endpoints.fetchUser.initiate(marshallData.user,{forceRefetch: true}));
+        // console.log('REFETCH',marshallData)
+        setTimeout(() => {
+          dispatch(api.endpoints.fetchCurrentUser.initiate(undefined,{forceRefetch: true}));
+          dispatch(api.endpoints.fetchOffer.initiate(marshallData.data.offer,{forceRefetch: true}));
+        }, 500);
 
-        return {data: marshallData};
+
+
+
+        return {data: marshallData.data};
       }
     }),
 

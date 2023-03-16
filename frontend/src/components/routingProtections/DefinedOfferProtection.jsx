@@ -1,6 +1,6 @@
 // The Offer page wrapper that safely loads data so we don't need to worry about it inside it
 import {Outlet, useParams} from "react-router-dom";
-import {selectOfferById, useFetchOfferQuery} from "../../routes/offers/offers-slice.js";
+import {selectOfferById, useFetchOfferQuery, selectOfferReady} from "../../routes/offers/offers-slice.js";
 import {useSelector} from "react-redux";
 import {selectCompanyById, useLazyFetchCompanyQuery} from "../../routes/offers/companies-slice.js";
 import {useEffect} from "react";
@@ -22,13 +22,14 @@ export default function DefinedOfferProtection() {
   useEffect(() => {
     if (offer.company) launchFetchCompanyQuery(offer.company);
   }, [offer.company]);
-  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
+  const company = useSelector((state) => selectCompanyById(state, offer?.company)) || {};
+  const sofferReady = useSelector(selectOfferReady);
   // console.log('company',company)
 
   // Don't use the ready status because sometimes the objects are partially loaded and can be displayed already.
   // Instead, if the id is present is a good test to see if we can display stuff.
   // console.log('DefinedOfferProtection',!(offer.id));
-  if (!(offer.id)) return <LoadingSpinner />;
+  if (!(sofferReady && offer.id)) return <LoadingSpinner />;
 
   return <Outlet />;
 }

@@ -25,9 +25,11 @@ import {ButtonWithConfirmation, ListPageContent} from "../../components/atoms.js
 import {useSnackbar} from "../../components/snackbar.jsx";
 import {useUpdateSlotMutation} from "../offers/book/slots-slice.js";
 import {selectCurrentUser} from "../../app/auth-slice.js";
+import { useNavigate ,redirect} from "react-router-dom";
 
 export function MeetingCardContent({slot, offer}) {
   const {t} = useTranslation();
+  const navigate = useNavigate();
   const [openSnackbar] = useSnackbar();
   const {tDateTime} = useTranslationWithDates();
   // const [deleteMeeting, {isLoading: isDeletingMeeting}] = useDeleteMeetingMutation();
@@ -40,9 +42,9 @@ export function MeetingCardContent({slot, offer}) {
   // console.log('currentUser',currentUser)
 
   const isAllowForComapny = currentUser?.companies.includes(offer.company);
-  const isAllowForUser = slot?.user==currentUser?.id
+  const isAllowForUser = slot?.user?.id==currentUser?.id
   const isAllow = isAllowForComapny||isAllowForUser;
-  console.log('slot',slot);
+  // console.log('slot',slot);
 
   const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
 
@@ -89,12 +91,15 @@ export function MeetingCardContent({slot, offer}) {
             color={"primary"}
             loading={isUpdatingSlotx}
             onClick={async (event) => {
-              event.stopPropagation();
+              // event.stopPropagation();
               let slotToUpdate= {...slot};
               slotToUpdate.user=null;
+              // navigate('/offers');
               const newSlot = await updateSlot(slotToUpdate).unwrap();
               // await deleteMeeting(meeting.id).unwrap();
               openSnackbar("Suppression du rendez-vous réussie");
+
+
             }}
             areYouSureText={
               "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
@@ -127,9 +132,9 @@ export default function PageMyMeetings() {
 
   function OfferListItemWithMeetingInfo({value: slot}) {
     // const slot = useSelector((state) => selectSlotById(state, meeting.slot));
-    console.log('slot.offer',slot.offer)
+    // console.log('slot.offer',slot.offer)
     const offer = useSelector((state) => selectOfferById(state, slot.offer));
-    console.log('offer',offer)
+    // console.log('offer',offer)
     return (
       <>
       {offer&&
