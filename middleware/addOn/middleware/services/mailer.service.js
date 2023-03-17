@@ -1,8 +1,9 @@
 const path = require('path');
 const { MIME_TYPES } = require('@semapps/mime-types');
+// import fetch from 'node-fetch';
 
 // console.log(process.env);
-
+var fetch= require('node-fetch');
 var mailjet = require ('node-mailjet')
   .connect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 
@@ -60,5 +61,39 @@ module.exports = {
         })
 
     },
+    async sendSms (ctx) {
+
+      // console.log('ctx',ctx)
+      if ( !ctx || !ctx.params ||!ctx.params.to  || !ctx.params.text) {
+        // console.log('CTX.PARAMS',ctx.params);
+        throw new Error('One or more parameters are missing');
+      }
+
+      console.log('CTX.PARAMS',ctx.params);
+
+      let url = 'https://api.mailjet.com/v4/sms-send';
+      const body={
+        "From":"0661246584",
+        "To": "+33661246584" ,
+        "Text":ctx.params.text
+      }
+
+      let options = {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.MJ_SMS_TOKEN}`,
+         'content-type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      };
+
+      // console.log('nodeFetch',fetch)
+
+      fetch(url, options)
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .catch(err => console.error('error:' + err));
+    },
+
   }
 };

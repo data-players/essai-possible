@@ -155,6 +155,16 @@ module.exports = {
                         job : job['pair:label']
                       }
                     });
+
+                    console.log('companyUserObject',companyUserObject)
+
+                    if (companyUserObject['pair:phone']){
+                      await ctx.call('mailer.sendSms', {
+                        // subject:"[essai-possible] rendez-vous",
+                        to:companyUserObject['pair:phone'],
+                        text:`${user['pair:e-mail']} à annulé le rdv pour${job['pair:label']}`
+                      });
+                    }
                   }
 
                 }

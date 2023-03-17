@@ -46,6 +46,7 @@ services:
       - REPLYTO_LABEL=${REPLYTO_LABEL}
       - MJ_APIKEY_PUBLIC=${MJ_APIKEY_PUBLIC}
       - MJ_APIKEY_PRIVATE=${MJ_APIKEY_PRIVATE}
+      - MJ_SMS_TOKEN=${MJ_SMS_TOKEN}
     command: bash -c "cp -r ./addOn/middleware/* . && yarn install && pm2-runtime 'yarn run dev'"
     networks:
       - semapps
