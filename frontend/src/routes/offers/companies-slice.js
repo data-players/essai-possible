@@ -1,8 +1,7 @@
 import {createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import api, {
   addStatusForEndpoints,
-  baseCreateMutation,
-  baseUpdateMutation,
+  baseCreateCore,
   baseUpdateCore,
   matchAny,
   readySelector,

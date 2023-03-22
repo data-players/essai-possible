@@ -146,7 +146,7 @@ api.injectEndpoints({
         setTimeout(() => {
           dispatch(api.endpoints.fetchCurrentUser.initiate(undefined,{forceRefetch: true}));
           dispatch(api.endpoints.fetchOffer.initiate(marshallData.data.offer,{forceRefetch: true}));
-        }, 500);
+        }, 1000);
 
 
 

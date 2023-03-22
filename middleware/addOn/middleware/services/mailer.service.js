@@ -1,9 +1,6 @@
-const path = require('path');
-const { MIME_TYPES } = require('@semapps/mime-types');
-// import fetch from 'node-fetch';
-
-// console.log(process.env);
-var fetch= require('node-fetch');
+// const path = require('path');
+// const { MIME_TYPES } = require('@semapps/mime-types');
+const fetch = require('node-fetch');
 var mailjet = require ('node-mailjet')
   .connect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 
@@ -11,18 +8,14 @@ var mailjet = require ('node-mailjet')
 module.exports = {
   name: 'mailer',
   dependencies: ['api'],
-  // async started() {
-  //   // Wait a bit before adding the route, or sometimes it is not added
-  //   await new Promise(resolve => setTimeout(resolve, 3000));
-  //   await this.broker.call('api.addRoute', {
-  //     route: {
-  //       bodyParsers: { json: true },
-  //       aliases: {
-  //         [`POST _mailer/send-email`]: 'mailer.sendMail'
-  //       }
-  //     }
-  //   });
-  // },
+  async started() {
+    if (!process.env.MJ_APIKEY_PUBLIC || !process.env.MJ_APIKEY_PRIVATE){
+      throw new Error(`missing MJ_APIKEY_PUBLIC or MJ_APIKEY_PRIVATE environnment variable to send mails`)
+    }
+    if (!process.env.MJ_SMS_TOKEN){
+      throw new Error(`missing MJ_SMS_TOKEN environnment variable to send sms`)
+    }
+  },
   actions: {
     async sendMail (ctx) {
 
@@ -32,7 +25,7 @@ module.exports = {
         throw new Error('One or more parameters are missing');
       }
 
-      console.log('CTX.PARAMS',ctx.params);
+      // console.log('CTX.PARAMS',ctx.params);
 
       const request = mailjet
         .post("send", {'version': 'v3.1'})
@@ -64,17 +57,17 @@ module.exports = {
     async sendSms (ctx) {
 
       // console.log('ctx',ctx)
-      if ( !ctx || !ctx.params ||!ctx.params.to  || !ctx.params.text) {
+      if ( !ctx || !ctx.params ||!ctx.params.from || !ctx.params.to  || !ctx.params.text) {
         // console.log('CTX.PARAMS',ctx.params);
         throw new Error('One or more parameters are missing');
       }
 
-      console.log('CTX.PARAMS',ctx.params);
+      // console.log('CTX.PARAMS',ctx.params);
 
       let url = 'https://api.mailjet.com/v4/sms-send';
       const body={
-        "From":"0661246584",
-        "To": "+33661246584" ,
+        "From": ctx.params.from ,
+        "To": ctx.params.to,
         "Text":ctx.params.text
       }
 

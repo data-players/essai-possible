@@ -40,6 +40,7 @@ import {useTranslationWithDates} from "../app/i18n.js";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded.js";
 import {CircularProgress} from "@mui/joy";
 import * as Muicon from '@mui/icons-material';
+import { MuiTelInput } from 'mui-tel-input'
 
 /**
  * INPUTS
@@ -301,6 +302,18 @@ export function DateInput({
     </LocalizationProvider>
   );
 }
+
+export function PhoneInput({
+  value,
+  ...props
+}) {
+  return (
+
+    <MuiTelInput defaultCountry="FR" onlyCountries={['FR']} langOfCountryName="fr" forceCallingCode value={value} {...props}/>
+
+  );
+}
+
 
 /**
  * COMPONENTS

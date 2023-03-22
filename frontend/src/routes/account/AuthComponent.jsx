@@ -176,6 +176,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
 
               <UserFormElements
                 register={register}
+                setFieldValue={setFieldValue}
                 baseFormPath={"user"}
               />
 

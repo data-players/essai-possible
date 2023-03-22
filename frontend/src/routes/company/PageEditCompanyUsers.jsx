@@ -34,12 +34,17 @@ const AffiliatesItem = function({
       variant={"soft"}
       sx={{width: "100%"}}>
         <Grid container spacing={2}>
-          <Grid xs={10}>
-            <Typography xs={10} key={value.id}>{value.label}</Typography>
+          <Grid xs={4}>
+            <Typography xs={4} key={value.id}>{value.label}</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <Typography   key={value.id}>{value.email}</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <Typography  key={value.id}>{value.phone}</Typography>
           </Grid>
           <Grid xs={2}>
             <ButtonWithConfirmation
-              xs={2} 
               color={"danger"}
               onClick={async (event) => {
                 event.stopPropagation();
@@ -73,8 +78,14 @@ const AskedAfiliationItem = function({
       sx={{width: "100%"}}
       >
         <Grid container spacing={2} >
-          <Grid xs={10}>
-            <Typography xs={10}  key={value.id}>{value.label}</Typography>
+        <Grid xs={4}>
+            <Typography xs={4} key={value.id}>{value.label}</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <Typography   key={value.id}>{value.email}</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <Typography  key={value.id}>{value.phone}</Typography>
           </Grid>
           <Grid xs={2}>
             <Button

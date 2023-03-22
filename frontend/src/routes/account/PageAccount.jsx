@@ -146,7 +146,7 @@ export default function PageAccount() {
                   <>
                     <FormStep showTitle showContent title={"Mes informations personnelles"}>
                       <Stack gap={3}>
-                        <UserFormElements register={register} />
+                        <UserFormElements register={register} setFieldValue={setFieldValue} />
                       </Stack>
                     </FormStep>
                   </>

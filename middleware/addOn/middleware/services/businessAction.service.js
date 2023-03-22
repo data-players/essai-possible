@@ -1,4 +1,11 @@
 const CONFIG = require('../config/config');
+const parsePhoneNumber = require('libphonenumber-js');
+var mustache = require('mustache');
+const dayjs = require('dayjs');
+const LocalizedFormat = require( 'dayjs/plugin/localizedFormat')
+dayjs.extend(LocalizedFormat)
+require('dayjs/locale/fr')
+dayjs.locale('fr');
 
 function normalisePredicate(data, predicate) {
   return data[predicate] == undefined ? [] : Array.isArray(data[predicate]) ? data[predicate] : [data[predicate]];
@@ -76,6 +83,8 @@ module.exports = {
                   ...job,
                   'pair:hasStatus':status['@id']
                 }
+                const timing = dayjs(newData['pair:startDate']).format('LLLL');
+                console.log('timing',timing)
                 // console.log('UPDATE JOB',newJob)
 
                 const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
@@ -99,7 +108,7 @@ module.exports = {
                     variables:{
                       user : user['pair:e-mail'],
                       company: company['pair:label'],
-                      timing:  newData['pair:startDate'],
+                      timing:  timing,
                       job : job['pair:label']
                     }
                   });
@@ -133,6 +142,9 @@ module.exports = {
                   const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
                   // console.log('updatedJob',updatedJob)
 
+                  const timing = dayjs(newData['pair:startDate']).format('LLLL');
+                  console.log('timing',dayjs.locale() ,timing)
+
                   const user = await ctx.call('ldp.resource.get', { resourceUri : oldData['pair:concerns'], accept:'application/ld+json'});
                   const company =  await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});                
                   // console.log('company',company)
@@ -151,18 +163,44 @@ module.exports = {
                       variables:{
                         user : user['pair:e-mail'],
                         company: company['pair:label'],
-                        timing:  newData['pair:startDate'],
+                        timing:  timing,
                         job : job['pair:label']
                       }
                     });
 
                     console.log('companyUserObject',companyUserObject)
+                    const parsedPhoneNumber = parsePhoneNumber(companyUserObject['pair:phone'], 'FR').number;
+                    console.log('parsedPhoneNumber',parsedPhoneNumber)
+
+                    const query= `
+                    PREFIX semapps: <http://semapps.org/ns/core#>
+                    PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                    CONSTRUCT {
+                      ?s1 ?p1 ?o1.
+                    }
+                    WHERE {
+                      ?s1 a semapps:Page.
+                      ?s1 semapps:title ?l1.
+                      FILTER(REGEX(LCASE(STR(?l1)), LCASE("SMS - annulation"))).
+                      ?s1 ?p1 ?o1.
+                    }`
+                    const page  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                    console.log('page',page);
+                    const variable = {
+                      user:user['pair:e-mail'],
+                      timing:timing,
+                      job:job['pair:label'],
+                      mail:'mail'
+                    }
+                    const text = mustache.render(page.content, variable)
+                    console.log('text',text)
 
                     if (companyUserObject['pair:phone']){
                       await ctx.call('mailer.sendSms', {
                         // subject:"[essai-possible] rendez-vous",
-                        to:companyUserObject['pair:phone'],
-                        text:`${user['pair:e-mail']} à annulé le rdv pour${job['pair:label']}`
+                        to:parsedPhoneNumber,
+                        from:process.env.SMS_SENDER,
+                        text:text
                       });
                     }
                   }

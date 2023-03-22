@@ -2,3 +2,14 @@
 # yarn lockfile v1
 
 
+libphonenumber-js@^1.10.15:
+  version "1.10.24"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.24.tgz#a1744cf29df86d5a587562ea28dde12320eb6ab6"
+  integrity sha512-3Dk8f5AmrcWqg+oHhmm9hwSTqpWHBdSqsHmjCJGroULFubi0+x7JEIGmRZCuL3TI8Tx39xaKqfnhsDQ4ALa/Nw==
+
+mui-tel-input@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/mui-tel-input/-/mui-tel-input-3.1.1.tgz#e58deca03e306e494fc600894f29ed43f57d3b57"
+  integrity sha512-7JO3rCZUGbZBbIzWb8VPYop+VbqQAUfNZ7UOUT1IunC2ZX+0pJbdcS1jA522FqmiD5lOzTvFKdJiJKci7vd7JQ==
+  dependencies:
+    libphonenumber-js "^1.10.15"
