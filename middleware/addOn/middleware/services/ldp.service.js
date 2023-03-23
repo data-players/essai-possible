@@ -8,6 +8,9 @@ const { defaultContext } = require('@semapps/core');
 const ontologies = require('../config/ontologies.json');
 const { MoleculerError } = require('moleculer').Errors;
 
+function normalisePredicate(data, predicate) {
+  return data[predicate] == undefined ? [] : Array.isArray(data[predicate]) ? data[predicate] : [data[predicate]];
+}
 
 module.exports = {
   mixins: [LdpService, DocumentTaggerMixin],
@@ -61,6 +64,79 @@ module.exports = {
                   break;
               }
 
+              return res
+            }
+
+        }
+      },
+      hooksResource: {
+        after: {
+            "put":async (ctx, res)=>{
+              const { resourceUri, oldData, newData, webId } = res;
+              console.log('XXXXXX hooksResource PUT',res)
+              switch (newData.type) {
+                case 'ep:TimeSlot' :
+                  const predicate = 'pair:concerns';
+                  const newConcerns = normalisePredicate(newData, predicate);
+                  const oldConcerns = normalisePredicate(oldData, predicate);
+                  // console.log('diff',newConcerns,oldConcerns)
+              
+                  const diffConcerns=newConcerns.filter(c=>!oldConcerns.includes(c));
+                  if(diffConcerns.length>0){
+                    const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
+                    const query= `
+                    PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                    PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                    CONSTRUCT {
+                      ?s1 ?p1 ?o1.
+                    }
+                    WHERE {
+                      ?s1 a ep:JobStatus.
+                      ?s1 pair:label ?l1.
+                      FILTER(REGEX(LCASE(STR(?l1)), LCASE("Pourvue"))).
+                      ?s1 ?p1 ?o1.
+                    }`
+                    const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                    // const pourvuSubject = result['@graph'][0]
+                    // console.log('status',status)
+                    let newJob = {
+                      ...job,
+                      'pair:hasStatus':status['@id']
+                    }
+                    const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
+
+                  }
+                  const invDiffConcerns=oldConcerns.filter(c=>!newConcerns.includes(c));
+                  if(invDiffConcerns.length>0){
+                      const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
+                      const query= `
+                      PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                      CONSTRUCT {
+                        ?s1 ?p1 ?o1.
+                      }
+                      WHERE {
+                        ?s1 a ep:JobStatus.
+                        ?s1 pair:label ?l1.
+                        FILTER(REGEX(LCASE(STR(?l1)), LCASE("Publiée"))).
+                        ?s1 ?p1 ?o1.
+                      }`
+                      const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                      // const pourvuSubject = result['@graph'][0]
+                      // console.log('status',status)
+                      let newJob = {
+                        ...job,
+                        'pair:hasStatus':status['@id']
+                      }
+    
+                      const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
+
+                    }
+                  break;
+              
+                default:
+                  break;
+              }
               return res
             }
 

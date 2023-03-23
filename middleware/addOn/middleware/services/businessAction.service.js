@@ -57,8 +57,8 @@ module.exports = {
               // const slot = ctx.params.resourceUri;
               // console.log('PUT SLOTS',oldData, newData);
               const predicate = 'pair:concerns';
-              const newConcerns = normalisePredicate(newData,  'pair:concerns');
-              const oldConcerns = normalisePredicate(oldData,  'pair:concerns');
+              const newConcerns = normalisePredicate(newData, predicate);
+              const oldConcerns = normalisePredicate(oldData, predicate);
               // console.log('diff',newConcerns,oldConcerns)
           
               const diffConcerns=newConcerns.filter(c=>!oldConcerns.includes(c));
@@ -87,7 +87,7 @@ module.exports = {
                 console.log('timing',timing)
                 // console.log('UPDATE JOB',newJob)
 
-                const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
+                // const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
                 // console.log('updatedJob',updatedJob)
 
                 const user = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:concerns'], accept:'application/ld+json'});
@@ -113,8 +113,6 @@ module.exports = {
                     }
                   });
                 }
-
-
               }
               const invDiffConcerns=oldConcerns.filter(c=>!newConcerns.includes(c));
               if(invDiffConcerns.length>0){
@@ -139,7 +137,7 @@ module.exports = {
                     'pair:hasStatus':status['@id']
                   }
 
-                  const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
+                  // const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
                   // console.log('updatedJob',updatedJob)
 
                   const timing = dayjs(newData['pair:startDate']).format('LLLL');
@@ -204,12 +202,8 @@ module.exports = {
                       });
                     }
                   }
-
                 }
-
-    
               break;
-          
           default:
             break;
         }

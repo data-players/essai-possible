@@ -18,9 +18,9 @@ export default function ConnectedUserProtection({children}) {
   // const currentUser = useSelector(selectCurrentUser);
 
   // Non connected users bump out
-  // useEffect(() => {
-  //   if (!authTokenExists) navigate("/login");
-  // }, [authTokenExists]);
+  useEffect(() => {
+    if (!authTokenExists ) navigate("/login");
+  }, [authTokenExists]);
 
   // Connected but loading users wait
   // console.log('ConnectedUserProtection',!authTokenExists || !currentUserReady)

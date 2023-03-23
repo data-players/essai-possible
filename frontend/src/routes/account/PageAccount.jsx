@@ -187,8 +187,8 @@ export default function PageAccount() {
                   <Button
                     color={"danger"}
                     onClick={async () => {
-                      navigate("/login?loggedOut");
                       await dispatch(authActions.logOut());
+                      navigate("/login?loggedOut");
                       openSnackbar("Déconnexion réussie", {color: "success"});
                     }}>
                     Se déconnecter

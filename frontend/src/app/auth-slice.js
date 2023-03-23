@@ -35,7 +35,7 @@ const slice = createSlice({
       state.currentUser = user;
     },
     logOut: (state) => {
-      state.user = null;
+      state.currentUser = null;
       state.token = null;
       state.webId = null;
       localStorage.removeItem("token");

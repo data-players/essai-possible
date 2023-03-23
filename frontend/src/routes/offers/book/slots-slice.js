@@ -143,10 +143,10 @@ api.injectEndpoints({
         // const data = (await baseQuery(body.id)).data;
         // const marshallData = marshaller.marshall(data);
         // console.log('REFETCH',marshallData)
-        setTimeout(() => {
+        // setTimeout(() => {
           dispatch(api.endpoints.fetchCurrentUser.initiate(undefined,{forceRefetch: true}));
           dispatch(api.endpoints.fetchOffer.initiate(marshallData.data.offer,{forceRefetch: true}));
-        }, 1000);
+        // }, 1000);
 
 
 

@@ -215,19 +215,46 @@ async function disassemblySlots(state, args, dispatch) {
     // console.log('slotsToDelete',slotsToDelete);
   
     const createdSlotsId = [];
+    let disassemblyPromises = [];
+
     for (const slotToCreate of slotsToCreate) {
-      const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
-        start: slotToCreate.start,
-        offer: args.id
-      }));
-      createdSlotsId.push(createdSlot.data.id);
+      disassemblyPromises.push(new Promise(async (resolve,reject)=>{
+        try {
+          const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
+            start: slotToCreate.start,
+            offer: args.id
+          }));
+          createdSlotsId.push(createdSlot.data.id);
+          resolve();
+        } catch (error) {
+          reject(error)
+        }
+      }))
+      // const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
+      //   start: slotToCreate.start,
+      //   offer: args.id
+      // }));
+      // createdSlotsId.push(createdSlot.data.id);
     }
     for (const slotToDelete of slotsToDelete) {
-      if (slotToDelete != undefined && slotToDelete != 'undefined') {
-        // console.log("slotToDelete",slotToDelete)
-        const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
-      }
+      // if (slotToDelete != undefined && slotToDelete != 'undefined') {
+      //   // console.log("slotToDelete",slotToDelete)
+      //   const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
+      // }
+
+      disassemblyPromises.push(new Promise(async (resolve,reject)=>{
+        try {
+          if (slotToDelete != undefined && slotToDelete != 'undefined') {
+            // console.log("slotToDelete",slotToDelete)
+            const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
+          }
+          resolve();
+        } catch (error) {
+          reject(error)
+        }
+      }))
     }
+    const promiseResult = await Promise.all(disassemblyPromises)
   
     const allSlotsIds = slotsWithId.map(s => s.id).concat(createdSlotsId);
     let dataToUpdate = { ...args };

@@ -57,7 +57,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
   // const meetingsReady = useSelector(selectMeetingsReady);
 
   const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
-
+ console.log('AuthComponent currentUser',currentUser)
   useEffect(()=>{
     if(currentUserIsComplete && redirectComplete){
       navigate(redirectComplete);
@@ -120,7 +120,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
 
   // If we are waiting for the user to be loaded, show loading
   if (authTokenExists && !currentUser) return <LoadingSpinner />;
-  console.log('companyMode',companyMode)
+  // console.log('companyMode',companyMode)
 
   return (
     <>

@@ -51,9 +51,9 @@ export default function Root() {
   // - prefetch the user if the user was already logged in
   const [launchFetchUserQuery] = useLazyFetchCurrentUserQuery();
   const authTokenExists = useSelector(selectAuthTokenExists);
-  useEffect(() => {
-    if (authTokenExists) launchFetchUserQuery();
-  }, [authTokenExists, launchFetchUserQuery]);
+  // useEffect(() => {
+  //   if (authTokenExists) launchFetchUserQuery();
+  // }, [authTokenExists, launchFetchUserQuery]);
 
   const location = useLocation();
   const values = queryString.parse(location.search);
