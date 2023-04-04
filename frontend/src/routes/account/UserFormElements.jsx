@@ -22,13 +22,13 @@ export function UserFormElements({register,setFieldValue, baseFormPath}) {
           onChange={(value) => setFieldValue(base + "phone", value)}
           disabled={false}
         />
-      <FormInput
+      {/* <FormInput
         label="Numéro de téléphone"
         name={base + "phone"}
         placeholder="+33 6 12 34 56 78"
         type={"tel"}
         register={register}
-      />
+      /> */}
     </>
   );
 }

@@ -309,7 +309,7 @@ export function PhoneInput({
 }) {
   return (
 
-    <MuiTelInput defaultCountry="FR" onlyCountries={['FR']} langOfCountryName="fr" forceCallingCode value={value} {...props}/>
+    <MuiTelInput defaultCountry="FR" langOfCountryName="en" forceCallingCode value={value} {...props}/>
 
   );
 }

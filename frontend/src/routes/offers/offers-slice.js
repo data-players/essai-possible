@@ -203,6 +203,36 @@ export const selectFilteredOffersIds = createSelector(
   }
 );
 
+async function fetchSlotForOffer(data, dispatch) {
+  // console.log('fetchslotforOffer',data)
+  if(data.slots && Array.isArray(data.slots)){
+    let fetchSlotPromises = [];
+    for (const slot of data.slots) {
+      fetchSlotPromises.push(new Promise(async (resolve, reject) => {
+        try {
+          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+          resolve(slotResult.data);
+        } catch (error) {
+          reject(error);
+        }
+      }));
+  
+    }
+    const slots = await Promise.all(fetchSlotPromises);
+    const nextSlots = slots.filter(s => new Date(s.start) > new Date());
+    // console.log(slots, nextSlots);
+    const finalData = {
+      ...data,
+      slots,
+      nextSlots
+    };
+    return finalData;
+  }else{
+    return data;
+  }
+
+}
+
 async function disassemblySlots(state, args, dispatch) {
   console.log('args',args)
   if(args.slots){
@@ -279,10 +309,11 @@ api.injectEndpoints({
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
-        const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
-        // console.log('fetchOffers',data)
+        const list = baseResponse.data["ldp:contains"].map((offer) => marshaller.marshall(offer));
+        const listWithSlots = await Promise.all(list.map(item=>fetchSlotForOffer(item, dispatch)))
+
         return {
-          data
+          data : listWithSlots
         }
       },
       keepUnusedDataFor: 500, // Keep cached data for X seconds after the query hook is not used anymore.
@@ -293,7 +324,7 @@ api.injectEndpoints({
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
-        const data = baseResponse.data["ldp:contains"].map((company) => marshaller.marshall(company));
+        const data = baseResponse.data["ldp:contains"].map((ofer) => marshaller.marshall(ofer));
         // console.log('fetchOffers',data)
         return {
           data
@@ -305,23 +336,14 @@ api.injectEndpoints({
     // Fetch one offer by id
     fetchOffer: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        console.log('fetchOffer',args);
+        // console.log('fetchOffer',args);
         const baseResponse = await baseQuery({
           url: decodeURIComponent(args),
         });
         const data = marshaller.marshall(baseResponse.data);
-        const slots= [];
-        for (const slot of data.slots) {
-          // console.log('get slot',slot)
-          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot,{forceRefetch: true}));
-          slots.push(slotResult.data)
-          // console.log(slotData.data);
-        }
-        const finalData = {
-          ...data,
-          slots, 
-        }
-        console.log('finalData fetchOffer',finalData)
+        // const slots= [];
+        const finalData = await fetchSlotForOffer(data, dispatch);
+        // console.log('finalData fetchOffer',finalData)
         return {
           data:finalData
         }
@@ -444,6 +466,8 @@ export const offerDefaultValues = {
   // slots : []
 
 };
+
+
 
 
 

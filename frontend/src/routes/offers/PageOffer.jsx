@@ -2,7 +2,9 @@ import {Link as ReactRouterLink, useParams} from "react-router-dom";
 import {PageContent} from "../../components/Layout";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
+import Textarea from "@mui/joy/Textarea";
 import Button from "@mui/joy/Button";
+
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import {useTranslation} from "react-i18next";
 import {BasicList, ParagraphWithTitle} from "../../components/atoms.jsx";
@@ -68,9 +70,9 @@ export default function PageOffer() {
           {t("offers.chooseASlotToExchangeWithTheCompany")}
         </Typography>
         <Typography textColor={"text.tertiary"}>
-          {t("offers.xMeetingSlotsAvailable", {count: offer?.slots?.length || 0})}
+          {t("offers.xMeetingSlotsAvailable", {count: offer?.nextSlots?.length || 0})}
         </Typography>
-        {offer?.slots?.length > 0 && (
+        {offer?.nextSlots?.length > 0 && (
           <Button
             variant={"solid"}
             color="primary"
@@ -103,18 +105,18 @@ export default function PageOffer() {
           <Grid xs={12} md={8}>
             <Stack gap={4}>
               <ParagraphWithTitle title={t("offers.description")}>
-                <Typography textAlign={"justify"}>{offer.description}</Typography>
+                <Textarea value={offer.description} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               {/* Company card in the text on xs+ screens */}
               <OfferSider offer={offer} display={{xs: "flex", md: "none"}} />
 
               <ParagraphWithTitle title={t("offers.tasks")}>
-                <Typography textAlign={"justify"}>{offer.tasks}</Typography>
+                <Textarea value={offer.tasks} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.skills")}>
-                <Typography textAlign={"justify"}>{offer.skills}</Typography>
+                <Textarea value={offer.skills} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.softSkills")}>
@@ -122,10 +124,10 @@ export default function PageOffer() {
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.workEnvironment")}>
-                <Typography textAlign={"justify"}>{offer.workEnvironment}</Typography>
+                <Textarea value={offer.workEnvironment} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
-              {offer?.slots?.length > 0 && (
+              {offer?.nextSlots?.length > 0 && (
                 <Card variant={"soft"}>
                   <MeetingCard />
                 </Card>

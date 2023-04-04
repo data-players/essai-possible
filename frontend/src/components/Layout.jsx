@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/joy/Box";
 import Sheet from "@mui/joy/Sheet";
 import Stack from "@mui/joy/Stack";
-import HeroHomeImage from "../assets/hero-home.jpg";
+import HeroHomeImage from "../assets/58137.jpg";
 import TousTesPossiblesLogoWhite from "../assets/tous-tes-possibles-logo-white.png";
 import Grid from "@mui/joy/Grid";
 import Typography from "@mui/joy/Typography";

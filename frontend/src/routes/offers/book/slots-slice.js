@@ -104,7 +104,7 @@ api.injectEndpoints({
 
     fetchSlot: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        console.log('fetchSlot',args);
+        // console.log('fetchSlot',args);
         const baseResponse = await baseQuery({
           url: decodeURIComponent(args),
         });

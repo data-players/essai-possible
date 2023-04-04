@@ -18,27 +18,41 @@ import Card from "@mui/joy/Card";
 
 export default function MeetingSlotsGenerator({register, values, setFieldValue, offerId}) {
   const {tDate, tTime} = useTranslationWithDates();
-  const [startDate, setStartDate] = useState(dayjs());
-  const [endDate, setEndDate] = useState(dayjs());
-  const [startTime, setStartTime] = useState(dayjs());
-  const [endTime, setEndTime] = useState(dayjs());
+  const [startDate, setStartDate] = useState(dayjs().hour(9).minute(0));
+  const [endDate, setEndDate] = useState(dayjs().hour(9).minute(0));
+  // const [startTime, setStartTime] = useState(dayjs());
+  // const [endTime, setEndTime] = useState(dayjs());
   const [daysOfWeek, setDaysOfWeek] = useState(["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"]);
 
   // console.log('MeetingSlotsGenerator',values)
 
-  function handleSetDateTimeFn(isSettingStart, setStart, setEnd, otherDate) {
-    const setDateTime = isSettingStart ? setStart : setEnd;
-    const setOtherDateTime = isSettingStart ? setEnd : setStart;
-    return (date) => {
-      console.log("newdate", date.toString(), "otherdate", otherDate.toString());
-
-      setDateTime(date); // Set the date
-
-      // If there is a date overlap, then set the other date to the same
-      if (isSettingStart ? date.isAfter(otherDate) : date.isBefore(otherDate))
-        setOtherDateTime(date);
-    };
+  function setStartDateTime(date) {
+    setStartDate(date);
+    if(endDate.isBefore(date)){
+      setEndDate(date);
+    }
   }
+  function setEndDateTime(date) {
+    setEndDate(date);
+    if(startDate.isAfter(date)){
+      setStartDate(date);
+    }
+  }
+
+
+  // function handleSetDateTimeFn(isSettingStart, setStart, setEnd, otherDate) {
+  //   const setDateTime = isSettingStart ? setStart : setEnd;
+  //   const setOtherDateTime = isSettingStart ? setEnd : setStart;
+  //   return (date) => {
+  //     console.log("newdate", date.toString(), "otherdate", otherDate.toString());
+
+  //     setDateTime(date); // Set the date
+
+  //     // If there is a date overlap, then set the other date to the same
+  //     if (isSettingStart ? date.isAfter(otherDate) : date.isBefore(otherDate))
+  //       setOtherDateTime(date);
+  //   };
+  // }
 
   // const slotsForOffer = useSelector((state) =>
   //   offerId ? selectSlotsForOffer(state, offerId) : []
@@ -46,22 +60,25 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
   const existingOfferSlotsKeys = values?.offer?.slots?.map((slot) => slot.start);
 
   function generateSlots() {
-    let currentDate = startDate.startOf("day");
-    const maxDate = endDate.startOf("day");
-    const realStartTime = startTime.millisecond(0).second(0).year(2000).month(1).day(1);
-    const realEndTime = endTime.millisecond(0).second(0).year(2000).month(1).day(1);
+    // let currentDate = startDate.startOf("day");
+    let currentDate = startDate.clone();
+    // const maxDate = endDate.startOf("day");
+    // const realStartTime = startTime.millisecond(0).second(0).year(2000).month(1).day(1);
+    // const realEndTime = endTime.millisecond(0).second(0).year(2000).month(1).day(1);
 
     const slots = [];
 
     // console.log("STARTING SLOTS GENERATION");
 
-    while (currentDate.isBefore(maxDate) || currentDate.isSame(maxDate)) {
+    while (currentDate.isBefore(endDate) || currentDate.isSame(endDate) ) {
       // console.log(" DAY :", currentDate.format("DD/MM"));
 
       const dayOfWeek = currentDate.format("dddd").toLowerCase();
       if (daysOfWeek.find((day) => day.toLowerCase() === dayOfWeek)) {
-        let currentTime = realStartTime;
-        while (currentTime.isBefore(realEndTime) || currentTime.isSame(realEndTime)) {
+        // let currentTime = realStartTime;
+        let currentTime =currentDate.clone();
+        const endTime = currentDate.minute(endDate.minute()).hour(endDate.hour())
+        while (currentTime.isBefore(endTime)) {
           // console.log("  TIME :", currentTime.format("HH:mm"));
 
           const slotStart = currentDate.minute(currentTime.minute()).hour(currentTime.hour());
@@ -106,7 +123,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               inputFormat={"ddd D MMM YYYY"}
               disableMaskedInput
               value={startDate}
-              onChange={handleSetDateTimeFn(true, setStartDate, setEndDate, endDate)}
+              onChange={setStartDateTime}
               help={"De cette date (comprise)..."}
             />
           </Grid>
@@ -117,7 +134,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               inputFormat={"ddd D MMM YYYY"}
               disableMaskedInput
               value={endDate}
-              onChange={handleSetDateTimeFn(false, setStartDate, setEndDate, startDate)}
+              onChange={setEndDateTime}
               help={"...jusqu'à cette date incluse..."}
             />
           </Grid>
@@ -126,8 +143,8 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               component={DateInput}
               datePickerComponent={TimePicker}
               label="Heure de début"
-              value={startTime}
-              onChange={handleSetDateTimeFn(true, setStartTime, setEndTime, endTime)}
+              value={startDate}
+              onChange={setStartDateTime}
               help={"...et de cette heure là..."}
             />
           </Grid>
@@ -136,8 +153,8 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               component={DateInput}
               datePickerComponent={TimePicker}
               label="Heure de fin"
-              value={endTime}
-              onChange={handleSetDateTimeFn(false, setStartTime, setEndTime, startTime)}
+              value={endDate}
+              onChange={setEndDateTime}
               help={"...jusqu'à cette heure là incluse."}
             />
           </Grid>
@@ -171,8 +188,8 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
                     startDate: tDate(startDate, "long"),
                     endDate: tDate(endDate, "long"),
                     daysOfWeek,
-                    startTime: tTime(startTime),
-                    endTime: tTime(endTime),
+                    startTime: tTime(startDate),
+                    endTime: tTime(endDate),
                   }}
                 />
               </Typography>

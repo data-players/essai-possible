@@ -57,7 +57,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
   // const meetingsReady = useSelector(selectMeetingsReady);
 
   const currentUserIsComplete = currentUser && userValidationSchema.isValidSync(currentUser);
- console.log('AuthComponent currentUser',currentUser)
+//  console.log('AuthComponent currentUser',currentUser)
   useEffect(()=>{
     if(currentUserIsComplete && redirectComplete){
       navigate(redirectComplete);

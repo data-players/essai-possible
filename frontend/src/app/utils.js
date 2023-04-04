@@ -229,9 +229,9 @@ export function createJsonLDMarshaller(
 
       for (const [newFieldName, oldFieldNameOrMarshaller] of Object.entries(renamingsSchema)) {
         if (typeof oldFieldNameOrMarshaller === "string") {
-          console.log('unmarshal 2',newFieldName,oldFieldNameOrMarshaller,outObject[newFieldName],outObject[newFieldName]!==undefined)
+          // console.log('unmarshal 2',newFieldName,oldFieldNameOrMarshaller,outObject[newFieldName],outObject[newFieldName]!==undefined)
           if (outObject[newFieldName]!==undefined){
-            console.log('unmarshal 2',newFieldName,oldFieldNameOrMarshaller,outObject[newFieldName])
+            // console.log('unmarshal 2',newFieldName,oldFieldNameOrMarshaller,outObject[newFieldName])
             inObject[oldFieldNameOrMarshaller] = outObject[newFieldName]; // The value at oldFieldName
           }
         } else if (

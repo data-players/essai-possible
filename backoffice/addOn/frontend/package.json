@@ -41,6 +41,8 @@
     "hot-copy-addOn": "nodemon -w './addOn/frontend/**/*' -e js --exec 'yarn copy-addOn'",
     "copy-and-start-addOn": "yarn hot-copy-addOn & yarn start",
     "copy-addOn": "cp -r ./addOn/frontend/* .",
+    "rollup" : "yarn --cwd ./../../semapps/src/frontend/ run rollup",
+    "link-all" : "yarn --cwd ./../../semapps/src/frontend/ run link-all",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

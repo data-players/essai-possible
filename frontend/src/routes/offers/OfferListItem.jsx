@@ -104,7 +104,7 @@ export default function OfferListItem({
               alignItems={"center"}
               justifyContent={"space-between"}>
               <Typography textColor={"text.tertiary"}>
-                {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+                {t("offers.xMeetingSlotsAvailable", {count: offer.nextSlots?.length || 0})}
               </Typography>
 
               <Chip
@@ -159,7 +159,7 @@ export function OfferListItemForCompany({value: offerId}) {
         <Grid container spacing={3}>
           <Grid md={6} xs={12}>
             <Typography textColor={"text.tertiary"}>
-              {t("offers.xMeetingSlotsAvailable", {count: offer.slots?.length || 0})}
+              {t("offers.xMeetingSlotsAvailable", {count: offer.nextSlots?.length || 0})}
             </Typography>
           </Grid>
           <Grid md={6} xs={12}>

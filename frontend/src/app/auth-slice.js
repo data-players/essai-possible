@@ -9,7 +9,7 @@ import api, {
 import jwtDecode from "jwt-decode";
 import {createJsonLDMarshaller} from "./utils.js";
 import * as yup from "yup";
-import {requiredEmail, requiredPhone, requiredString} from "./fieldValidation.js";
+import {requiredEmail, requiredPhone, requiredInternationalPhone,requiredString} from "./fieldValidation.js";
 
 /**
  * AUTHENTICATION SLICE
@@ -28,7 +28,7 @@ const slice = createSlice({
       localStorage.setItem("token", payload); // Also persist token to local storage
       const tockenData = jwtDecode(payload);
       state.webId = tockenData.webId;
-      console.log('tockenData',tockenData.webId)
+      // console.log('tockenData',tockenData.webId)
       state.token = payload;
     },
     setUser: (state, {payload: user}) => {
@@ -99,11 +99,11 @@ api.injectEndpoints({
     fetchCurrentUser: builder.query({
       queryFn: async (arg, {getState,dispatch}, extraOptions, baseQuery) => {
         const webId = getState().auth.webId;
-        console.log('fetchCurrentUser',webId)
+        // console.log('fetchCurrentUser',webId)
         if(webId){
           const result = await baseQuery(webId);
           const marshallData = marshaller.marshall(result.data);
-          console.log('fetchCurrentUsermarshallData',marshallData)
+          // console.log('fetchCurrentUsermarshallData',marshallData)
 
           const slots= [];
           for (const slot of marshallData.slots) {
@@ -116,7 +116,7 @@ api.injectEndpoints({
             ...marshallData,
             slots, 
           }
-          console.log('fetchCurrentUser finalData',finalData)
+          // console.log('fetchCurrentUser finalData',finalData)
           return {data: finalData};
         }else{
           return {error:"fetch user without token"};
@@ -128,7 +128,7 @@ api.injectEndpoints({
     // Fetch one user by id
     fetchUser: builder.query({
       query: (id) => {
-        console.log('---- fetch specific',id)
+        // console.log('---- fetch specific',id)
         //log volontaire de controle, suspition que l'id arrive parfait pas encodé
         // console.log("fetchUser id", id);
         return decodeURIComponent(id);
@@ -175,7 +175,7 @@ export const {
 export const userValidationSchema = yup.object({
   firstName: requiredString,
   lastName: requiredString,
-  phone: requiredPhone,
+  phone: requiredInternationalPhone,
   email: requiredEmail,
 });
 

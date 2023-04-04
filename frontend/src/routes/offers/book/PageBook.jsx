@@ -50,7 +50,7 @@ export default function PageBook() {
   const offer = useSelector((state) => selectOfferById(state, encodeURIComponent(id))) || {};
   const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
   // const slotsForOffer = useSelector((state) => selectSlotsForOffer(state, offer.id));
-  const slotsForOffer = offer?.slots||[];
+  const slotsForOffer = offer?.nextSlots||[];
   const slotsForUser = currentUser?.slots||[];
   const meetingForOffer = slotsForOffer.map(so=>so.id).filter(soId=>slotsForUser.map(su=>su.id).includes(soId)).legth>0
 

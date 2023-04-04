@@ -63,7 +63,7 @@ export default function PageEditOffer({mode, isCopying}) {
   const [openSlotsGenerator, setOpenSlotsGenerator] = useState(null);
 
   const offer = useSelector((state) => (isEditMode ? selectOfferById(state, encodeURIComponent(id)) : undefined));
-  console.log("offer Edit",offer)
+  // console.log("offer Edit",offer)
   const company = useSelector((state) =>
     selectCompanyById(state, isEditMode ? offer.company : encodeURIComponent(companyId))
   );
@@ -143,7 +143,7 @@ export default function PageEditOffer({mode, isCopying}) {
   return (
     <EditFormComponent
       // ready when the company is ready + if edit mode, the offer and the slots are ready
-      ready={companyReady && (!isEditMode || (offerReady))}
+      ready={companyReady && (!isEditMode || (offerReady) && (!(isAddingOffer || isUpdatingOffer)))}
       pageBanner={
         isEditMode && !isCopying ? (
           <OfferBanner
