@@ -19,9 +19,10 @@ import {AuthCard} from "./AuthCard.jsx";
 export default function PageLogIn() {
   // console.log('PageLogIn!');
   const {t} = useTranslation();
-  const {loggedOut} = queryString.parse(window.location.search);
+  const parsedSearch = queryString.parse(window.location.search);
+  const {loggedOut} = parsedSearch;
 
-  console.log('Login Page function loggedOut',loggedOut,window.location.search,window.location)
+  console.log('Login Page function loggedOut',loggedOut,parsedSearch,window.location.search,window.location)
 
   // If loggedOut is equal to something else than "undefined", then it means the query arg loggedOut was used
   const displayLoggedOutMessage = loggedOut !== undefined;
