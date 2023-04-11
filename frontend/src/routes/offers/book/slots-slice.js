@@ -59,7 +59,8 @@ const marshaller = createJsonLDMarshaller(
     type: "type",
     start: "pair:startDate",
     offer: "pair:about",
-    user : "pair:concerns"
+    user : "pair:concerns",
+    comments : "pair:comments"
   },
   {
     encodeUriFields: ["offer","user"],

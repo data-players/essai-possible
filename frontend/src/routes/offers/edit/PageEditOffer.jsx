@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
+import Card from "@mui/joy/Card";
 import {
   CheckboxGroupSemantic,
   ExternalLink,
@@ -81,6 +82,8 @@ export default function PageEditOffer({mode, isCopying}) {
   const status = useSelector(selectAllStatus);
   const skills = useSelector(selectAllSkills);
 
+  const draftStatus = status.find(s=>s.id.includes('brouillon'))?.id;
+
   const [addOffer, {isLoading: isAddingOffer}] = useAddOfferMutation();
   const [updateOffer, {isLoading: isUpdatingOffer}] = useUpdateOfferMutation();
   const [updateCompany, {isLoading: isUpdatingCompany}] = useUpdateCompanyMutation();
@@ -116,7 +119,7 @@ export default function PageEditOffer({mode, isCopying}) {
     const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
     if (shouldUpdateCompany) updateCompany(values.company);
 
-    const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(offer?.slots);
+    // const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(offer?.slots);
     // if (shouldUpdateSlots) {
     //   // TODO Update slots for offer
     // }
@@ -143,7 +146,7 @@ export default function PageEditOffer({mode, isCopying}) {
   return (
     <EditFormComponent
       // ready when the company is ready + if edit mode, the offer and the slots are ready
-      ready={companyReady && (!isEditMode || (offerReady) && (!(isAddingOffer || isUpdatingOffer)))}
+      ready={companyReady && (!isEditMode || offerReady)}
       pageBanner={
         isEditMode && !isCopying ? (
           <OfferBanner
@@ -168,12 +171,12 @@ export default function PageEditOffer({mode, isCopying}) {
               slots:offer?.slots,
             }
           : {
-              offer: offerDefaultValues,
+              offer: {...offerDefaultValues,status: draftStatus},
               company: {...companyDefaultValues, ...company},
               slots:[],
             }
       }
-      validationSchema={validationSchema}
+      // validationSchema={validationSchema}
       onSubmit={onSubmit}
       isEditMode={isEditMode && !isCopying}
       onDelete={onDelete}
@@ -207,7 +210,7 @@ export default function PageEditOffer({mode, isCopying}) {
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
       }
       deleteButtonText={"Supprimer l'offre"}>
-      {(register, {values, setFieldValue, errors, showingErrors}) => (
+      {(register, {values, setFieldValue, errors, showingErrors,pendingMutation}) => (
         <>
           <FormStep
             stepNumber={1}
@@ -221,6 +224,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"titre"}
                 register={register}
                 name={"offer.title"}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 label={"Objectif"}
@@ -228,6 +232,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 name={"offer.goal"}
                 options={goals}
                 register={register}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 component={Textarea}
@@ -235,6 +240,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"description"}
                 register={register}
                 name={"offer.description"}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 component={Textarea}
@@ -243,6 +249,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 register={register}
                 name={"offer.tasks"}
                 help={"5 recommandées"}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 component={Textarea}
@@ -251,6 +258,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 register={register}
                 name={"offer.skills"}
                 help={"4 recommandées"}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 component={CheckboxGroupSemantic}
@@ -261,6 +269,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 onChange={(value) => setFieldValue("offer.softSkills", value)}
                 options={skills}
                 help={"3 recommandées"}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 label={"Environnement de travail"}
@@ -270,6 +279,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"environnement de travail"}
                 register={register}
                 name={"offer.workEnvironment"}
+                pendingMutation={pendingMutation}
               />
             </Stack>
           </FormStep>
@@ -290,6 +300,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"durée"}
                 register={register}
                 name={"offer.duration"}
+                pendingMutation={pendingMutation}
               />
 
               <FormInput
@@ -297,6 +308,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"horaires"}
                 register={register}
                 name={"offer.timeSchedule"}
+                pendingMutation={pendingMutation}
               />
 
               <FormInput
@@ -306,6 +318,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 register={register}
                 onChange={(event, value) => setFieldValue("offer.location", value)}
                 name={"offer.location"}
+                pendingMutation={pendingMutation}
               />
 
               <FormInput
@@ -313,6 +326,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"conditions"}
                 register={register}
                 name={"offer.particularConditions"}
+                pendingMutation={pendingMutation}
               />
 
               <FormInput
@@ -320,6 +334,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"amménagements"}
                 register={register}
                 name={"offer.possibleArrangements"}
+                pendingMutation={pendingMutation}
               />
             </Stack>
           </FormStep>
@@ -342,6 +357,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 help={
                   "Combien de temps dure un rendez-vous en moyenne, préférences sur les horaires, déroulé, etc."
                 }
+                pendingMutation={pendingMutation}
               />
 
               <FormInput
@@ -350,6 +366,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder="email@mon-entreprise.com"
                 type={"email"}
                 register={register}
+                pendingMutation={pendingMutation}
               />
               <FormInput
                 label="Numéro de téléphone du mentor"
@@ -357,6 +374,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder="+33 6 12 34 56 78"
                 type={"tel"}
                 register={register}
+                pendingMutation={pendingMutation}
               />
             </Stack>
           </FormStep>
@@ -451,6 +469,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 component={RadioGroupSemantic}
                 options={status}
                 register={register}
+                pendingMutation={pendingMutation}
               />
             </Stack>
           </FormStep>
@@ -499,6 +518,14 @@ export default function PageEditOffer({mode, isCopying}) {
               </Button>
             </Stack>
           </FormStep>
+          {(isUpdatingOffer||isDeletingOffer)?
+            <Card variant="solid" color="warning">
+              <Stack gap={1}>
+                <Typography>L'enregistrement d'une offre necessite un temps de traitement qui depend du nombre de rdv à créer, modifier ou supprimet. Cela peut prendre plusieurs minutes</Typography>
+              </Stack>
+            </Card>
+          :<></>}
+          
         </>
       )}
     </EditFormComponent>

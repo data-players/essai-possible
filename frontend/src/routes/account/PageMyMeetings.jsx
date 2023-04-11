@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useSelector} from "react-redux";
-import {HeroBanner} from "../../components/Layout.jsx";
+import {HeroBanner, PageContent} from "../../components/Layout.jsx";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
 import Grid from "@mui/joy/Grid";
@@ -28,6 +28,7 @@ import {selectCurrentUser} from "../../app/auth-slice.js";
 import { useNavigate ,redirect} from "react-router-dom";
 
 export function MeetingCardContent({slot, offer}) {
+  // console.log('slot',slot)
   const {t} = useTranslation();
   const navigate = useNavigate();
   const [openSnackbar] = useSnackbar();
@@ -59,7 +60,7 @@ export function MeetingCardContent({slot, offer}) {
 
   return (
     isAllow ? (
-      <Stack gap={3}>
+      <Stack gap={1}>
         {isAllowForUser &&
           <Typography level="body" sx={{color: "text.tertiary"}}>
             Vous avez réservé le créneau suivant :
@@ -75,8 +76,14 @@ export function MeetingCardContent({slot, offer}) {
             </Typography>
           </>
         }
+        <Typography level="body" sx={{color: "text.tertiary"}}>
+          horaire :
+        </Typography>
         <Typography level="h3">{tDateTime(slot.start)}</Typography>
-        <Typography>{slot.comments}</Typography>
+        <Typography level="body" sx={{color: "text.tertiary"}}>
+          commentaire :
+        </Typography>
+        <Typography level="h5">{slot.comments}</Typography>
         <Stack gap={2} onClick={(event) => event.stopPropagation()}>
           <Button
             component={Link}
@@ -113,8 +120,6 @@ export function MeetingCardContent({slot, offer}) {
         <div>{currentStatus.label}</div>
       </Stack>
     )
-      
-   
   );
 }
 
@@ -128,7 +133,9 @@ export default function PageMyMeetings() {
   const currentUser = useSelector(selectCurrentUser);
   // console.log('currentUser',currentUser)
   const meetings =currentUser?.slots;
-  const meetingsReady = true;
+  const nextSlot=meetings.filter(s=>new Date(s.start)>= new Date()) 
+  const pastSlot=meetings.filter(s=>new Date(s.start)< new Date()) 
+  // const meetingsReady = true;
 
   function OfferListItemWithMeetingInfo({value: slot}) {
     // const slot = useSelector((state) => selectSlotById(state, meeting.slot));
@@ -140,6 +147,7 @@ export default function PageMyMeetings() {
       {offer&&
         <OfferListItem
         value={offer.id}
+        slot={slot}
         sideElement={() => <MeetingCardContent offer={offer} slot={slot}/>}
       />
       }
@@ -160,14 +168,28 @@ export default function PageMyMeetings() {
           </Grid>
         </Container>
       </HeroBanner>
+      <PageContent>
 
       <ListPageContent
-        ready={offersReady && meetingsReady}
+        ready={offersReady}
         noResultsContent={t("account.youDontHaveMeetingsYet")}
-        values={meetings}
+        values={nextSlot}
         item={OfferListItemWithMeetingInfo}
         getKey={(value) => value.id}
       />
+      {pastSlot.length>0 ?
+      <>
+              <Typography level="h2">Rendez vous passés</Typography>
+              <ListPageContent
+                ready={offersReady}
+                values={pastSlot}
+                item={OfferListItemWithMeetingInfo}
+                getKey={(value) => value.id}
+              />
+      </>
+      :<></>}
+
+      </PageContent>
     </>
   );
 }

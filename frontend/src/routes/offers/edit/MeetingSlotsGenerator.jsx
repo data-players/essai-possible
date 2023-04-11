@@ -234,7 +234,7 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
               }}
               deletable
               onChange={(key) =>{
-                console.log('onChange',key,values.slots)
+                // console.log('onChange',key,values.slots)
                   setFieldValue(
                     "slots",
                     values.slots.filter((slot) => slot.start !== key)

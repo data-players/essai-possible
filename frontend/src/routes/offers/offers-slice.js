@@ -203,14 +203,14 @@ export const selectFilteredOffersIds = createSelector(
   }
 );
 
-async function fetchSlotForOffer(data, dispatch) {
+async function fetchSlotForOffer(data, dispatch, forceRefetch) {
   // console.log('fetchslotforOffer',data)
   if(data.slots && Array.isArray(data.slots)){
     let fetchSlotPromises = [];
     for (const slot of data.slots) {
       fetchSlotPromises.push(new Promise(async (resolve, reject) => {
         try {
-          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+          const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot,{forceRefetch: forceRefetch}));
           resolve(slotResult.data);
         } catch (error) {
           reject(error);
@@ -220,6 +220,7 @@ async function fetchSlotForOffer(data, dispatch) {
     }
     const slots = await Promise.all(fetchSlotPromises);
     const nextSlots = slots.filter(s => new Date(s.start) > new Date());
+    // const nextSlots = slots;
     // console.log(slots, nextSlots);
     const finalData = {
       ...data,
@@ -324,7 +325,7 @@ api.injectEndpoints({
         const baseResponse = await baseQuery({
           url: `/jobs`,
         });
-        const data = baseResponse.data["ldp:contains"].map((ofer) => marshaller.marshall(ofer));
+        const data = baseResponse.data["ldp:contains"].map((offer) => marshaller.marshall(offer));
         // console.log('fetchOffers',data)
         return {
           data
@@ -342,7 +343,7 @@ api.injectEndpoints({
         });
         const data = marshaller.marshall(baseResponse.data);
         // const slots= [];
-        const finalData = await fetchSlotForOffer(data, dispatch);
+        const finalData = await fetchSlotForOffer(data, dispatch,true);
         // console.log('finalData fetchOffer',finalData)
         return {
           data:finalData
@@ -377,7 +378,7 @@ api.injectEndpoints({
           const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id,{forceRefetch: true}));
           return fetchData.data;
         });
-        console.log(out);
+        // console.log(out);
         return out;
       }
     }),
@@ -437,7 +438,7 @@ export const offerValidationSchema = yup.object({
 
 export const offerDefaultValues = {
   // Job description
-  title: "",
+  title: "test init",
   goal: "",
   description: "",
   tasks: "",
@@ -459,7 +460,7 @@ export const offerDefaultValues = {
   mentorEmail: "",
 
   // Status
-  // status: "Brouillon", // TODO : set default in component
+  // status: "http%3A%2F%2Flocalhost%3A3000%2Fstatus%2Fbrouillon", // TODO : set default in component
   publishedAt: undefined,
 
   //Slots

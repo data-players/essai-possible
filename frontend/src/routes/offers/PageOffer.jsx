@@ -86,6 +86,7 @@ export default function PageOffer() {
       </Stack>
     );
   }
+  // console.log('renderReady',renderReady)
 
   return !renderReady ? (
     <LoadingSpinner />
@@ -105,18 +106,18 @@ export default function PageOffer() {
           <Grid xs={12} md={8}>
             <Stack gap={4}>
               <ParagraphWithTitle title={t("offers.description")}>
-                <Textarea value={offer.description} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
+                <Textarea value={offer.description} readOnly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               {/* Company card in the text on xs+ screens */}
               <OfferSider offer={offer} display={{xs: "flex", md: "none"}} />
 
               <ParagraphWithTitle title={t("offers.tasks")}>
-                <Textarea value={offer.tasks} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
+                <Textarea value={offer.tasks} readOnly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.skills")}>
-                <Textarea value={offer.skills} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
+                <Textarea value={offer.skills} readOnly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.softSkills")}>
@@ -124,7 +125,7 @@ export default function PageOffer() {
               </ParagraphWithTitle>
 
               <ParagraphWithTitle title={t("offers.workEnvironment")}>
-                <Textarea value={offer.workEnvironment} readonly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
+                <Textarea value={offer.workEnvironment} readOnly variant='plain' sx={{backgroundColor:'transparent'}} disabled color='string'/>
               </ParagraphWithTitle>
 
               {offer?.nextSlots?.length > 0 && (

@@ -31,7 +31,11 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   }, [encodedCompanyId, currentUser?.companies]);
 
   // console.log('ComapnyProtection',!company?.id)
-  if (!company?.id) return <LoadingSpinner />;
+  
+  if (!company?.id){
+    console.log('CompanyAccountProtection Loading...')
+    return <LoadingSpinner />;
+  }
 
   return children || <Outlet />;
 };

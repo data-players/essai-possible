@@ -29,7 +29,10 @@ export default function DefinedOfferProtection() {
   // Don't use the ready status because sometimes the objects are partially loaded and can be displayed already.
   // Instead, if the id is present is a good test to see if we can display stuff.
   // console.log('DefinedOfferProtection',!(offer.id));
-  if (!(sofferReady && offer.id)) return <LoadingSpinner />;
+  if (!(sofferReady && offer.id)){
+    console.log('DefinedOfferProtection Loading...')
+    return <LoadingSpinner />;
+  }
 
   return <Outlet />;
 }

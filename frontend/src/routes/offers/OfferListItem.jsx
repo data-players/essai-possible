@@ -77,16 +77,22 @@ function OfferListItemRoot({offer, children}) {
  */
 export default function OfferListItem({
   value: offerId,
+  slot, 
   sideElement: SideElement = OfferDescriptionSideElement,
 }) {
   const {t, tDate} = useTranslationWithDates();
   const offer = useSelector((state) => selectOfferById(state, offerId));
   // console.log('OfferListItem offer',offer)
+  const isNextSlotAvaible = offer.nextSlots.length>0;
+  const isMySlotAvaible = slot && new Date(slot.start)>new Date();
+  
+  const isFutureSlot = (slot&&isMySlotAvaible)||(!slot&&isNextSlotAvaible);
+  // console.log('isFutureSlot',isFutureSlot,slot)
   const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
   return (
-    <OfferListItemRoot offer={offer}>
-      <Grid container columnSpacing={4} rowSpacing={2}>
+    <OfferListItemRoot offer={offer} >
+      <Grid container columnSpacing={4} rowSpacing={2} sx={{opacity:isFutureSlot?"1":"0.5"}}>
         <Grid xs={12} md={8}>
           <Stack gap={2}>
             <Typography level="h3" component="h2" fontWeight={"lg"}>

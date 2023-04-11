@@ -58,7 +58,7 @@ export default function EditFormComponent({
               </>
             )}
 
-            {children(register, {values, setFieldValue, errors, dirty, showingErrors})}
+            {children(register, {values, setFieldValue, errors, dirty, showingErrors,pendingMutation:deleteLoading||updateLoading})}
 
             <Collapse in={showingErrors} sx={{mb: -2}}>
               {/* {console.log(errors)} */}

@@ -107,13 +107,15 @@ const MemoizedFormInput = React.memo(
     placeholder,
     help,
     registration,
+    pendingMutation,
     ...props
   }) => {
     // console.log('MemoizedFormInput',label,props.options)
+    console.log('MemoizedFormInput pendingMutation',label,pendingMutation==true)
     return (
       <WrapperComponent>
         <FormLabel>{label}</FormLabel>
-        <InputComponent placeholder={placeholder} {...registration} {...props} />
+        <InputComponent placeholder={placeholder} pendingMutation={pendingMutation} readOnly={pendingMutation==true} disabled={pendingMutation==true}  {...registration} {...props} />
         <FormHelperText sx={registration?.errors && {color: "red", fontWeight: "lg"}}>
           {registration?.errors || help}
         </FormHelperText>
@@ -121,8 +123,8 @@ const MemoizedFormInput = React.memo(
     );
   },
   (pp, np) => {
-    const renderVariation = JSON.stringify([pp.registration?.value, pp.registration.errors, pp.deps, pp.options]) ===
-    JSON.stringify([np.registration?.value, np.registration.errors, np.deps, np.options]);
+    const renderVariation = JSON.stringify([pp.registration?.value, pp.registration.errors, pp.deps, pp.options,pp.pendingMutation]) ===
+    JSON.stringify([np.registration?.value, np.registration.errors, np.deps, np.options,np.pendingMutation]);
     if(renderVariation){
       // console.log('VARIATON','pp',pp,'np',np)
     }
