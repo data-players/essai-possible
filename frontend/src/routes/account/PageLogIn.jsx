@@ -23,6 +23,8 @@ export default function PageLogIn() {
   const {loggedOut} = parsedSearch;
 
   console.log('Login Page function loggedOut',loggedOut,parsedSearch,window.location.search,window.location)
+  console.log('Login Page function loggedOut1',window.location.href)
+  console.log('Login Page function loggedOut2',JSON.stringify(window.location))
 
   // If loggedOut is equal to something else than "undefined", then it means the query arg loggedOut was used
   const displayLoggedOutMessage = loggedOut !== undefined;
