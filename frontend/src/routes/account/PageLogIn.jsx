@@ -21,7 +21,7 @@ export default function PageLogIn() {
   const {t} = useTranslation();
   const {loggedOut} = queryString.parse(window.location.search);
 
-  console.log('Login Page function loggedOut',loggedOut,queryString)
+  console.log('Login Page function loggedOut',loggedOut,window.location.search,window.location)
 
   // If loggedOut is equal to something else than "undefined", then it means the query arg loggedOut was used
   const displayLoggedOutMessage = loggedOut !== undefined;
