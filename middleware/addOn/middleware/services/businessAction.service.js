@@ -44,7 +44,8 @@ module.exports = {
                   }],
                   variables:{
                     user : newData['pair:e-mail'],
-                    company:company['pair:label']
+                    company:company['pair:label'],
+                    url:`${config.SEMAPPS_FRONT_URL}company/${encodeURIComponent(company.id)}/users`
                   }
                 });
               }
