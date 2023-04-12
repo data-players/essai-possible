@@ -120,7 +120,7 @@ export default function PageAccount() {
                     </Typography>
 
                     <Typography>
-                      Ces informations sont gérées par Les Communs. Pour les modifiez, rendez-vous
+                      Ces informations sont gérées par Les Communs. Pour les modifier, rendez-vous
                       dans votre espace Les Communs.
                     </Typography>
 
@@ -188,8 +188,8 @@ export default function PageAccount() {
                     color={"danger"}
                     onClick={async () => {
                       await dispatch(authActions.logOut());
-                      navigate("/login?loggedOut");
-                      openSnackbar("Déconnexion réussie", {color: "success"});
+                      // navigate("/login?loggedOut");
+                      // openSnackbar("Déconnexion réussie", {color: "success"});
                     }}>
                     Se déconnecter
                   </Button>

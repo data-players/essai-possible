@@ -12,28 +12,19 @@ import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded.js";
 import * as React from "react";
 import {
   selectCurrentUser,
+  selectEverLoggedOut
 } from "../../app/auth-slice.js";
 import {useSelector} from "react-redux";
 import {AuthCard} from "./AuthCard.jsx";
 
 export default function PageLogIn() {
-  // console.log('PageLogIn!');
+
+  const everLoggedOut = useSelector(selectEverLoggedOut);
   const {t} = useTranslation();
-  const parsedSearch = queryString.parse(window.location.search);
-  const {loggedOut} = parsedSearch;
-
-  console.log('Login Page function loggedOut',loggedOut,parsedSearch,window.location.search,window.location)
-  console.log('Login Page function loggedOut1',window.location.href)
-  console.log('Login Page function loggedOut2',JSON.stringify(window.location))
-
-  // If loggedOut is equal to something else than "undefined", then it means the query arg loggedOut was used
-  const displayLoggedOutMessage = loggedOut !== undefined;
-
-  const currentUser = useSelector(selectCurrentUser);
 
   return (
     <PageAuthStructure title={t("nav.logIn")}>
-      {displayLoggedOutMessage && (
+      {everLoggedOut && (
         <HelpBox color={"success"}>
           <Typography fontWeight={"lg"}>Déconnexion réussie</Typography>
           <Typography>Vous vous êtes déconnecté·e du site Essai Possible.</Typography>

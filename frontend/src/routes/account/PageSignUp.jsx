@@ -8,6 +8,9 @@ import PageAuthStructure from "./PageAuthStructure.jsx";
 import {AuthCard} from "./AuthCard.jsx";
 
 /**
+ * LEGACY / not used
+ */
+/**
  * @param companyMode boolean true = company mode | false = candidate mode
  * @param logInMode true = logIn | false = signUp
  */

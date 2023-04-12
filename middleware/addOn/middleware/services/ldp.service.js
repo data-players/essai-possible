@@ -32,13 +32,15 @@ module.exports = {
               // console.log('HOOK GET');
               // console.log('BEFORE POST',ctx.params);
               const resource = ctx.params.resource;
-              
+              // console.log('POST',resource);              
               const container = await ctx.call('ldp.registry.getByUri', { containerUri : ctx.params.containerUri})
+              // console.log('container',container)
               switch (container.path) {
                 case '/organizations':
                   // const user = ctx.params.resourceUri;
-                  // console.log('POST ORGA',resource);
+
                   const newSiret = resource['ep:siret'];
+                  // console.log('newSiret',newSiret)
                   const query= `PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
                   CONSTRUCT {
                     ?s1 ?p1 ?o1.
@@ -47,9 +49,10 @@ module.exports = {
                       ?s1 ep:siret "${newSiret}".
                       ?s1 ?p1 ?o1.
                   }`
+                  // console.log('query',query)
                   const result  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
-                  // console.log('result',result['@graph']);
-                  if (result['@graph'] && Array.isArray(result['@graph']) && result['@graph'].length>0){
+                  // console.log('result',result);
+                  if (result['@graph']||result['@id']){
                     // throw new Error('Siret deja existant');
                     throw new MoleculerError(
                       `Un entreprise avec siret "${newSiret}" existe déjà`,

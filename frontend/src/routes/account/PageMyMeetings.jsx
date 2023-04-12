@@ -42,9 +42,9 @@ export function MeetingCardContent({slot, offer}) {
     const currentStatus = status.find(s=>s.id==offer.status)
   // console.log('currentUser',currentUser)
 
-  const isAllowForComapny = currentUser?.companies.includes(offer.company);
+  const isAllowForCompany = currentUser?.companies.includes(offer.company)
   const isAllowForUser = slot?.user?.id==currentUser?.id
-  const isAllow = isAllowForComapny||isAllowForUser;
+  const isAllow = isAllowForCompany||isAllowForUser;
   // console.log('slot',slot);
 
   const [updateSlot, {isLoading: isUpdatingSlotx}] = useUpdateSlotMutation();
@@ -61,12 +61,8 @@ export function MeetingCardContent({slot, offer}) {
   return (
     isAllow ? (
       <Stack gap={1}>
-        {isAllowForUser &&
-          <Typography level="body" sx={{color: "text.tertiary"}}>
-            Vous avez réservé le créneau suivant :
-           </Typography>
-        }
-        {isAllowForComapny &&
+
+        {isAllowForCompany ?
           <>
             <Typography level="body" sx={{color: "text.tertiary"}}>
               Une personne à reservé ce créneau :
@@ -75,7 +71,11 @@ export function MeetingCardContent({slot, offer}) {
               {slot.user.label}
             </Typography>
           </>
-        }
+        : isAllowForUser ?
+          <Typography level="body" sx={{color: "text.tertiary"}}>
+            Vous avez réservé le créneau suivant :
+           </Typography>
+        :<></>}
         <Typography level="body" sx={{color: "text.tertiary"}}>
           horaire :
         </Typography>
@@ -109,7 +109,11 @@ export function MeetingCardContent({slot, offer}) {
 
             }}
             areYouSureText={
-              "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
+              isAllowForCompany ?
+                "Êtes-vous sûr de vouloir annuler cette rencontre ? Un mail sera automatiquement envoyé au candidat. Votre annonce sera remise en ligne. Si vous souhaitez proposer un autre créneau candidat, nous vous conseillons de ne pas annuler son RDV et de lui proposer directement un autre créneau par mail ou téléphone."
+              : isAllowForUser ?
+                "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
+              : ""
             }>
             Supprimer
           </ButtonWithConfirmation>

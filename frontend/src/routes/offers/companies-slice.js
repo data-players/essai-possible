@@ -140,7 +140,7 @@ api.injectEndpoints({
           askedAffiliation: args.askedAffiliation?.map(a=>a.id)
         }
 
-        return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
+        return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/organizations","https://data.essai-possible.data-players.com/context.json",async (id)=>{
           const fetchData= await dispatch(api.endpoints.fetchCompany.initiate(id));
           return fetchData.data;
         })

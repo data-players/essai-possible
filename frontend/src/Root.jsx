@@ -9,7 +9,12 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
+// import TousTesPossiblesLogoWhite from "../assets/tous-tes-possibles-logo-white.png";
+import Grid from "@mui/joy/Grid";
 import {useFetchOffersQuery} from "./routes/offers/offers-slice.js";
+import LinkedIn from "@mui/icons-material/LinkedIn.js";
+import Facebook from "@mui/icons-material/Facebook.js";
+import Instagram from "@mui/icons-material/Instagram.js";
 import {
   authActions,
   selectAuthTokenExists,
@@ -104,7 +109,7 @@ export default function Root() {
   ) : (
     <>
       <AuthButton.LogIn />
-      <AuthButton.SignUp />
+      {/* <AuthButton.SignUp /> */}
     </>
   );
 
@@ -171,14 +176,23 @@ export default function Root() {
         </Layout.Main>
 
         <Layout.Footer>
-          <Chip color={"primary"} variant={"soft"}>
+          <Typography>
             {t("footer.contact")}
-          </Chip>
+          </Typography>
           <Typography fontSize={"md"} fontWeight={"xl"} sx={{mt: 1, ml: 2}}>
-            <Link href={"mailto:contact@essaipossible.fr"} sx={{color: "primary.solidColor"}}>
-              contact@essaipossible.fr
+            <Link href={"mailto:entreprises@toustespossibles.fr"} sx={{color: "primary.solidColor"}}>
+            entreprises@toustespossibles.fr"
             </Link>
           </Typography>
+          <Typography fontSize={"lg"} sx={{mt: 2}}>
+            suivez nous
+          </Typography>
+          <Grid container>
+            <Grid xs={4}><IconButton component="a" href="https://fr.linkedin.com/company/toustespossibles" target="_blank"><LinkedIn/></IconButton></Grid>
+            <Grid xs={4}><IconButton component="a" href="https://www.facebook.com/TousTesPossibles/" target="_blank"><Facebook/></IconButton></Grid>
+            <Grid xs={4}><IconButton component="a" href="https://www.instagram.com/toustespossibles/?hl=fr" target="_blank"><Instagram/></IconButton></Grid>
+          </Grid>
+          <Typography sx={{mt: 2}}>Image de gstudioimagen sur Freepik</Typography>
         </Layout.Footer>
       </Layout.Root>
     </Box>

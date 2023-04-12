@@ -9,6 +9,9 @@ import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import MenuIcon from "@mui/icons-material/Menu.js";
+import LinkedIn from "@mui/icons-material/LinkedIn.js";
+import Facebook from "@mui/icons-material/Facebook.js";
+import Instagram from "@mui/icons-material/Instagram.js";
 import EssaiPossibleLogo from "../assets/essai-possible-logo.jpg";
 import {Link as ReactRouterLink, useNavigate, useParams} from "react-router-dom";
 import Slide from "@mui/material/Slide";
@@ -159,16 +162,21 @@ function Footer(props) {
       <Sheet color={"neutral"} variant={"solid"} invertedColors sx={{overflow: "hidden"}}>
         <Container>
           <Grid container spacing={6} py={8} alignItems="center">
-            <Grid xs={12} md={9}>
+            <Grid xs={12} md={3}>
               {props.children}
+            </Grid>
+            <Grid xs={0} md={6}>
             </Grid>
             <Grid xs={12} md={3}>
               <Stack gap={2} alignItems={"center"}>
                 <Box component={"img"} src={TousTesPossiblesLogoWhite} width={"100%"} />
                 <Typography fontSize={"lg"}>
                   {t("footer.projectFundedBy")}{" "}
-                  <Link href={"https://www.toustespossibles.fr"} target="_blank">
+                  <Link href={"https://www.toustespossibles.fr/entreprises-inclusives/"} target="_blank">
                     toustespossibles.fr
+                  </Link>
+                  <Link href={"https://majrh.fr/"} target="_blank">
+                    Mettez à jour vos pratiques RH
                   </Link>
                 </Typography>
                 <Link

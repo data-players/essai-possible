@@ -2,6 +2,7 @@ import Button from "@mui/joy/Button";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import BookTwoTone from "@mui/icons-material/BookTwoTone";
 import {HeroBanner, PageContent} from "../components/Layout.jsx";
 import {Link as ReactRouterLink} from "react-router-dom";
 import {Trans, useTranslation} from "react-i18next";
@@ -146,15 +147,30 @@ export default function HomePage() {
               <Typography level="h4" component={"p"}>
                 {t("homePage.dontHesitateAndFillTheInformation")}
               </Typography>
-              <Button
-                component={ReactRouterLink}
-                variant={"solid"}
-                color="neutral"
-                to={companyActionUrl}
-                size={"lg"}
-                startDecorator={<CreateRoundedIcon />}>
-                {t("homePage.register")}
-              </Button>
+              <Grid container spacing={10}>
+                <Grid xs={6}>
+                  <Button sx={{ width: "100%" }}
+                    component="a"
+                    variant={"soft"}
+                    color="neutral"
+                    href="https://majrh.fr"
+                    target="_blank"
+                    startDecorator={<BookTwoTone/>}>
+                    {"Entamer ma Mise à Jour RH"}
+                  </Button>
+                </Grid>
+                <Grid xs={6}>
+                  <Button sx={{ width: "100%" }}
+                    component={ReactRouterLink}
+                    variant={"solid"}
+                    color="neutral"
+                    to={companyActionUrl}
+                    startDecorator={<AddRoundedIcon />}>
+                    {"poster une offre"}
+                  </Button>
+                </Grid>
+              </Grid>
+
             </Stack>
           </Container>
         </HeroBanner>

@@ -28,13 +28,13 @@ export default function MeetingSlotsGenerator({register, values, setFieldValue, 
 
   function setStartDateTime(date) {
     setStartDate(date);
-    if(endDate.isBefore(date)){
+    if(endDate && endDate.isBefore(date)){
       setEndDate(date);
     }
   }
   function setEndDateTime(date) {
     setEndDate(date);
-    if(startDate.isAfter(date)){
+    if(startDate && startDate.isAfter(date)){
       setStartDate(date);
     }
   }

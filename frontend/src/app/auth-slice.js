@@ -22,6 +22,7 @@ const slice = createSlice({
     currentUser:null,
     token: localStorage.getItem("token") || null,
     webId: localStorage.getItem("token") ? jwtDecode(localStorage.getItem("token")).webId : null,
+    everLoggedOut:false
   },
   reducers: {
     setToken: (state, {payload}) => {
@@ -38,6 +39,7 @@ const slice = createSlice({
       state.currentUser = null;
       state.token = null;
       state.webId = null;
+      state.everLoggedOut = true;
       localStorage.removeItem("token");
     },
   },
@@ -65,6 +67,7 @@ export const selectCurrentUserStatus = stateSelector("auth", "fetchCurrentUser")
 
 export const selectCurrentUser = (state) => state.auth.currentUser;
 export const selectAuthTokenExists = (state) => state.auth.token != undefined;
+export const selectEverLoggedOut = (state) => state.auth.everLoggedOut;
 
 /**
  * AUTHENTICATION API ENDPOINTS
@@ -108,7 +111,7 @@ api.injectEndpoints({
           const slots= [];
           for (const slot of marshallData.slots) {
             // console.log('get slot',slot)
-            const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot));
+            const slotResult = await dispatch(api.endpoints.fetchSlot.initiate(slot,{forceRefetch: true}));
             slots.push(slotResult.data)
             // console.log(slotData.data);
           }

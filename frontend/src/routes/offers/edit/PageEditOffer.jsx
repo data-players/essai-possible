@@ -176,7 +176,7 @@ export default function PageEditOffer({mode, isCopying}) {
               slots:[],
             }
       }
-      // validationSchema={validationSchema}
+      validationSchema={validationSchema}
       onSubmit={onSubmit}
       isEditMode={isEditMode && !isCopying}
       onDelete={onDelete}
@@ -210,7 +210,7 @@ export default function PageEditOffer({mode, isCopying}) {
         "Votre offre sera intégralement supprimée et vous ne pourrez pas la récupérer."
       }
       deleteButtonText={"Supprimer l'offre"}>
-      {(register, {values, setFieldValue, errors, showingErrors,pendingMutation}) => (
+      {(register, {values, setFieldValue, errors, showingErrors,pendingmutation}) => (
         <>
           <FormStep
             stepNumber={1}
@@ -224,7 +224,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"titre"}
                 register={register}
                 name={"offer.title"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 label={"Objectif"}
@@ -232,15 +232,16 @@ export default function PageEditOffer({mode, isCopying}) {
                 name={"offer.goal"}
                 options={goals}
                 register={register}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 component={Textarea}
-                label={"Description du poste"}
+                label={"Description"}
                 placeholder={"description"}
+                help={"Décrivez votre structure de manière brève (2 à 3 phrases par message)."}
                 register={register}
                 name={"offer.description"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 component={Textarea}
@@ -248,8 +249,8 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"tâches"}
                 register={register}
                 name={"offer.tasks"}
-                help={"5 recommandées"}
-                pendingMutation={pendingMutation}
+                help={<Stack><div>Décrivez les tâches du poste avec des verbes d'actions et sans vocabulaire technique</div><div>Exemple, remplacez : « Coliser et panacher les marchandises» par : «Mettre en colis les marchandises »</div><div>5 recommandées</div></Stack>}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 component={Textarea}
@@ -257,8 +258,8 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"savoir-faire"}
                 register={register}
                 name={"offer.skills"}
-                help={"4 recommandées"}
-                pendingMutation={pendingMutation}
+                help={<Stack><div>Axez vos exigences sur des résultats et donnez des détails.</div><div>Exemple, remplacez : “Au moins 5 années d’expérience en tant qu’assistant.e de direction” par : “Expérience de travail dans l’accueil de clientèle, la prise de rendez-vous, la gestion des plannings et l’organisation de réunions.”</div><div>4 recommandées</div></Stack>}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 component={CheckboxGroupSemantic}
@@ -269,17 +270,15 @@ export default function PageEditOffer({mode, isCopying}) {
                 onChange={(value) => setFieldValue("offer.softSkills", value)}
                 options={skills}
                 help={"3 recommandées"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 label={"Environnement de travail"}
-                help={
-                  "Ce qui donne envie aux candidats de vous rejoindre: identité, culture, ambiance.."
-                }
+                help={<Stack><div>Montrez votre engagement. Exemple : Notre entreprise souhaite valoriser un milieu de travail où les différences individuelles sont appréciées et reconnues sans distinctions d’origine, de genre, de handicap, d’orientation sexuelle, d’âge, de milieu social, de croyances etc.</div><div>Donnez le maximum d’informations liées aux conditions de travail. Exemple - travail en extérieur par tout temps, lieu de travail bruyant, déplacements fréquents. Vous pouvez également indiquer que vous êtes prêt/e à discuter d’aménagement de poste ou de conditions de travail si la personne en exprime le besoin.</div></Stack>}
                 placeholder={"environnement de travail"}
                 register={register}
                 name={"offer.workEnvironment"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
             </Stack>
           </FormStep>
@@ -300,7 +299,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"durée"}
                 register={register}
                 name={"offer.duration"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
 
               <FormInput
@@ -308,7 +307,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"horaires"}
                 register={register}
                 name={"offer.timeSchedule"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
 
               <FormInput
@@ -318,7 +317,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 register={register}
                 onChange={(event, value) => setFieldValue("offer.location", value)}
                 name={"offer.location"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
 
               <FormInput
@@ -326,7 +325,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"conditions"}
                 register={register}
                 name={"offer.particularConditions"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
 
               <FormInput
@@ -334,7 +333,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"amménagements"}
                 register={register}
                 name={"offer.possibleArrangements"}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
             </Stack>
           </FormStep>
@@ -345,7 +344,7 @@ export default function PageEditOffer({mode, isCopying}) {
             showContent
             title={"Modalités du rendez-vous"}
             subtitle={
-              "Ajoutez des détails sur le rendez-vous ainsi que le contact du ou de la mentor, maître de stage, qui sera en charge des candidat·es."
+              "Renseignez les modalités de la première rencontre (Date, horaires, adresse, contact de la personne qui accueille des candidat·es."
             }>
             <Stack gap={3}>
               <FormInput
@@ -357,7 +356,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 help={
                   "Combien de temps dure un rendez-vous en moyenne, préférences sur les horaires, déroulé, etc."
                 }
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
 
               <FormInput
@@ -366,7 +365,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder="email@mon-entreprise.com"
                 type={"email"}
                 register={register}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
               <FormInput
                 label="Numéro de téléphone du mentor"
@@ -374,7 +373,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder="+33 6 12 34 56 78"
                 type={"tel"}
                 register={register}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
             </Stack>
           </FormStep>
@@ -469,7 +468,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 component={RadioGroupSemantic}
                 options={status}
                 register={register}
-                pendingMutation={pendingMutation}
+                pendingmutation={pendingmutation}
               />
             </Stack>
           </FormStep>

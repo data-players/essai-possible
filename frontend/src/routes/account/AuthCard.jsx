@@ -21,33 +21,44 @@ import {HelpBox} from "../../components/atoms";
 export function AuthCard({ redirectUrl, redirectComplete ,defaultConnectionMode="signUp", welcomeInfo, helpBoxConnected}) {
   const {t} = useTranslation();
   const currentUser = useSelector(selectCurrentUser);
-  const [openedCard, setOpenedCard] = useState(defaultConnectionMode);
+  // const [openedCard, setOpenedCard] = useState(defaultConnectionMode);
 
-  const Content = ({connectionMode}) => {
-    const isLogInMode = connectionMode === "logIn";
-    const nextConnectionMode = connectionMode==="signUp"?"logIn":"signUp";
+  // const Content = ({connectionMode}) => {
+  //   const isLogInMode = connectionMode === "logIn";
+  //   const nextConnectionMode = connectionMode==="signUp"?"logIn":"signUp";
 
-    return (
-      <>
-        <Stack alignItems={"center"} gap={2}>
-        <AuthComponent logInMode={isLogInMode} redirectUrl={redirectUrl}/>
+  //   return (
+  //     <>
+  //       <Stack alignItems={"center"} gap={2}>
+  //       <AuthComponent logInMode={isLogInMode} redirectUrl={redirectUrl}/>
             
-              <Typography level={"h4"}>
-                {isLogInMode ? "Nouveau sur Essai Possible ?" : "Vous avez déjà un compte ?"}
-              </Typography>
-              <Button
-                startDecorator={<CreateRoundedIcon />}
-                color={isLogInMode ? "primary" : "neutral"}
-                onClick={() => setOpenedCard(nextConnectionMode)}
-                >
-                {t(`nav.${nextConnectionMode}`)}
-              </Button>
-            
+  //             {/* <Typography level={"h4"}>
+  //               {isLogInMode ? "Nouveau sur Essai Possible ?" : "Vous avez déjà un compte ?"}
+  //             </Typography>
+  //             <Button
+  //               startDecorator={<CreateRoundedIcon />}
+  //               color={isLogInMode ? "primary" : "neutral"}
+  //               onClick={() => setOpenedCard(nextConnectionMode)}
+  //               >
+  //               {t(`nav.${nextConnectionMode}`)}
+  //             </Button>
+  //            */}
+
+  //             <Typography level={"h4"}>
+  //               {"Nouveau sur Essai Possible ou Vous avez déjà un compte ?"}
+  //             </Typography>
+  //             {/* <Button
+  //               startDecorator={<CreateRoundedIcon />}
+  //               color={isLogInMode ? "primary" : "neutral"}
+  //               onClick={() => setOpenedCard(nextConnectionMode)}
+  //               >
+  //               {t(`nav.${nextConnectionMode}`)}
+  //             </Button> */}
           
-        </Stack>
-      </>
-    );
-  };
+  //       </Stack>
+  //     </>
+  //   );
+  // };
 
   // return (<></>)
 
@@ -59,18 +70,10 @@ export function AuthCard({ redirectUrl, redirectComplete ,defaultConnectionMode=
       <AuthComponent redirectUrl={redirectUrl} redirectComplete={redirectComplete} welcomeInfo={welcomeInfo}/>
     </HelpBox>
   ) : (
-    <>
-
-      { openedCard === "signUp" &&
-          <Card variant={"outlined"}>
-          <Content connectionMode={"signUp"} />
-        </Card>
-      }
-      { openedCard === "logIn" &&
-        <Card variant={"outlined"}>
-          <Content connectionMode={"logIn"} />
-        </Card>
-      }
-    </>
+    
+    <Card variant={"outlined"}>
+      <AuthComponent redirectUrl={redirectUrl} redirectComplete={redirectComplete} welcomeInfo={welcomeInfo}/>
+    </Card>
+    
   );
 }

@@ -65,42 +65,10 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
   })
 
 
-  // const specificRedirections= [
-  //   {
-  //     source : 'login',
-  //     target : 'account'
-  //   }
-  // ]
-  // // let pathName = window.location.host+window.location.pathname;
-  // let pathName = window.location.href;
-  // for (const specificRedirection of specificRedirections) {
-
-  //   if (pathName.includes(specificRedirection.source)){
-  //     pathName = pathName.replace(specificRedirection.source,specificRedirection.target);
-  //   }
-  // }
-  // redirectUrl = redirectUrl||window.location
-  // console.log('pathName',pathName)
-
-  // const currentUserIsComplete = false;
-
-  // Redirect user to the offers page if it is a basic user, to its meetings
-  // if it has already meetings, and to the company offers if it is a pro account
-  // useEffect(() => {
-  //   if (currentUserIsComplete && redirect && meetingsReady) {
-  //     navigate(
-  //       currentUser.companies?.length > 0
-  //         ? `/company/${encodeURIComponent(currentUser.companies[0])}`
-  //         : meetings.length > 0
-  //           ? "/account/my-meetings"
-  //           : "/offers"
-  //     );
-  //   }
-  // }, [currentUserIsComplete, currentUser, redirect, meetingsReady, meetings]);
 
 
   async function onSubmit(values) {
-    console.log('UPDATE')
+    // console.log('UPDATE')
     if (companyMode) {
       if (newCompanyMode) {
         // Create the new company
@@ -128,27 +96,30 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
       {currentUser ? (
         <>
          {welcomeInfo &&
-                 <HelpBox color={"success"}>
-                 <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
-                 <Typography>
-                   <strong>Bonjour {currentUser.firstName} !</strong> Vous êtes identifié avec Les Communs.
-                 </Typography>
-               </HelpBox>
+              <HelpBox color={"success"}>
+                <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
+                <Typography>
+                  <strong>Bonjour {currentUser.firstName} !</strong> Vous êtes identifié avec Les Communs.
+                </Typography>
+              </HelpBox>
          }
         </>
       ) : (
         <>
           <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
           <Typography textAlign={"center"} fontWeight={"lg"}>
+            <div>Le portail Les Communs est le moyen de connexion</div><div>choisie par cette platforme</div>
+          </Typography>
+          {/* <Typography textAlign={"center"} fontWeight={"lg"}>
             {logInMode
               ? "Connectez-vous à Essai Possible en vous identifiant sur le portail des Communs."
               : "Créez-vous un compte sur Essai Possible en vous identifiant sur le portail des Communs."}
-          </Typography>
-          {companyMode && (
+          </Typography> */}
+          {/* {companyMode && (
             <Typography textAlign={"center"} mt={-2}>
               Vous pourrez ensuite renseigner votre entreprise.
             </Typography>
-          )}
+          )} */}
         </>
       )}
 
@@ -157,7 +128,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
         <EditFormComponent
           component={Stack}
           m={0}
-          validationButtonText={logInMode ? "Se connecter" : "Mettre à jour"}
+          validationButtonText={"Mettre à jour"}
           isEditMode={false}
           updateLoading={isUpdatingUser || isAddingCompany}
           initialValues={{
@@ -170,7 +141,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
             user: userValidationSchema
           })}
           onSubmit={onSubmit}
-          successText={logInMode ? "Connexion réussie" : "Compte mis à jour avec succès"}
+          successText={"Compte mis à jour avec succès"}
           >
           {(register, {values, setFieldValue, errors}) => (
 
@@ -185,7 +156,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
       ) : (
         // USER NOT IDENTIFIED --> Ask for identification with Les Communs
         <ButtonWithLoading size="lg" color="primary" onClick={(e)=>{connectToLesCommuns(redirectUrl)}}>
-          S'identifier avec Les Communs
+          Connectez-vous ou créez vous un compte
         </ButtonWithLoading>
       )}
     </>
