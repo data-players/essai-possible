@@ -38,7 +38,7 @@ export default function EditFormComponent({
     openSnackbar("Suppression réussie");
   }
 
-  if (!ready) return <LoadingSpinner />;
+  if (!ready) return <><LoadingSpinner /><div>FORM</div></>;
 
   return (
     <>
