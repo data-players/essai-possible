@@ -34,7 +34,7 @@ const Protection = ({children, redirectTo = "/offers"}) => {
   
   if (!company?.id){
     console.log('CompanyAccountProtection Loading...')
-    return <LoadingSpinner />;
+    return <><LoadingSpinner /><div>COMPANY PROTECTION</div></>;
   }
 
   return children || <Outlet />;
