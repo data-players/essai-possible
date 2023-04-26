@@ -348,7 +348,12 @@ api.injectEndpoints({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
 
         const state= getState();
-        let dataToUpdate = await disassemblySlots(state, args, dispatch);
+        // let dataToUpdate = await disassemblySlots(state, args, dispatch);
+        await new Promise(r => setTimeout(r, 2000));
+        let dataToUpdate={
+          ...args,
+          slots:undefined
+        }
 
         console.log('--------------------- DISASEMBY SLOT END')
 
