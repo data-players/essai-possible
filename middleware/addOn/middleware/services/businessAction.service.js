@@ -18,14 +18,13 @@ module.exports = {
         const { resourceUri, oldData, newData, webId } = ctx.params;
         // console.log('______________________________ldp.resource.updated',ctx.params);
         const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
-        // console.log('container',container)
+        console.log('ldp.resource.updated container',container)
         switch (container.path) {
           case '/users':
             // const user = ctx.params.resourceUri;
             // console.log('PUT USER',oldData, newData);
             const newAskedAffiliation = newData['ep:askedAffiliation']==undefined?[]:Array.isArray(newData['ep:askedAffiliation'])?newData['ep:askedAffiliation']:[newData['ep:askedAffiliation']];
             const oldAskedAffiliation = oldData['ep:askedAffiliation']==undefined?[]:Array.isArray(oldData['ep:askedAffiliation'])?oldData['ep:askedAffiliation']:[newData['ep:askedAffiliation']];
-        
             const diffAskedCompanies=newAskedAffiliation.filter(c=>!oldAskedAffiliation.includes(c));
             // console.log('diffAskedCompanies',diffAskedCompanies);
             for (const diffAskedCompany of diffAskedCompanies) {
@@ -38,21 +37,80 @@ module.exports = {
                 // template || !ctx.params.subject  || !ctx.params.to || !ctx.params.variables
                 await ctx.call('mailer.sendMail', {
                   template:4641817,
-                  subject:"rattachement d'entreprise",
                   to:[{
                     Email :user['pair:e-mail']
                   }],
                   variables:{
                     user : newData['pair:e-mail'],
                     company:company['pair:label'],
-                    url:`${config.SEMAPPS_FRONT_URL}company/${encodeURIComponent(company.id)}/users`
+                    url:`${CONFIG.FRONT_URL}company/${encodeURIComponent(company.id)}/users`
                   }
                 });
               }
+              await ctx.call('mailer.sendMail', {
+                template:4708782,
+                to:[{
+                  Email :newData['pair:e-mail']
+                }],
+                variables:{
+                  company:company['pair:label'],
+                  url:`${CONFIG.FRONT_URL}company/${encodeURIComponent(company.id)}/users`
+                }
+              });
+              
               // console.log('company',company)
             }
+            // const newAffiliation = newData['pair:affiliatedBy']==undefined?[]:Array.isArray(newData['pair:affiliatedBy'])?newData['pair:affiliatedBy']:[newData['pair:affiliatedBy']];
+            // const oldAffiliation = oldData['pair:affiliatedBy']==undefined?[]:Array.isArray(oldData['pair:affiliatedBy'])?oldData['pair:affiliatedBy']:[newData['pair:affiliatedBy']];
+            // const diffCompanies=newAffiliation.filter(c=>!oldAffiliation.includes(c));
+
+            // for (const diffCompany of diffCompanies) {
+            //   const company = await ctx.call('ldp.resource.get', { resourceUri : diffCompany, accept:'application/ld+json'});
+            //   await ctx.call('mailer.sendMail', {
+            //     template:4708834,
+            //     to:[{
+            //       Email :newData['pair:e-mail']
+            //     }],
+            //     variables:{
+            //       company:company['pair:label'],
+            //       url:`${CONFIG.FRONT_URL}company/${encodeURIComponent(company.id)}/users`
+            //     }
+            //   });
+            //   // console.log('company',company)
+            // }
 
             break;
+
+            case '/organizations':
+
+              const newAffiliation = newData['pair:affiliates']==undefined?[]:Array.isArray(newData['pair:affiliates'])?newData['pair:affiliates']:[newData['pair:affiliates']];
+              const oldAffiliation = oldData['pair:affiliates']==undefined?[]:Array.isArray(oldData['pair:affiliates'])?oldData['pair:affiliates']:[newData['pair:affiliates']];
+              const diffUsers=newAffiliation.filter(c=>!oldAffiliation.includes(c));
+  
+              for (const diffUser of diffUsers) {
+                const user = await ctx.call('ldp.resource.get', { resourceUri : diffUser, accept:'application/ld+json'});
+                console.log({
+                  template:4708834,
+                  to:[{
+                    Email :user['pair:e-mail']
+                  }],
+                  variables:{
+                    company:newData['pair:label']
+                  }
+                })
+                await ctx.call('mailer.sendMail', {
+                  template:4708834,
+                  to:[{
+                    Email :user['pair:e-mail']
+                  }],
+                  variables:{
+                    company:newData['pair:label']
+                  }
+                });
+                // console.log('company',company)
+              }
+  
+              break;
 
             case '/timeSlot':
               // const slot = ctx.params.resourceUri;

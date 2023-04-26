@@ -176,7 +176,7 @@ export default function PageEditOffer({mode, isCopying}) {
               slots:[],
             }
       }
-      validationSchema={validationSchema}
+      // validationSchema={validationSchema}
       onSubmit={onSubmit}
       isEditMode={isEditMode && !isCopying}
       onDelete={onDelete}

@@ -181,7 +181,7 @@ export default function Root() {
           </Typography>
           <Typography fontSize={"md"} fontWeight={"xl"} sx={{mt: 1, ml: 2}}>
             <Link href={"mailto:entreprises@toustespossibles.fr"} sx={{color: "primary.solidColor"}}>
-            entreprises@toustespossibles.fr"
+            entreprises@toustespossibles.fr
             </Link>
           </Typography>
           <Typography fontSize={"lg"} sx={{mt: 2}}>

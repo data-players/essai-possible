@@ -438,7 +438,7 @@ export const offerValidationSchema = yup.object({
 
 export const offerDefaultValues = {
   // Job description
-  title: "test init",
+  title: "",
   goal: "",
   description: "",
   tasks: "",
