@@ -235,7 +235,7 @@ async function fetchSlotForOffer(data, dispatch, forceRefetch) {
 }
 
 async function disassemblySlots(state, args, dispatch) {
-  console.log('args',args)
+  // console.log('args',args)
   if(args.slots){
     const existing = { ...state.offers.entities[args.id] };
     // console.log(existing);
@@ -261,18 +261,9 @@ async function disassemblySlots(state, args, dispatch) {
           reject(error)
         }
       }))
-      // const createdSlot = await dispatch(api.endpoints.addSlot.initiate({
-      //   start: slotToCreate.start,
-      //   offer: args.id
-      // }));
-      // createdSlotsId.push(createdSlot.data.id);
+
     }
     for (const slotToDelete of slotsToDelete) {
-      // if (slotToDelete != undefined && slotToDelete != 'undefined') {
-      //   // console.log("slotToDelete",slotToDelete)
-      //   const deletedSlot = await dispatch(api.endpoints.deleteSlot.initiate(slotToDelete.id));
-      // }
-
       disassemblyPromises.push(new Promise(async (resolve,reject)=>{
         try {
           if (slotToDelete != undefined && slotToDelete != 'undefined') {
@@ -359,10 +350,11 @@ api.injectEndpoints({
         const state= getState();
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
 
-        return await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
+        const out = await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
           const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id));
           return fetchData.data;
         })
+        return out;
 
       }
     }),
