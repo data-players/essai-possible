@@ -349,7 +349,7 @@ api.injectEndpoints({
 
         const state= getState();
         // let dataToUpdate = await disassemblySlots(state, args, dispatch);
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 10000));
         let dataToUpdate={
           ...args,
           slots:undefined

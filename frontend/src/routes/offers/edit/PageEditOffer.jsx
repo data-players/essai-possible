@@ -141,7 +141,7 @@ export default function PageEditOffer({mode, isCopying}) {
     navigate(`/company/${encodeURIComponent(company.id)}`);
   }
 
-  // console.log(offerReady, slotsReady)
+  console.log('-- READY?',offerReady, isEditMode,offerReady)
 
   return (
     <EditFormComponent
