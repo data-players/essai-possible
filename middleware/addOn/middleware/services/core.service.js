@@ -70,7 +70,14 @@ module.exports = {
       description: CONFIG.INSTANCE_DESCRIPTION
     },
     webacl: {
-      superAdmins: ['https://data.essai-possible.data-players.com/users/simon.louvet.zen']
+      superAdmins: [
+        'https://data.essai-possible.data-players.com/users/simon.louvet.zen',
+        'https://data.essai-possible.data-players.com/users/tech',
+        'https://data.essaipossible.fr/users/simon.louvet.zen',
+        'https://data.essaipossible.fr/users/tech',
+        'https://data.essaipossible.fr/users/claire.versini',
+        'https://data.essaipossible.fr/users/maxime.gaudubois',
+      ]
     }
   }
 };

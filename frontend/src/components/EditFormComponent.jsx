@@ -26,6 +26,7 @@ export default function EditFormComponent({
   deleteButtonText,
   validationButtonText,
   successText,
+  allowUndirtySubmit,
   children,
   ...props
 }) {
@@ -38,7 +39,9 @@ export default function EditFormComponent({
     openSnackbar("Suppression réussie");
   }
 
-  if (!ready) return <><LoadingSpinner /><div>FORM</div></>;
+  console.log('allowUndirtySubmit',allowUndirtySubmit)
+
+  if (!ready) return <LoadingSpinner />;
 
   return (
     <>
@@ -80,7 +83,7 @@ export default function EditFormComponent({
               size={"lg"}
               type="submit"
               color="success"
-              disabled={!dirty}
+              disabled={!allowUndirtySubmit && !dirty}
               loading={updateLoading}
               onClick={() => setShowingErrors(Object.keys(errors)?.length > 0)}
               startDecorator={<CheckIcon />}>

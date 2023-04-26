@@ -26,7 +26,7 @@ export default function ConnectedUserProtection({children}) {
   // console.log('ConnectedUserProtection',!authTokenExists || !currentUserReady)
   if (!authTokenExists || !currentUserReady){
     console.log('ConnectedUserProtection Loading...')
-    return <><LoadingSpinner /><div>USER PROTECTION</div></>;
+    return <LoadingSpinner />;
   }
 
   return children || <Outlet />;

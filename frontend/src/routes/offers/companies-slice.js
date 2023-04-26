@@ -96,7 +96,7 @@ api.injectEndpoints({
     // Fetch one company by id
     fetchCompany: builder.query({
       queryFn: async (args, {getState,dispatch}, extraOptions, baseQuery) => {
-        // console.log('fetchOffer',args);
+
         const baseResponse = await baseQuery({
           url: decodeURIComponent(args),
         });

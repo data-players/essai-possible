@@ -31,7 +31,7 @@ export default function DefinedOfferProtection() {
   // console.log('DefinedOfferProtection',!(offer.id));
   if (!(sofferReady && offer.id)){
     console.log('DefinedOfferProtection Loading...')
-    return <><LoadingSpinner /><div>OFFER PROTECTION</div></>;
+    return <LoadingSpinner />;
   }
 
   return <Outlet />;

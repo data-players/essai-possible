@@ -349,15 +349,6 @@ api.injectEndpoints({
 
         const state= getState();
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
-        // await new Promise(r => setTimeout(r, 10000));
-        // let dataToUpdate={
-        //   ...args,
-        //   slots:undefined
-        // }
-        // return dataToUpdate;
-
-        // console.log('--------------------- DISASEMBY SLOT END')
-
         const out = await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
           const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id));
           return fetchData.data;

@@ -78,12 +78,12 @@ export const addStatusForEndpoints = (builder, endpoints = []) => {
 export async function baseUpdateCore(args, marshaller, baseQuery, fetchMethod) {
   const body = marshaller.unmarshall(args);
   const existingData = (await baseQuery(body.id)).data;
-  console.log('body',body)
+  // console.log('body',body)
   const mixedBody = {
     ...existingData,
     ...body
   };
-  console.log('mixedBody',mixedBody)
+  // console.log('mixedBody',mixedBody)
   await baseQuery({
     url: body.id,
     method: "PUT",

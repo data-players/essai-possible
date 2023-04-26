@@ -21,6 +21,7 @@
     "@mui/x-date-pickers": "^5.0.16",
     "@reduxjs/toolkit": "^1.9.1",
     "dayjs": "^1.11.7",
+    "deep-equal": "^2.2.0",
     "formik": "^2.2.9",
     "i18next": "^22.4.5",
     "i18next-browser-languagedetector": "^6.1.8",

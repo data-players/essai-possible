@@ -47,6 +47,7 @@ import EditFormComponent from "../../../components/EditFormComponent.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
 import MeetingSlotsGenerator from "./MeetingSlotsGenerator.jsx";
+import deepEqual from 'deep-equal';
 
 const validationSchema = yup.object({
   offer: offerValidationSchema,
@@ -113,16 +114,7 @@ export default function PageEditOffer({mode, isCopying}) {
     : t("offers.createANewOffer");
 
   async function onSubmit(values) {
-    // console.log('raw values',values);
     const method = isEditMode && !isCopying ? updateOffer : addOffer;
-
-    const shouldUpdateCompany = JSON.stringify(values.company) !== JSON.stringify(company);
-    if (shouldUpdateCompany) updateCompany(values.company);
-
-    // const shouldUpdateSlots = JSON.stringify(values.slots) !== JSON.stringify(offer?.slots);
-    // if (shouldUpdateSlots) {
-    //   // TODO Update slots for offer
-    // }
 
     const offerPayload = {...values.offer, id: offer?.id, company: company.id};
     if (isCopying) delete offerPayload.id; // Delete id if we are copying from an existing offer
@@ -133,6 +125,11 @@ export default function PageEditOffer({mode, isCopying}) {
       company: company.id,
       slots:values.slots
     }).unwrap();
+
+
+    const shouldUpdateCompany =!(deepEqual(values.company,company));
+    if (shouldUpdateCompany) updateCompany(values.company);
+
     navigate(`/offers/${encodeURIComponent(manipulatedOffer.id)}`);
   }
 
@@ -141,7 +138,7 @@ export default function PageEditOffer({mode, isCopying}) {
     navigate(`/company/${encodeURIComponent(company.id)}`);
   }
 
-  console.log('-- READY?',companyReady, isEditMode,offerReady)
+  // console.log('-- READY?',companyReady, isEditMode,offerReady)
 
   return (
     <EditFormComponent
@@ -177,6 +174,7 @@ export default function PageEditOffer({mode, isCopying}) {
             }
       }
       validationSchema={validationSchema}
+      allowUndirtySubmit
       onSubmit={onSubmit}
       isEditMode={isEditMode && !isCopying}
       onDelete={onDelete}
@@ -249,7 +247,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"tâches"}
                 register={register}
                 name={"offer.tasks"}
-                help={<Stack><div>Décrivez les tâches du poste avec des verbes d'actions et sans vocabulaire technique</div><div>Exemple, remplacez : « Coliser et panacher les marchandises» par : «Mettre en colis les marchandises »</div><div>5 recommandées</div></Stack>}
+                help={<Stack><span>Décrivez les tâches du poste avec des verbes d'actions et sans vocabulaire technique</span><span>Exemple, remplacez : « Coliser et panacher les marchandises» par : «Mettre en colis les marchandises »</span><span>5 recommandées</span></Stack>}
                 pendingmutation={pendingmutation}
               />
               <FormInput
@@ -258,7 +256,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 placeholder={"savoir-faire"}
                 register={register}
                 name={"offer.skills"}
-                help={<Stack><div>Axez vos exigences sur des résultats et donnez des détails.</div><div>Exemple, remplacez : “Au moins 5 années d’expérience en tant qu’assistant.e de direction” par : “Expérience de travail dans l’accueil de clientèle, la prise de rendez-vous, la gestion des plannings et l’organisation de réunions.”</div><div>4 recommandées</div></Stack>}
+                help={<Stack><span>Axez vos exigences sur des résultats et donnez des détails.</span><span>Exemple, remplacez : “Au moins 5 années d’expérience en tant qu’assistant.e de direction” par : “Expérience de travail dans l’accueil de clientèle, la prise de rendez-vous, la gestion des plannings et l’organisation de réunions.”</span><span>4 recommandées</span></Stack>}
                 pendingmutation={pendingmutation}
               />
               <FormInput
@@ -274,7 +272,7 @@ export default function PageEditOffer({mode, isCopying}) {
               />
               <FormInput
                 label={"Environnement de travail"}
-                help={<Stack><div>Montrez votre engagement. Exemple : Notre entreprise souhaite valoriser un milieu de travail où les différences individuelles sont appréciées et reconnues sans distinctions d’origine, de genre, de handicap, d’orientation sexuelle, d’âge, de milieu social, de croyances etc.</div><div>Donnez le maximum d’informations liées aux conditions de travail. Exemple - travail en extérieur par tout temps, lieu de travail bruyant, déplacements fréquents. Vous pouvez également indiquer que vous êtes prêt/e à discuter d’aménagement de poste ou de conditions de travail si la personne en exprime le besoin.</div></Stack>}
+                help={<Stack><span>Montrez votre engagement. Exemple : Notre entreprise souhaite valoriser un milieu de travail où les différences individuelles sont appréciées et reconnues sans distinctions d’origine, de genre, de handicap, d’orientation sexuelle, d’âge, de milieu social, de croyances etc.</span><span>Donnez le maximum d’informations liées aux conditions de travail. Exemple - travail en extérieur par tout temps, lieu de travail bruyant, déplacements fréquents. Vous pouvez également indiquer que vous êtes prêt/e à discuter d’aménagement de poste ou de conditions de travail si la personne en exprime le besoin.</span></Stack>}
                 placeholder={"environnement de travail"}
                 register={register}
                 name={"offer.workEnvironment"}
