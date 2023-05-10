@@ -2,6 +2,7 @@ const CONFIG = require('../config/config');
 const parsePhoneNumber = require('libphonenumber-js');
 var mustache = require('mustache');
 const dayjs = require('dayjs');
+const urlJoin = require('url-join');
 const LocalizedFormat = require( 'dayjs/plugin/localizedFormat')
 dayjs.extend(LocalizedFormat)
 require('dayjs/locale/fr')
@@ -14,11 +15,44 @@ function normalisePredicate(data, predicate) {
 module.exports = {
   name: 'businessAction',
   events : {
+    async 'ldp.resource.created'(ctx) {
+      const { resourceUri, newData, webId } = ctx.params;
+      console.log('------------------- created',newData,webId)
+      const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
+      switch (container.path) {
+        case '/organizations':
+          const user = await ctx.call('ldp.resource.get', { resourceUri : webId, accept:'application/ld+json'});
+          await ctx.call('mailer.sendMail', {
+            template:4658992,
+            to:[{
+              Email :user['pair:e-mail']
+            }],
+            variables:{
+              company:newData['pair:label']
+            }
+          });
+          break;
+        case '/users':
+          await ctx.call('mailer.sendMail', {
+            template:4659000,//1.c
+            to:[{
+              Email :newData['foaf:email']
+            }],
+            variables:{
+              user:newData['foaf:email']
+            }
+          });
+          break;
+        default:
+          break;
+  }
+    },
     async 'ldp.resource.updated'(ctx) {
         const { resourceUri, oldData, newData, webId } = ctx.params;
+        const frontUrl = CONFIG.FRONT_URL;
         // console.log('______________________________ldp.resource.updated',ctx.params);
         const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
-        console.log('ldp.resource.updated container',container)
+        // console.log('ldp.resource.updated container',container)
         switch (container.path) {
           case '/users':
             // const user = ctx.params.resourceUri;
@@ -89,15 +123,15 @@ module.exports = {
   
               for (const diffUser of diffUsers) {
                 const user = await ctx.call('ldp.resource.get', { resourceUri : diffUser, accept:'application/ld+json'});
-                console.log({
-                  template:4708834,
-                  to:[{
-                    Email :user['pair:e-mail']
-                  }],
-                  variables:{
-                    company:newData['pair:label']
-                  }
-                })
+                // console.log({
+                //   template:4708834,
+                //   to:[{
+                //     Email :user['pair:e-mail']
+                //   }],
+                //   variables:{
+                //     company:newData['pair:label']
+                //   }
+                // })
                 await ctx.call('mailer.sendMail', {
                   template:4708834,
                   to:[{
@@ -113,12 +147,11 @@ module.exports = {
               break;
 
             case '/timeSlot':
-              // const slot = ctx.params.resourceUri;
-              // console.log('PUT SLOTS',oldData, newData);
+
               const predicate = 'pair:concerns';
               const newConcerns = normalisePredicate(newData, predicate);
               const oldConcerns = normalisePredicate(oldData, predicate);
-              // console.log('diff',newConcerns,oldConcerns)
+
           
               const diffConcerns=newConcerns.filter(c=>!oldConcerns.includes(c));
               if(diffConcerns.length>0){
@@ -136,31 +169,58 @@ module.exports = {
                   ?s1 ?p1 ?o1.
                 }`
                 const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
-                // const pourvuSubject = result['@graph'][0]
-                // console.log('status',status)
+
                 let newJob = {
                   ...job,
                   'pair:hasStatus':status['@id']
                 }
                 const timing = dayjs(newData['pair:startDate']).format('LLLL');
-                console.log('timing',timing)
-                // console.log('UPDATE JOB',newJob)
 
-                // const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
-                // console.log('updatedJob',updatedJob)
 
                 const user = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:concerns'], accept:'application/ld+json'});
                 const company =  await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});                
-                // console.log('company',company)
+
+
+                await ctx.call('mailer.sendMail', {
+                  template:4708943,//2.a
+
+                  to:[{
+                    Email :user['pair:e-mail']
+                  }],
+                  variables:{
+                    user : user['pair:e-mail'],
+                    company: company['pair:label'],
+                    timing:  timing,
+                    job : job['pair:label'],
+                    place : job['pair:hasLocation']['pair:label'],
+                    mail : job['pair:e-mail'],
+                    phone : job['pair:phone']
+                    
+                  }
+                });
+
+
+                if(job['pair:e-mail']){
+                  await ctx.call('mailer.sendMail', {
+                    template:4641813,
+
+                    to:[{
+                      Email :job['pair:e-mail']
+                    }],
+                    variables:{
+                      user : user['pair:e-mail'],
+                      company: company['pair:label'],
+                      timing:  timing,
+                      job : job['pair:label']
+                    }
+                  });
+                }
                 const companyUsers = company['pair:affiliates']==undefined?[]:Array.isArray(company['pair:affiliates'])?company['pair:affiliates']:[company['pair:affiliates']];
                 for (const companyUser of companyUsers) {
                   const companyUserObject = await ctx.call('ldp.resource.get', { resourceUri : companyUser, accept:'application/ld+json'});
-                  // console.log('user',user);
-  
-                  // template || !ctx.params.subject  || !ctx.params.to || !ctx.params.variables
+
                   await ctx.call('mailer.sendMail', {
                     template:4641813,
-                    // subject:"[essai-possible] rendez-vous",
                     to:[{
                       Email :companyUserObject['pair:e-mail']
                     }],
@@ -189,75 +249,113 @@ module.exports = {
                     ?s1 ?p1 ?o1.
                   }`
                   const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
-                  // const pourvuSubject = result['@graph'][0]
-                  // console.log('status',status)
+
                   let newJob = {
                     ...job,
                     'pair:hasStatus':status['@id']
                   }
 
-                  // const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
-                  // console.log('updatedJob',updatedJob)
-
                   const timing = dayjs(newData['pair:startDate']).format('LLLL');
-                  console.log('timing',dayjs.locale() ,timing)
-
                   const user = await ctx.call('ldp.resource.get', { resourceUri : oldData['pair:concerns'], accept:'application/ld+json'});
                   const company =  await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});                
-                  // console.log('company',company)
-                  const companyUsers = company['pair:affiliates']==undefined?[]:Array.isArray(company['pair:affiliates'])?company['pair:affiliates']:[company['pair:affiliates']];
-                  for (const companyUser of companyUsers) {
-                    const companyUserObject = await ctx.call('ldp.resource.get', { resourceUri : companyUser, accept:'application/ld+json'});
-                    // console.log('user',user);
-    
-                    // template || !ctx.params.subject  || !ctx.params.to || !ctx.params.variables
-                    await ctx.call('mailer.sendMail', {
-                      template:4642565,
-                      // subject:"[essai-possible] rendez-vous",
-                      to:[{
-                        Email :companyUserObject['pair:e-mail']
-                      }],
-                      variables:{
-                        user : user['pair:e-mail'],
-                        company: company['pair:label'],
-                        timing:  timing,
-                        job : job['pair:label']
-                      }
-                    });
 
-                    console.log('companyUserObject',companyUserObject)
-                    const parsedPhoneNumber = parsePhoneNumber(companyUserObject['pair:phone'], 'FR').number;
-                    console.log('parsedPhoneNumber',parsedPhoneNumber)
-
-                    const query= `
-                    PREFIX semapps: <http://semapps.org/ns/core#>
-                    PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
-                    CONSTRUCT {
-                      ?s1 ?p1 ?o1.
+                  if (user.id==webId){
+                    if (job['pair:e-mail']){
+                      await ctx.call('mailer.sendMail', {
+                        template:4658987,//4.b
+                        to:[{
+                          Email :job['pair:e-mail']
+                        }],
+                        variables:{
+                          user : user['pair:e-mail'],
+                          company: company['pair:label'],
+                          timing:  timing,
+                          job : job['pair:label'],
+                          url1 : urlJoin(frontUrl,'offers',encodeURIComponent(job.id))
+                        }
+                      });
                     }
-                    WHERE {
-                      ?s1 a semapps:Page.
-                      ?s1 semapps:title ?l1.
-                      FILTER(REGEX(LCASE(STR(?l1)), LCASE("SMS - annulation"))).
-                      ?s1 ?p1 ?o1.
-                    }`
-                    const page  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
-                    console.log('page',page);
-                    const variable = {
-                      user:user['pair:e-mail'],
-                      timing:timing,
-                      job:job['pair:label'],
-                      mail:'mail'
-                    }
-                    const text = mustache.render(page.content, variable)
-                    console.log('text',text)
 
-                    if (companyUserObject['pair:phone']){
+                    if(job['pair:phone']){
+                      const smsText = await getSmsMessage(ctx,"SMS - annulation", {
+                        user:user['pair:e-mail'],
+                        timing:timing,
+                        job:job['pair:label'],
+                        mail:job['pair:e-mail']
+                      });
+                      const parsedPhoneNumber = parsePhoneNumber(job['pair:phone'], 'FR').number;
                       await ctx.call('mailer.sendSms', {
                         // subject:"[essai-possible] rendez-vous",
                         to:parsedPhoneNumber,
                         from:process.env.SMS_SENDER,
-                        text:text
+                        text:smsText
+                      });
+                    }
+
+
+                    const companyUsers = company['pair:affiliates']==undefined?[]:Array.isArray(company['pair:affiliates'])?company['pair:affiliates']:[company['pair:affiliates']];
+                    for (const companyUser of companyUsers) {
+                      const companyUserObject = await ctx.call('ldp.resource.get', { resourceUri : companyUser, accept:'application/ld+json'});
+
+                      await ctx.call('mailer.sendMail', {
+                        template:4658987,//4.b
+                        to:[{
+                          Email :companyUserObject['pair:e-mail']
+                        }],
+                        variables:{
+                          user : user['pair:e-mail'],
+                          company: company['pair:label'],
+                          timing:  timing,
+                          job : job['pair:label'],
+                          url1 : urlJoin(frontUrl,'offers',encodeURIComponent(job.id))
+                        }
+                      });
+
+                      if (companyUserObject['pair:phone']){
+                        const smsText = await getSmsMessage(ctx,"SMS - annulation", {
+                          user:user['pair:e-mail'],
+                          timing:timing,
+                          job:job['pair:label'],
+                          mail:companyUserObject['pair:e-mail']
+                        });
+                        const parsedPhoneNumber = parsePhoneNumber(companyUserObject['pair:phone'], 'FR').number;
+                        await ctx.call('mailer.sendSms', {
+                          // subject:"[essai-possible] rendez-vous",
+                          to:parsedPhoneNumber,
+                          from:process.env.SMS_SENDER,
+                          text:smsText
+                        });
+                      }
+                    }                   
+                    
+
+                  } else {
+
+                    await ctx.call('mailer.sendMail', {
+                      template:4642565,//4.1.i
+                      to:[{
+                        Email :user['pair:e-mail']
+                      }],
+                      variables:{
+                        company: company['pair:label'],
+                        timing:  timing,
+                        job : job['pair:label'],
+                      }
+                    });
+                    
+
+                    if(user['pair:phone']){
+                      const smsText = await getSmsMessage(ctx,"SMS - annulation entreprise", {
+                        company: company['pair:label'],
+                        timing:timing,
+                        job:job['pair:label'],
+                        mail:user['pair:e-mail']
+                      });
+                      const parsedPhoneNumber = parsePhoneNumber(job['pair:phone'], 'FR').number;
+                      await ctx.call('mailer.sendSms', {
+                        to:parsedPhoneNumber,
+                        from:process.env.SMS_SENDER,
+                        text:smsText
                       });
                     }
                   }
@@ -269,4 +367,25 @@ module.exports = {
     }
   }
 };
+
+async function getSmsMessage(ctx, title, variables) {
+  const query = `
+                      PREFIX semapps: <http://semapps.org/ns/core#>
+                      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                      CONSTRUCT {
+                        ?s1 ?p1 ?o1.
+                      }
+                      WHERE {
+                        ?s1 a semapps:Page.
+                        ?s1 semapps:title ?l1.
+                        FILTER(REGEX(LCASE(STR(?l1)), LCASE("${title}"))).
+                        ?s1 ?p1 ?o1.
+                      }`;
+  const page = await ctx.call('triplestore.query', { query, accept: 'application/ld+json' });
+  console.log('page', page);
+
+  const text = mustache.render(page.content, variables);
+  console.log('text', text);
+  return text;
+}
 

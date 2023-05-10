@@ -358,7 +358,7 @@ export default function PageEditOffer({mode, isCopying}) {
               />
 
               <FormInput
-                label="Email du mentor"
+                label="Email du contact référent"
                 name={"offer.mentorEmail"}
                 placeholder="email@mon-entreprise.com"
                 type={"email"}
@@ -366,7 +366,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 pendingmutation={pendingmutation}
               />
               <FormInput
-                label="Numéro de téléphone du mentor"
+                label="Numéro de téléphone du contact référent"
                 name={"offer.mentorPhone"}
                 placeholder="+33 6 12 34 56 78"
                 type={"tel"}

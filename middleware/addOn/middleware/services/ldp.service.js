@@ -76,7 +76,7 @@ module.exports = {
         after: {
             "put":async (ctx, res)=>{
               const { resourceUri, oldData, newData, webId } = res;
-              console.log('XXXXXX hooksResource PUT',res)
+              // console.log('XXXXXX hooksResource PUT',res)
               switch (newData.type) {
                 case 'ep:TimeSlot' :
                   const predicate = 'pair:concerns';
