@@ -60,7 +60,7 @@ module.exports = {
                         g=>({...g,'@context':timeSlotsResult['@context']})
                     )
                 }
-                for (const timeSlots of timeSlots) {
+                for (const timeSlot of timeSlots) {
                     const job = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.about, accept:'application/ld+json'});
                     const user = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.concerns, accept:'application/ld+json'});
                     const company = await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});
