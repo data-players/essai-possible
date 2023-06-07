@@ -10,7 +10,7 @@ import {
   requiredArray,
   requiredEmail,
   requiredPositiveNumber,
-  requiredPhone,
+  requiredInternationalPhone,
   requiredString,
 } from "../../app/fieldValidation.js";
 import {createJsonLDMarshaller} from "./../../app/utils.js";
@@ -421,7 +421,7 @@ export const offerValidationSchema = yup.object({
   // Meeting modalities
   meetingDuration: requiredPositiveNumber,
   meetingDetails: requiredString,
-  mentorPhone: requiredPhone,
+  mentorPhone: requiredInternationalPhone,
   mentorEmail: requiredEmail,
 
   // Status

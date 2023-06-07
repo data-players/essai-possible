@@ -25,6 +25,7 @@
     "ldp-navigator": "^1.2.10",
     "libphonenumber-js": "^1.10.24",
     "moleculer": "^0.14.18",
+    "moleculer-cron": "^0.0.2",
     "moleculer-repl": "^0.6.3",
     "moleculer-web": "^0.10.0-beta1",
     "mustache": "^4.2.0",

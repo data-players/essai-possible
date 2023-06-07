@@ -10,6 +10,7 @@ import {
   LocationSearchBar,
   RadioGroupSemantic,
   SimpleBanner,
+  PhoneInput
 } from "../../../components/atoms.jsx";
 import {FormInput, FormStep} from "../../../components/forms.jsx";
 import Textarea from "@mui/joy/Textarea";
@@ -366,10 +367,12 @@ export default function PageEditOffer({mode, isCopying}) {
                 pendingmutation={pendingmutation}
               />
               <FormInput
+                component={PhoneInput}
                 label="Numéro de téléphone du contact référent"
                 name={"offer.mentorPhone"}
                 placeholder="+33 6 12 34 56 78"
                 type={"tel"}
+                onChange={(value) => setFieldValue("offer.mentorPhone", value)}
                 register={register}
                 pendingmutation={pendingmutation}
               />
@@ -515,10 +518,10 @@ export default function PageEditOffer({mode, isCopying}) {
               </Button>
             </Stack>
           </FormStep>
-          {(isUpdatingOffer||isDeletingOffer)?
+          {(isAddingOffer || isUpdatingOffer||isDeletingOffer)?
             <Card variant="solid" color="warning">
               <Stack gap={1}>
-                <Typography>L'enregistrement d'une offre necessite un temps de traitement qui depend du nombre de rdv à créer, modifier ou supprimet. Cela peut prendre plusieurs minutes</Typography>
+                <Typography>L'enregistrement d'une offre necessite un temps de traitement qui depend du nombre de rdv à créer, modifier ou supprimer. Cela peut prendre plusieurs minutes</Typography>
               </Stack>
             </Card>
           :<></>}

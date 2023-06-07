@@ -53,6 +53,19 @@ module.exports = {
         // console.log('______________________________ldp.resource.updated',ctx.params);
         const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
         // console.log('ldp.resource.updated container',container)
+        const queryArchivee= `
+        PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+        PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+        CONSTRUCT {
+          ?s1 ?p1 ?o1.
+        }
+        WHERE {
+          ?s1 a ep:JobStatus.
+          ?s1 pair:label ?l1.
+          FILTER(REGEX(LCASE(STR(?l1)), LCASE("Archivée"))).
+          ?s1 ?p1 ?o1.
+        }`
+
         switch (container.path) {
           case '/users':
             // const user = ctx.params.resourceUri;
@@ -123,15 +136,6 @@ module.exports = {
   
               for (const diffUser of diffUsers) {
                 const user = await ctx.call('ldp.resource.get', { resourceUri : diffUser, accept:'application/ld+json'});
-                // console.log({
-                //   template:4708834,
-                //   to:[{
-                //     Email :user['pair:e-mail']
-                //   }],
-                //   variables:{
-                //     company:newData['pair:label']
-                //   }
-                // })
                 await ctx.call('mailer.sendMail', {
                   template:4708834,
                   to:[{
@@ -143,9 +147,25 @@ module.exports = {
                 });
                 // console.log('company',company)
               }
-  
               break;
 
+            case '/jobs':
+              const statusArchivee  = await ctx.call('triplestore.query', { query : queryArchivee, accept:'application/ld+json'});
+
+              if (oldData['pair:hasStatus']!=statusArchivee['@id'] && newData['pair:hasStatus']==statusArchivee['@id']){
+                const timeSlots= oldData['ep:subjectOf']==undefined?[]:Array.isArray(oldData['ep:subjectOf'])?oldData['ep:subjectOf']:[newData['ep:subjectOf']]
+                for (const timeSlot of timeSlots) {
+                  const timeSlotObject = await ctx.call('ldp.resource.get', { resourceUri : timeSlot, accept:'application/ld+json'});
+                  if (timeSlotObject['pair:concerns'] && (new Date(timeSlotObject['pair:startDate'] > new Date()))){
+                    const abordedTimeSlot={
+                      ...timeSlotObject,
+                      'pair:concerns':undefined
+                    }
+                    await ctx.call('ldp.resource.put', { resource:abordedTimeSlot, webId:webId, contentType:'application/ld+json'});
+                  }
+                }
+              }
+              break;
             case '/timeSlot':
 
               const predicate = 'pair:concerns';
@@ -155,25 +175,26 @@ module.exports = {
           
               const diffConcerns=newConcerns.filter(c=>!oldConcerns.includes(c));
               if(diffConcerns.length>0){
+                //RDV
                 const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
-                const query= `
-                PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
-                PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
-                CONSTRUCT {
-                  ?s1 ?p1 ?o1.
-                }
-                WHERE {
-                  ?s1 a ep:JobStatus.
-                  ?s1 pair:label ?l1.
-                  FILTER(REGEX(LCASE(STR(?l1)), LCASE("Pourvue"))).
-                  ?s1 ?p1 ?o1.
-                }`
-                const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                // const query= `
+                // PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                // PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                // CONSTRUCT {
+                //   ?s1 ?p1 ?o1.
+                // }
+                // WHERE {
+                //   ?s1 a ep:JobStatus.
+                //   ?s1 pair:label ?l1.
+                //   FILTER(REGEX(LCASE(STR(?l1)), LCASE("Pourvue"))).
+                //   ?s1 ?p1 ?o1.
+                // }`
+                // const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
 
-                let newJob = {
-                  ...job,
-                  'pair:hasStatus':status['@id']
-                }
+                // let newJob = {
+                //   ...job,
+                //   'pair:hasStatus':status['@id']
+                // }
                 const timing = dayjs(newData['pair:startDate']).format('LLLL');
 
 
@@ -235,25 +256,27 @@ module.exports = {
               }
               const invDiffConcerns=oldConcerns.filter(c=>!newConcerns.includes(c));
               if(invDiffConcerns.length>0){
+                  //ANNULATION
                   const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
-                  const query= `
-                  PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
-                  PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
-                  CONSTRUCT {
-                    ?s1 ?p1 ?o1.
-                  }
-                  WHERE {
-                    ?s1 a ep:JobStatus.
-                    ?s1 pair:label ?l1.
-                    FILTER(REGEX(LCASE(STR(?l1)), LCASE("Publiée"))).
-                    ?s1 ?p1 ?o1.
-                  }`
-                  const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+ 
+                  // const query= `
+                  // PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                  // PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                  // CONSTRUCT {
+                  //   ?s1 ?p1 ?o1.
+                  // }
+                  // WHERE {
+                  //   ?s1 a ep:JobStatus.
+                  //   ?s1 pair:label ?l1.
+                  //   FILTER(REGEX(LCASE(STR(?l1)), LCASE("Publiée"))).
+                  //   ?s1 ?p1 ?o1.
+                  // }`
+                  // const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
 
-                  let newJob = {
-                    ...job,
-                    'pair:hasStatus':status['@id']
-                  }
+                  // let newJob = {
+                  //   ...job,
+                  //   'pair:hasStatus':status['@id']
+                  // }
 
                   const timing = dayjs(newData['pair:startDate']).format('LLLL');
                   const user = await ctx.call('ldp.resource.get', { resourceUri : oldData['pair:concerns'], accept:'application/ld+json'});
@@ -330,20 +353,34 @@ module.exports = {
                     
 
                   } else {
-
-                    await ctx.call('mailer.sendMail', {
-                      template:4642565,//4.1.i
-                      to:[{
-                        Email :user['pair:e-mail']
-                      }],
-                      variables:{
-                        company: company['pair:label'],
-                        timing:  timing,
-                        job : job['pair:label'],
-                      }
-                    });
-                    
-
+                    console.log('queryArchivee',queryArchivee)
+                    const statusArchivee  = await ctx.call('triplestore.query', { query : queryArchivee, accept:'application/ld+json'});
+                    if(job['pair:hasStatus']==statusArchivee['@id']){
+                      await ctx.call('mailer.sendMail', {
+                        template:4709230,//3.a
+                        to:[{
+                          Email :user['pair:e-mail']
+                        }],
+                        variables:{
+                          company: company['pair:label'],
+                          timing:  timing,
+                          job : job['pair:label'],
+                        }
+                      });
+                    }else{
+                      await ctx.call('mailer.sendMail', {
+                        template:4642565,//4.1.i
+                        to:[{
+                          Email :user['pair:e-mail']
+                        }],
+                        variables:{
+                          company: company['pair:label'],
+                          timing:  timing,
+                          job : job['pair:label'],
+                        }
+                      });
+                    }
+                    console.log('SEND SMS ANNULATION',user['pair:phone'])
                     if(user['pair:phone']){
                       const smsText = await getSmsMessage(ctx,"SMS - annulation entreprise", {
                         company: company['pair:label'],

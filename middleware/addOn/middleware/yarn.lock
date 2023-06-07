@@ -1834,7 +1834,7 @@ cron-parser@^4.2.0:
   dependencies:
     luxon "^3.2.1"
 
-cron@^1.8.2:
+cron@^1.3.0, cron@^1.8.2:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/cron/-/cron-1.8.3.tgz#2a61d7b15848716885834ec56ac072f4b9744ebd"
   integrity sha512-JYR/QZFklJCIPndBLfd/2nU1nSlCMrUdtQ2mGLXSVM/qqqEK7DOrFR0gsEiyeqs0PdWrs0ve1ggH4V7XksDwXg==
@@ -4395,6 +4395,13 @@ moleculer-bull@^0.2.5:
   dependencies:
     bull "^3.15.0"
     lodash "^4.17.15"
+
+moleculer-cron@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/moleculer-cron/-/moleculer-cron-0.0.2.tgz#0fd12eb82d504ed2a8a9ccd2b3699373afc7cfcb"
+  integrity sha512-PChQ1Sw+AIK85dIsKWxuG8M3YMG8qwLWcCV5vSBWhfGOBZ8VBnxAaISAdd4NxkCyaInK2IpoQOXzRNL0JwL3+w==
+  dependencies:
+    cron "^1.3.0"
 
 moleculer-db@^0.8.15, moleculer-db@^0.8.16:
   version "0.8.23"

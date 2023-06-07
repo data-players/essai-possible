@@ -112,7 +112,7 @@ module.exports = {
                   const invDiffConcerns=oldConcerns.filter(c=>!newConcerns.includes(c));
                   if(invDiffConcerns.length>0){
                       const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
-                      const query= `
+                      const queryArchivee= `
                       PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
                       PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                       CONSTRUCT {
@@ -121,18 +121,34 @@ module.exports = {
                       WHERE {
                         ?s1 a ep:JobStatus.
                         ?s1 pair:label ?l1.
-                        FILTER(REGEX(LCASE(STR(?l1)), LCASE("Publiée"))).
+                        FILTER(REGEX(LCASE(STR(?l1)), LCASE("Archivée"))).
                         ?s1 ?p1 ?o1.
                       }`
-                      const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                      const statusArchivee  = await ctx.call('triplestore.query', { query : queryArchivee, accept:'application/ld+json'});
                       // const pourvuSubject = result['@graph'][0]
-                      // console.log('status',status)
-                      let newJob = {
-                        ...job,
-                        'pair:hasStatus':status['@id']
+                      if(job['pair:hasStatus']!=statusArchivee['@id']){
+                        const query= `
+                        PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                        PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                        CONSTRUCT {
+                          ?s1 ?p1 ?o1.
+                        }
+                        WHERE {
+                          ?s1 a ep:JobStatus.
+                          ?s1 pair:label ?l1.
+                          FILTER(REGEX(LCASE(STR(?l1)), LCASE("Publiée"))).
+                          ?s1 ?p1 ?o1.
+                        }`
+                        const status  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                        // const pourvuSubject = result['@graph'][0]
+                        // console.log('status',status)
+                        let newJob = {
+                          ...job,
+                          'pair:hasStatus':status['@id']
+                        }
+      
+                        const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});  
                       }
-    
-                      const updatedJob= await ctx.call('ldp.resource.put', { resource : newJob, webId:ctx.params.webId, contentType:'application/ld+json'});
 
                     }
                   break;

@@ -37,6 +37,7 @@ export default function CompanyOfferPreview({offer, children}) {
   // console.log('offer.status',offer.status,offer,status.find(s=>s.id.includes('publiee'))?.id)
   const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
   const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
+  const isArchived = offer.status === status.find(s=>s.id.includes('archivee'))?.id;
 
   // console.log('offer status',offer.status,isDraft,isPublished,isFulfilled)
   const isConnected = currentUserReady && currentUser?.id;
@@ -192,6 +193,25 @@ export default function CompanyOfferPreview({offer, children}) {
           </>
         }
         color={"success"}
+        button={
+          <Button
+            startDecorator={<VisibilityRoundedIcon />}
+            onClick={handleChangeStatus(status.find(s=>s.id.includes('publiee'))?.id)}
+            loading={isUpdatingOffer}>
+            Republier
+          </Button>
+        }
+      />
+
+      <StatusCollapse
+        open={isArchived}
+        title={"Cette offre est archivée."}
+        description={
+          <>
+            Cette Offre est archivée
+          </>
+        }
+        color={"warning"}
         button={
           <Button
             startDecorator={<VisibilityRoundedIcon />}
