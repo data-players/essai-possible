@@ -49,7 +49,7 @@ module.exports = {
                 }`
                 console.log(query);
                 const timeSlotsResult  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
-                console.log(timeSlot);
+                // console.log(timeSlot);
 
                 let timeSlots=[];
 
