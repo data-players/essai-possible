@@ -26,6 +26,7 @@ import {useSnackbar} from "../../components/snackbar.jsx";
 import {useUpdateSlotMutation} from "../offers/book/slots-slice.js";
 import {selectCurrentUser} from "../../app/auth-slice.js";
 import { useNavigate ,redirect} from "react-router-dom";
+import {selectCompanyById} from "../offers/companies-slice.js";
 
 export function MeetingCardContent({slot, offer}) {
   // console.log('slot',slot)
@@ -37,12 +38,15 @@ export function MeetingCardContent({slot, offer}) {
   // const isDeletingMeeting = false;
   // console.log('MeetingCardContent',slot, offer)
   const currentUser = useSelector(selectCurrentUser);
+  const company = useSelector((state) => selectCompanyById(state, offer.company)) || {};
 
     const status = useSelector(selectAllStatus);
     const currentStatus = status.find(s=>s.id==offer.status)
   // console.log('currentUser',currentUser)
 
   const isAllowForCompany = currentUser?.companies.includes(offer.company)
+
+
   const isAllowForUser = slot?.user?.id==currentUser?.id
   const isAllow = isAllowForCompany||isAllowForUser;
   // console.log('slot',slot);
@@ -58,6 +62,18 @@ export function MeetingCardContent({slot, offer}) {
     "%2F" +
     dayjs(slot?.start).clone().add(slot.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
 
+  const conventionUrl = `https://staging.immersion-facile.beta.gouv.fr/demande-immersion?`+
+  `email=${slot?.user?.email}&`+
+  `firstName=${slot?.user?.firstName}&`+
+  `lastName=${slot?.user?.lastName}&`+
+  `phone=${slot?.user?.phone}&`+
+  `siret=${company?.siret}&`+
+  `dateStart=${slot?.start}&`+
+  `businessName=${company?.name}&`+ //ko
+  `establishmentTutor.phone=${offer?.mentorPhone}&`+ // ko
+  `establishmentTutor.email=${offer?.mentorEmail}&`+ //ko
+  `place=${offer?.location?.label}` //ko
+
   return (
     isAllow ? (
       <Stack gap={1}>
@@ -70,6 +86,13 @@ export function MeetingCardContent({slot, offer}) {
             <Typography level="h3">
               {slot.user.label}
             </Typography>
+            <Button
+              component="a"
+              target="_blank"
+              href={conventionUrl}
+              variant={"soft"}>
+              remplire demande de convention
+            </Button>
           </>
         : isAllowForUser ?
           <Typography level="body" sx={{color: "text.tertiary"}}>

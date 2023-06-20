@@ -46,10 +46,10 @@ module.exports = {
         })
       await request
         .then((result) => {
-          console.log('sendMail ok', JSON.stringify(result.body))
+          // console.log('sendMail ok', JSON.stringify(result.body))
         })
         .catch((err) => {
-          console.log('sendMail ko', err.statusCode, err.ErrorMessage)
+          console.error('sendMail ko', err.statusCode, err.ErrorMessage)
           throw new Error('Error while sending mail');
         })
 

@@ -9,7 +9,7 @@ module.exports = {
     crons: [
         {
             name: "reminder-next-cron",
-            cronTime: '*/1 * * * *',
+            cronTime: '*0 * * * *',
             onTick: function() {
                 this.getLocalService("reminder")
                 .actions.reminderNext()
@@ -28,11 +28,13 @@ module.exports = {
     actions: {
         reminderNext: {
             async handler(ctx) {
+                
                 const now = new Date();
+                // console.log('-----------------reminder CRON -2')
                 const dayNext = new Date(now.setDate(now.getDate() + 2));
                 const dayNextIso = dayNext.toISOString();
                 // console.log('dayNext',dayNext,dayNext);
-                const query= `
+                const queryNext= `
                 PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
                 PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -47,24 +49,24 @@ module.exports = {
                   FILTER NOT EXISTS {?s1 ep:remainderNext ?reminder }.
                   ?s1 ?p1 ?o1.
                 }`
-                console.log(query);
-                const timeSlotsResult  = await ctx.call('triplestore.query', { query, accept:'application/ld+json'});
+                // console.log(query);
+                const timeSlotsResultNext  = await ctx.call('triplestore.query', { query:queryNext, accept:'application/ld+json'});
                 // console.log(timeSlot);
 
-                let timeSlots=[];
+                let timeSlotsNext=[];
 
-                if (timeSlotsResult['@id']){
-                    timeSlots=[timeSlotsResult];
-                }else if(timeSlotsResult['@graph']) {
-                    timeSlots=timeSlotsResult['@graph'].map(
-                        g=>({...g,'@context':timeSlotsResult['@context']})
+                if (timeSlotsResultNext['@id']){
+                    timeSlotsNext=[timeSlotsResultNext];
+                }else if(timeSlotsResultNext['@graph']) {
+                    timeSlotsNext=timeSlotsResultNext['@graph'].map(
+                        g=>({...g,'@context':timeSlotsResultNext['@context']})
                     )
                 }
-                for (const timeSlot of timeSlots) {
+                for (const timeSlot of timeSlotsNext) {
                     const job = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.about, accept:'application/ld+json'});
                     const user = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.concerns, accept:'application/ld+json'});
                     const company = await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});
-                    console.log(job,user,company);
+                    // console.log(job,user,company);
                     const timing = dayjs(timeSlot['startDate']).format('LLLL');
                     let parsedPhoneNumber;
                     if(job['pair:phone']){
@@ -97,7 +99,7 @@ module.exports = {
                         }
                     });
 
-                    const smsText = await getSmsMessage(ctx,"SMS - remainderNext", {
+                    const smsText = await getSmsMessage(ctx,"SMS - reminderNext", {
                         company:company['pair:label'],
                         timing:timing,
                         place:job['pair:hasLocation']['pair:label'],
@@ -116,6 +118,90 @@ module.exports = {
                         'ep:remainderNext':true
                     }
 
+                    // console.log('reminder update',newTimeSlot)
+                    const newTimeSlotUpdated= await ctx.call('ldp.resource.put', { resource : newTimeSlot, webId:'system', contentType:'application/ld+json'});
+
+                }        
+                
+                // console.log('-----------------reminder CRON +10')
+                const dayPrevious = new Date(now.setDate(now.getDate() - 10));
+                const dayPreviousIso = dayPrevious.toISOString();
+                // console.log('dayNext',dayNext,dayNext);
+                const queryPrevious= `
+                PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+                PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                CONSTRUCT {
+                  ?s1 ?p1 ?o1.
+                }
+                WHERE {
+                  ?s1 a ep:TimeSlot.
+                  ?s1 pair:startDate ?date .
+                  FILTER (?date < "${dayPreviousIso}"^^xsd:dateTime).
+                  FILTER EXISTS {?s1 pair:concerns ?user }.
+                  FILTER NOT EXISTS {?s1 ep:remainderPrevious ?reminder }.
+                  ?s1 ?p1 ?o1.
+                }`
+                // console.log(queryPrevious);
+                const timeSlotsResultPrevious  = await ctx.call('triplestore.query', { query:queryPrevious, accept:'application/ld+json'});
+                // console.log(timeSlotsResultPrevious);
+
+
+                let timeSlotsPrevious=[];
+
+                if (timeSlotsResultPrevious['@id']){
+                    timeSlotsPrevious=[timeSlotsResultPrevious];
+                }else if(timeSlotsResultPrevious['@graph']) {
+                    timeSlotsPrevious=timeSlotsResultPrevious['@graph'].map(
+                        g=>({...g,'@context':timeSlotsResultPrevious['@context']})
+                    )
+                }
+                for (const timeSlot of timeSlotsPrevious) {
+                    const job = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.about, accept:'application/ld+json'});
+                    const user = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.concerns, accept:'application/ld+json'});
+                    const company = await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});
+                    // console.log(job,user,company);
+                    const timing = dayjs(timeSlot['startDate']).format('LLLL');
+                    let parsedPhoneNumber;
+                    if(job['pair:phone']){
+                        parsedPhoneNumber=parsePhoneNumber(job['pair:phone'], 'FR').number;
+                    }
+
+                    await ctx.call('mailer.sendMail', {
+                        template:4709562,//6.a beneficiare
+                        to:[{
+                            Email :user['pair:e-mail']
+                        }],
+                        variables:{
+                        }
+                    });
+
+                    await ctx.call('mailer.sendMail', {
+                        template:4709551,//6.1 entreprise
+                        to:[{
+                            Email :job['pair:e-mail']
+                        }],
+                        variables:{
+                        }
+                    });
+
+                    const smsText = await getSmsMessage(ctx,"SMS - reminderPrevious", {
+                        mail:user['pair:e-mail']
+                    });
+
+                    const parsedPhoneNumberUSer = parsePhoneNumber(user['pair:phone'], 'FR').number;
+                    await ctx.call('mailer.sendSms', {
+                    to:parsedPhoneNumberUSer,
+                    from:process.env.SMS_SENDER,
+                    text:smsText
+                    });
+
+                    let newTimeSlot = {
+                        ...timeSlot,
+                        'ep:remainderPrevious':true
+                    }
+
+                    // console.log('reminder update',newTimeSlot)
                     const newTimeSlotUpdated= await ctx.call('ldp.resource.put', { resource : newTimeSlot, webId:'system', contentType:'application/ld+json'});
 
                 }                

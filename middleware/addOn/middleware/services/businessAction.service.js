@@ -17,7 +17,7 @@ module.exports = {
   events : {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
-      console.log('------------------- created',newData,webId)
+      // console.log('------------------- created',newData,webId)
       const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
       switch (container.path) {
         case '/organizations':
@@ -107,24 +107,7 @@ module.exports = {
               
               // console.log('company',company)
             }
-            // const newAffiliation = newData['pair:affiliatedBy']==undefined?[]:Array.isArray(newData['pair:affiliatedBy'])?newData['pair:affiliatedBy']:[newData['pair:affiliatedBy']];
-            // const oldAffiliation = oldData['pair:affiliatedBy']==undefined?[]:Array.isArray(oldData['pair:affiliatedBy'])?oldData['pair:affiliatedBy']:[newData['pair:affiliatedBy']];
-            // const diffCompanies=newAffiliation.filter(c=>!oldAffiliation.includes(c));
-
-            // for (const diffCompany of diffCompanies) {
-            //   const company = await ctx.call('ldp.resource.get', { resourceUri : diffCompany, accept:'application/ld+json'});
-            //   await ctx.call('mailer.sendMail', {
-            //     template:4708834,
-            //     to:[{
-            //       Email :newData['pair:e-mail']
-            //     }],
-            //     variables:{
-            //       company:company['pair:label'],
-            //       url:`${CONFIG.FRONT_URL}company/${encodeURIComponent(company.id)}/users`
-            //     }
-            //   });
-            //   // console.log('company',company)
-            // }
+  
 
             break;
 
@@ -137,7 +120,7 @@ module.exports = {
               for (const diffUser of diffUsers) {
                 const user = await ctx.call('ldp.resource.get', { resourceUri : diffUser, accept:'application/ld+json'});
                 await ctx.call('mailer.sendMail', {
-                  template:4708834,
+                  template:4708834,// 1.b.3
                   to:[{
                     Email :user['pair:e-mail']
                   }],
@@ -300,7 +283,7 @@ module.exports = {
                     }
 
                     if(job['pair:phone']){
-                      const smsText = await getSmsMessage(ctx,"SMS - annulation", {
+                      const smsText = await getSmsMessage(ctx,"SMS - annulation beneficiaire", {
                         user:user['pair:e-mail'],
                         timing:timing,
                         job:job['pair:label'],
@@ -335,7 +318,7 @@ module.exports = {
                       });
 
                       if (companyUserObject['pair:phone']){
-                        const smsText = await getSmsMessage(ctx,"SMS - annulation", {
+                        const smsText = await getSmsMessage(ctx,"SMS - annulation entreprise", {
                           user:user['pair:e-mail'],
                           timing:timing,
                           job:job['pair:label'],
@@ -353,7 +336,7 @@ module.exports = {
                     
 
                   } else {
-                    console.log('queryArchivee',queryArchivee)
+                    // console.log('queryArchivee',queryArchivee)
                     const statusArchivee  = await ctx.call('triplestore.query', { query : queryArchivee, accept:'application/ld+json'});
                     if(job['pair:hasStatus']==statusArchivee['@id']){
                       await ctx.call('mailer.sendMail', {
@@ -380,7 +363,7 @@ module.exports = {
                         }
                       });
                     }
-                    console.log('SEND SMS ANNULATION',user['pair:phone'])
+                    // console.log('SEND SMS ANNULATION',user['pair:phone'])
                     if(user['pair:phone']){
                       const smsText = await getSmsMessage(ctx,"SMS - annulation entreprise", {
                         company: company['pair:label'],
