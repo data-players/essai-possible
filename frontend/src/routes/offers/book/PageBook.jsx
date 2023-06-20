@@ -183,6 +183,7 @@ export default function PageBook() {
                 label="Avez-vous des commentaires à partager avec l'entreprise ?"
                 name={"comments"}
                 placeholder="conditions particulières, remarques pour l'entreprise..."
+                help="si vous avez une question ou besoin de préciser quelque chose à l'employeur, faites-le ici. Il ne s'agit pas de préciser ici vos compétences ou les éléments de votre motivation, que vous pourrez démontrer lors de votre immersion"
                 minRows={3}
                 register={register}
               />
