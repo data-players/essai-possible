@@ -93,6 +93,7 @@
     "myCompany_other": "Mes Entreprises",
     "askAffiliation":{
       "title" : "Espace entreprise",
+      "help" : "Si vous êtes une entreprise et voulez poster des offres, demandez un rattachement à votre entreprise ou créez là dans la plateforme !",
       "button": "Demander un rattachement",
       "more":"à une entreprise pour publier des offres"
     }

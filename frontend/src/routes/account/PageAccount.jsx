@@ -198,7 +198,7 @@ export default function PageAccount() {
               <Card variant={"soft"}>
                   <Stack gap={2}>
                     <Typography level={"h3"}>{t("company.askAffiliation.title")}</Typography>
-                    <Typography>{t("company.askAffiliation.button")} {t("company.askAffiliation.more")}</Typography>
+                    <Typography>{t("company.askAffiliation.help")}</Typography>
                     {!askAfilitionMode &&
                       <Button onClick={(e)=>{
                         e.preventDefault();
@@ -273,12 +273,12 @@ export default function PageAccount() {
                       )}
 
                         <Stack textAlign={"center"} alignItems={"center"}>
-                          <Typography sx={{ opacity: 0.7 }}>
+                          <Typography sx={{ opacity: 0.7, fontWeight: 'bold' }}>
                             {!newCompanyMode
                               ? "Vous ne trouvez pas votre entreprise ?"
                               : "Votre entreprise est déjà référencée ?"}
                           </Typography>
-                          <Link onClick={(e) => {
+                          <Link sx={{fontWeight: 'bold' }} onClick={(e) => {
                               e.preventDefault();
                               setNewCompanyMode(!newCompanyMode);
                             }}>
