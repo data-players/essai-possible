@@ -9,7 +9,7 @@ module.exports = {
     crons: [
         {
             name: "reminder-next-cron",
-            cronTime: '*/1 * * * *',
+            cronTime: '0 4,12,20 * * *',
             onTick: function() {
                 this.getLocalService("reminder")
                 .actions.reminderNext()
