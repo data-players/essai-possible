@@ -181,7 +181,7 @@ export default function HomePage() {
               <Stack gap={4} m={1}>
                 <Typography level="h2">{t("homePage.essaiPossibleTerritories")}</Typography>
                 <Typography level={"h4"} component={"p"}>
-                  {t("homePage.implantationsExplanation")}
+                  {t("homePage.implantationsExplanation").replace(' ?', '\xa0?')}
                 </Typography>
                 <ExternalLink
                   level={""}

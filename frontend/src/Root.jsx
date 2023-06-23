@@ -176,21 +176,21 @@ export default function Root() {
         </Layout.Main>
 
         <Layout.Footer>
-          <Typography>
+          <Typography fontWeight={"xl"}>
             {t("footer.contact")}
           </Typography>
-          <Typography fontSize={"md"} fontWeight={"xl"} sx={{mt: 1, ml: 2}}>
+          <Typography fontSize={"md"}  sx={{mt: 1}}>
             <Link href={"mailto:entreprises@toustespossibles.fr"} sx={{color: "primary.solidColor"}}>
             entreprises@toustespossibles.fr
             </Link>
           </Typography>
-          <Typography fontSize={"lg"} sx={{mt: 2}}>
-            suivez nous
+          <Typography fontWeight={"xl"} sx={{mt: 2}}>
+            Suivez nous
           </Typography>
           <Grid container>
-            <Grid xs={4}><IconButton component="a" href="https://fr.linkedin.com/company/toustespossibles" target="_blank"><LinkedIn/></IconButton></Grid>
-            <Grid xs={4}><IconButton component="a" href="https://www.facebook.com/TousTesPossibles/" target="_blank"><Facebook/></IconButton></Grid>
-            <Grid xs={4}><IconButton component="a" href="https://www.instagram.com/toustespossibles/?hl=fr" target="_blank"><Instagram/></IconButton></Grid>
+            <Grid xs={1}><IconButton component="a" href="https://fr.linkedin.com/company/toustespossibles" target="_blank"><LinkedIn/></IconButton></Grid>
+            <Grid xs={1}><IconButton component="a" href="https://www.facebook.com/TousTesPossibles/" target="_blank"><Facebook/></IconButton></Grid>
+            <Grid xs={1}><IconButton component="a" href="https://www.instagram.com/toustespossibles/?hl=fr" target="_blank"><Instagram/></IconButton></Grid>
           </Grid>
           <Typography sx={{mt: 2}}>Image de gstudioimagen sur Freepik</Typography>
         </Layout.Footer>

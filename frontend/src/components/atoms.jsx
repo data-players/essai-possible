@@ -339,6 +339,7 @@ export function ButtonWithConfirmation({
   loading,
   areYouSureText,
   onClick,
+  cancelText,
   ...props
 }) {
   const [areYouSure, setAreYouSure] = useState(false);
@@ -355,7 +356,7 @@ export function ButtonWithConfirmation({
           {children}
         </Button>
         <Button variant={"soft"} size={"sm"} onClick={() => setAreYouSure(false)}>
-          Annuler
+          {cancelText||'Annuler'}
         </Button>
       </Stack>
     </Card>

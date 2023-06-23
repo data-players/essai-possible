@@ -44,6 +44,8 @@ import Box from "@mui/joy/Box";
 import * as yup from "yup";
 import HelpPdf1 from "../../../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../../../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
+import GuidePdf from "../../../assets/Guide_Essai_Possible.pdf";
+
 import EditFormComponent from "../../../components/EditFormComponent.jsx";
 import Link from "@mui/joy/Link";
 import {CompanyFormElements} from "../../company/CompanyFormElements.jsx";
@@ -199,8 +201,7 @@ export default function PageEditOffer({mode, isCopying}) {
               </>
             )}
           </Typography>
-          <ExternalLink href={HelpPdf1}>Comment analyser les besoins d'un poste ?</ExternalLink>
-          <ExternalLink href={HelpPdf2}>Comment rédiger une fiche de poste ?</ExternalLink>
+          <ExternalLink href={GuidePdf}>Guide Essai Possible</ExternalLink>
         </>
       }
       deleteLoading={isDeletingOffer}
@@ -328,8 +329,8 @@ export default function PageEditOffer({mode, isCopying}) {
               />
 
               <FormInput
-                label={"Amménagements possibles"}
-                placeholder={"amménagements"}
+                label={"Aménagements possibles"}
+                placeholder={"aménagements"}
                 register={register}
                 name={"offer.possibleArrangements"}
                 pendingmutation={pendingmutation}
@@ -469,6 +470,7 @@ export default function PageEditOffer({mode, isCopying}) {
                 component={RadioGroupSemantic}
                 options={status}
                 register={register}
+                help={`Le passage d'une offre en "archivées" enclenche un envoi automatique de mails d'annulation à toute personne ayant réservé un créneau de rencontre à une date ultérieure au changement de statut`}
                 pendingmutation={pendingmutation}
               />
             </Stack>

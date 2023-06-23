@@ -4,6 +4,7 @@ import Sheet from "@mui/joy/Sheet";
 import Stack from "@mui/joy/Stack";
 import HeroHomeImage from "../assets/58137.jpg";
 import TousTesPossiblesLogoWhite from "../assets/tous-tes-possibles-logo-white.png";
+import MajRHLogo from "../assets/majRH.png";
 import Grid from "@mui/joy/Grid";
 import Typography from "@mui/joy/Typography";
 import {useTranslation} from "react-i18next";
@@ -32,6 +33,7 @@ import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import Divider from "@mui/joy/Divider";
 import HelpPdf1 from "../assets/Outil 1 : Définition du poste.pdf";
 import HelpPdf2 from "../assets/Outil 2 : Rédaction de l'offre d'emploi.pdf";
+import GuidePdf from "../assets/Guide_Essai_Possible.pdf";
 import {ExternalLink} from "./atoms.jsx";
 
 function Root(props) {
@@ -105,12 +107,10 @@ function Navigation({mobileDrawerContent, isCompanyAccount, ...props}) {
           <Typography fontWeight={"lg"} textAlign={"center"}>
             Vous êtes connecté·e avec un compte entreprise.
           </Typography>
-          <ExternalLink href={HelpPdf1} fontSize={"sm"}>
-            Comment analyser les besoins d'un poste ?
+          <ExternalLink href={GuidePdf} fontSize={"sm"}>
+            guide Essai Possible
           </ExternalLink>
-          <ExternalLink href={HelpPdf2} fontSize={"sm"}>
-            Comment rédiger une fiche de poste ?
-          </ExternalLink>
+          
         </Sheet>
       </Collapse>
       <Container
@@ -162,21 +162,26 @@ function Footer(props) {
       <Sheet color={"neutral"} variant={"solid"} invertedColors sx={{overflow: "hidden"}}>
         <Container>
           <Grid container spacing={6} py={8} alignItems="center">
-            <Grid xs={12} md={3}>
+            <Grid xs={12} md={4}>
               {props.children}
             </Grid>
-            <Grid xs={0} md={6}>
+            <Grid xs={0} md={4}>
+              <Stack gap={2} alignItems={"center"}>
+                <Box component={"img"} src={MajRHLogo} width={"50%"} />
+                <Typography fontSize={"lg"}>
+                  <Link href={"https://majrh.fr/"} target="_blank">
+                    Mettez à jour vos pratiques RH
+                  </Link>
+                </Typography>
+              </Stack>
             </Grid>
-            <Grid xs={12} md={3}>
+            <Grid xs={12} md={4}>
               <Stack gap={2} alignItems={"center"}>
                 <Box component={"img"} src={TousTesPossiblesLogoWhite} width={"100%"} />
                 <Typography fontSize={"lg"}>
                   {t("footer.projectFundedBy")}{" "}
                   <Link href={"https://www.toustespossibles.fr/entreprises-inclusives/"} target="_blank">
                     toustespossibles.fr
-                  </Link>
-                  <Link href={"https://majrh.fr/"} target="_blank">
-                    Mettez à jour vos pratiques RH
                   </Link>
                 </Typography>
                 <Link

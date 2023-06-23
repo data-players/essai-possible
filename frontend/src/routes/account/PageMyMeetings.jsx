@@ -81,7 +81,7 @@ export function MeetingCardContent({slot, offer}) {
         {isAllowForCompany ?
           <>
             <Typography level="body" sx={{color: "text.tertiary"}}>
-              Une personne à reservé ce créneau :
+              Un créneau de rencontre a été réservé pour la personne ci-dessous. Vous avez un recevoir un mail avec toutes ses coordonnées pour la contacter pour toute précision. Belle rencontre !
             </Typography>
             <Typography level="h3">
               {slot.user.label}
@@ -91,7 +91,7 @@ export function MeetingCardContent({slot, offer}) {
               target="_blank"
               href={conventionUrl}
               variant={"soft"}>
-              remplire demande de convention
+              remplir demande de convention
             </Button>
           </>
         : isAllowForUser ?
@@ -120,6 +120,7 @@ export function MeetingCardContent({slot, offer}) {
           <ButtonWithConfirmation
             color={"primary"}
             loading={isUpdatingSlotx}
+            cancelText={'ne pas annuler'}
             onClick={async (event) => {
               // event.stopPropagation();
               let slotToUpdate= {...slot};
@@ -135,10 +136,10 @@ export function MeetingCardContent({slot, offer}) {
               isAllowForCompany ?
                 "Êtes-vous sûr de vouloir annuler cette rencontre ? Un mail sera automatiquement envoyé au candidat. Votre annonce sera remise en ligne. Si vous souhaitez proposer un autre créneau candidat, nous vous conseillons de ne pas annuler son RDV et de lui proposer directement un autre créneau par mail ou téléphone."
               : isAllowForUser ?
-                "Êtes vous sûr·e de vouloir supprimer ce rendez-vous ? L'entreprise sera mise au courant."
+                "Êtes-vous sûr.e de vouloir annuler ce rendez-vous ? Nous tiendrons l'entreprise au courant. N'hésitez pas à choisir un autre créneau ou bien à parcours les autres offres pour effectuer une immersion dans une autre structure."
               : ""
             }>
-            Supprimer
+            ANNULER
           </ButtonWithConfirmation>
         </Stack>
       </Stack>

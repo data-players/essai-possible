@@ -231,7 +231,7 @@ export default function PageAccount() {
                         mt={1}
                         borderRadius={2}
                         onSubmit={onSubmitAffiliationNewCompany}
-                        validationButtonText= "initiliser votre entreprise">
+                        validationButtonText= "initialiser votre entreprise">
                         {(register, {values, setFieldValue, errors}) => (
 
                           <>

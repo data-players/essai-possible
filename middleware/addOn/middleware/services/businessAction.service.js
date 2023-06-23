@@ -4,9 +4,14 @@ var mustache = require('mustache');
 const dayjs = require('dayjs');
 const urlJoin = require('url-join');
 const LocalizedFormat = require( 'dayjs/plugin/localizedFormat')
+const timezone = require('dayjs/plugin/timezone')
+const utc = require('dayjs/plugin/utc')
 dayjs.extend(LocalizedFormat)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 require('dayjs/locale/fr')
 dayjs.locale('fr');
+
 
 function normalisePredicate(data, predicate) {
   return data[predicate] == undefined ? [] : Array.isArray(data[predicate]) ? data[predicate] : [data[predicate]];
@@ -178,8 +183,11 @@ module.exports = {
                 //   ...job,
                 //   'pair:hasStatus':status['@id']
                 // }
-                const timing = dayjs(newData['pair:startDate']).format('LLLL');
 
+                // console.log('______TimeZone',dayjs.tz)
+                // console.log('______________',newData['pair:startDate']);
+                const timing = dayjs(newData['pair:startDate']).tz('Europe/Paris').format('LLLL');
+                // console.log('______________timing',timing);
 
                 const user = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:concerns'], accept:'application/ld+json'});
                 const company =  await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});                
@@ -261,7 +269,8 @@ module.exports = {
                   //   'pair:hasStatus':status['@id']
                   // }
 
-                  const timing = dayjs(newData['pair:startDate']).format('LLLL');
+                  const timing = dayjs(newData['pair:startDate']).tz('Europe/Paris').format('LLLL');
+                  // console.log('______________timing',timing);
                   const user = await ctx.call('ldp.resource.get', { resourceUri : oldData['pair:concerns'], accept:'application/ld+json'});
                   const company =  await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});                
 
@@ -402,10 +411,10 @@ async function getSmsMessage(ctx, title, variables) {
                         ?s1 ?p1 ?o1.
                       }`;
   const page = await ctx.call('triplestore.query', { query, accept: 'application/ld+json' });
-  console.log('page', page);
+  // console.log('page', page);
 
   const text = mustache.render(page.content, variables);
-  console.log('text', text);
+  // console.log('text', text);
   return text;
 }
 

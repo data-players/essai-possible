@@ -41,6 +41,7 @@ export function CompanyFormElements({register, setFieldValue, baseFormPath}) {
       <FormInput
         label={"Site internet de l'entreprise"}
         placeholder={"https://mon-entreprise.com"}
+        help ="noubliez pas d'ajouter https:// dans votre url"
         register={register}
         type={"url"}
         name={base + "website"}
