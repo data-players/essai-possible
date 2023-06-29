@@ -108,7 +108,7 @@ export const AuthComponent = ({logInMode, redirectUrl, redirectComplete, welcome
         <>
           <Box component={"img"} src={LesCommunsLogo} height={50} alignSelf={"center"} />
           <Typography textAlign={"center"} fontWeight={"lg"}>
-            <div>Le portail Les Communs est le moyen de connexion</div><div>choisie par cette platforme</div>
+            <div>Le portail Les Communs est le moyen de connexion</div><div>choisi par cette plateforme</div>
           </Typography>
           {/* <Typography textAlign={"center"} fontWeight={"lg"}>
             {logInMode
