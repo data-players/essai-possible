@@ -9,7 +9,7 @@ const dataProvider = semanticDataProvider({
   dataServers,
   resources: Object.fromEntries(Object.entries(resources).map(([k, v]) => [k, v.dataModel])),
   ontologies,
-  jsonContext: "https://data.essai-possible.data-players.com/" + 'context.json'
+  jsonContext: "https://data.essaipossible.fr/" + 'context.json'
 });
 
 export default dataProvider;

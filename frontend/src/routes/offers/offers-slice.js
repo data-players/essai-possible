@@ -349,7 +349,7 @@ api.injectEndpoints({
 
         const state= getState();
         let dataToUpdate = await disassemblySlots(state, args, dispatch);
-        const out = await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essai-possible.data-players.com/context.json",async (id)=>{
+        const out = await baseCreateCore(dataToUpdate,marshaller,baseQuery,"/jobs","https://data.essaipossible.fr/context.json",async (id)=>{
           const fetchData= await dispatch(api.endpoints.fetchOffer.initiate(id));
           return fetchData.data;
         })

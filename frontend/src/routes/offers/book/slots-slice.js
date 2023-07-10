@@ -126,7 +126,7 @@ api.injectEndpoints({
 
 
     addSlot: builder.mutation({
-      queryFn: baseCreateMutation(marshaller, "timeSlot", "https://data.essai-possible.data-players.com/context.json"),
+      queryFn: baseCreateMutation(marshaller, "timeSlot", "https://data.essaipossible.fr/context.json"),
     }),
 
     updateSlot: builder.mutation({

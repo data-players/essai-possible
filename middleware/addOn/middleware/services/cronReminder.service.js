@@ -2,6 +2,15 @@ const Cron = require("moleculer-cron");
 const parsePhoneNumber = require('libphonenumber-js');
 var mustache = require('mustache');
 const dayjs = require('dayjs');
+const LocalizedFormat = require( 'dayjs/plugin/localizedFormat')
+const timezone = require('dayjs/plugin/timezone')
+const utc = require('dayjs/plugin/utc')
+dayjs.extend(LocalizedFormat)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+require('dayjs/locale/fr')
+dayjs.locale('fr');
+
 
 module.exports = {
     name: "reminder",
@@ -35,7 +44,7 @@ module.exports = {
                 const dayNextIso = dayNext.toISOString();
                 // console.log('dayNext',dayNext,dayNext);
                 const queryNext= `
-                PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                PREFIX ep: <https://data.essaipossible.fr/ontology#>
                 PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                 CONSTRUCT {
@@ -67,7 +76,7 @@ module.exports = {
                     const user = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.concerns, accept:'application/ld+json'});
                     const company = await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});
                     // console.log(job,user,company);
-                    const timing = dayjs(timeSlot['startDate']).format('LLLL');
+                    const timing = dayjs(timeSlot['startDate']).tz('Europe/Paris').format('LLLL');
                     let parsedPhoneNumber;
                     if(job['pair:phone']){
                         parsedPhoneNumber=parsePhoneNumber(job['pair:phone'], 'FR').number;
@@ -128,7 +137,7 @@ module.exports = {
                 const dayPreviousIso = dayPrevious.toISOString();
                 // console.log('dayNext',dayNext,dayNext);
                 const queryPrevious= `
-                PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                PREFIX ep: <https://data.essaipossible.fr/ontology#>
                 PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                 CONSTRUCT {
@@ -161,7 +170,7 @@ module.exports = {
                     const user = await ctx.call('ldp.resource.get', { resourceUri : timeSlot.concerns, accept:'application/ld+json'});
                     const company = await ctx.call('ldp.resource.get', { resourceUri : job['pair:offeredBy'], accept:'application/ld+json'});
                     // console.log(job,user,company);
-                    const timing = dayjs(timeSlot['startDate']).format('LLLL');
+                    const timing = dayjs(timeSlot['startDate']).tz('Europe/Paris').format('LLLL');
                     let parsedPhoneNumber;
                     if(job['pair:phone']){
                         parsedPhoneNumber=parsePhoneNumber(job['pair:phone'], 'FR').number;

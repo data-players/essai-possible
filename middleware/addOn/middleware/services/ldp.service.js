@@ -23,7 +23,7 @@ module.exports = {
       return urlJoin(CONFIG.FRONT_URL, containerPreferredView, encodeURIComponent(resourceUri), 'show')
     },
     defaultContainerOptions: {
-      jsonContext: urlJoin('https://data.essai-possible.data-players.com/','context.json'),
+      jsonContext: urlJoin('https://data.essaipossible.fr/','context.json'),
     }
   },
   hooksContainer: {
@@ -41,7 +41,7 @@ module.exports = {
 
                   const newSiret = resource['ep:siret'];
                   // console.log('newSiret',newSiret)
-                  const query= `PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                  const query= `PREFIX ep: <https://data.essaipossible.fr/ontology#>
                   CONSTRUCT {
                     ?s1 ?p1 ?o1.
                   }
@@ -88,7 +88,7 @@ module.exports = {
                   if(diffConcerns.length>0){
                     const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
                     const query= `
-                    PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                    PREFIX ep: <https://data.essaipossible.fr/ontology#>
                     PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                     CONSTRUCT {
                       ?s1 ?p1 ?o1.
@@ -113,7 +113,7 @@ module.exports = {
                   if(invDiffConcerns.length>0){
                       const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
                       const queryArchivee= `
-                      PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                      PREFIX ep: <https://data.essaipossible.fr/ontology#>
                       PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                       CONSTRUCT {
                         ?s1 ?p1 ?o1.
@@ -128,7 +128,7 @@ module.exports = {
                       // const pourvuSubject = result['@graph'][0]
                       if(job['pair:hasStatus']!=statusArchivee['@id']){
                         const query= `
-                        PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                        PREFIX ep: <https://data.essaipossible.fr/ontology#>
                         PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                         CONSTRUCT {
                           ?s1 ?p1 ?o1.

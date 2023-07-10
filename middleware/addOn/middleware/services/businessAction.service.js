@@ -59,7 +59,7 @@ module.exports = {
         const container = await ctx.call('ldp.registry.getByUri', { resourceUri});
         // console.log('ldp.resource.updated container',container)
         const queryArchivee= `
-        PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+        PREFIX ep: <https://data.essaipossible.fr/ontology#>
         PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
         CONSTRUCT {
           ?s1 ?p1 ?o1.
@@ -166,7 +166,7 @@ module.exports = {
                 //RDV
                 const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
                 // const query= `
-                // PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                // PREFIX ep: <https://data.essaipossible.fr/ontology#>
                 // PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                 // CONSTRUCT {
                 //   ?s1 ?p1 ?o1.
@@ -251,7 +251,7 @@ module.exports = {
                   const job = await ctx.call('ldp.resource.get', { resourceUri : newData['pair:about'], accept:'application/ld+json'});
  
                   // const query= `
-                  // PREFIX ep: <https://data.essai-possible.data-players.com/ontology#>
+                  // PREFIX ep: <https://data.essaipossible.fr/ontology#>
                   // PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
                   // CONSTRUCT {
                   //   ?s1 ?p1 ?o1.

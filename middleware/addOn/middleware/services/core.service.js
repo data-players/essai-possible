@@ -12,7 +12,7 @@ module.exports = {
   settings: {
     baseUrl: CONFIG.HOME_URL,
     baseDir: path.resolve(__dirname, '..'),
-    jsonContext: urlJoin('https://data.essai-possible.data-players.com/','context.json'),
+    jsonContext: urlJoin('https://data.essaipossible.fr/','context.json'),
     triplestore: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
@@ -60,7 +60,7 @@ module.exports = {
     //       file: path.resolve(__dirname, './node_modules/@seampps/core/config/context-as.json')
     //     },
     //     {
-    //       uri: 'https://data.essai-possible.data-players.com/context.json',
+    //       uri: 'https://data.essaipossible.fr/context.json',
     //       file: path.resolve(__dirname, './public/context.json')
     //     }
     //   ],
@@ -71,8 +71,8 @@ module.exports = {
     },
     webacl: {
       superAdmins: [
-        'https://data.essai-possible.data-players.com/users/simon.louvet.zen',
-        'https://data.essai-possible.data-players.com/users/tech',
+        'https://data.essaipossible.fr/users/simon.louvet.zen',
+        'https://data.essaipossible.fr/users/tech',
         'https://data.essaipossible.fr/users/simon.louvet.zen',
         'https://data.essaipossible.fr/users/tech',
         'https://data.essaipossible.fr/users/claire.versini',

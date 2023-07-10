@@ -56,8 +56,8 @@
   },
   {
     "prefix": "ep",
-    "owl": "https://data.essai-possible.data-players.com/ontology",
-    "url": "https://data.essai-possible.data-players.com/ontology#"
+    "owl": "https://data.essaipossible.fr/ontology",
+    "url": "https://data.essaipossible.fr/ontology#"
   },
   {
     "prefix": "aurba",

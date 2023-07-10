@@ -157,7 +157,7 @@ export function baseDeleteMutation() {
   const func = async (args, {getState}, extraOptions, baseQuery) => {
     // const body = marshaller.unmarshall(args);
     // body.id=undefined;
-    // body['@context']="https://data.essai-possible.data-players.com/context.json"
+    // body['@context']="https://data.essaipossible.fr/context.json"
     const postResponse = await baseQuery({
       url: decodeURIComponent(args),
       method: "DELETE"
