@@ -46,8 +46,9 @@ export function MeetingCardContent({slot, offer}) {
 
   const isAllowForCompany = currentUser?.companies.includes(offer.company)
 
+  const slotUser = slot.find(s => s.user?.id === currentUser?.id)
 
-  const isAllowForUser = slot?.user?.id==currentUser?.id
+  const isAllowForUser = slotUser !== undefined
   const isAllow = isAllowForCompany||isAllowForUser;
   // console.log('slot',slot);
 
@@ -58,17 +59,17 @@ export function MeetingCardContent({slot, offer}) {
     "&text=" +
     encodeURI(t("meeting.agendaEventTitle", {offer})) +
     "&dates=" +
-    dayjs(slot?.start).format("YYYYMMDD[T]HHmm[00Z") +
+    dayjs(slotUser?.start).format("YYYYMMDD[T]HHmm[00Z") +
     "%2F" +
-    dayjs(slot?.start).clone().add(slot.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
+    dayjs(slotUser?.start).clone().add(slotUser.duration, "minutes").format("YYYYMMDD[T]HHmm[00Z");
 
   const conventionUrl = `https://staging.immersion-facile.beta.gouv.fr/demande-immersion?`+
-  `email=${slot?.user?.email}&`+
-  `firstName=${slot?.user?.firstName}&`+
-  `lastName=${slot?.user?.lastName}&`+
-  `phone=${slot?.user?.phone}&`+
+  `email=${slotUser?.user?.email}&`+
+  `firstName=${slotUser?.user?.firstName}&`+
+  `lastName=${slotUser?.user?.lastName}&`+
+  `phone=${slotUser?.user?.phone}&`+
   `siret=${company?.siret}&`+
-  `dateStart=${slot?.start}&`+
+  `dateStart=${slotUser?.start}&`+
   `businessName=${company?.name}&`+ //ko
   `establishmentTutor.phone=${offer?.mentorPhone}&`+ // ko
   `establishmentTutor.email=${offer?.mentorEmail}&`+ //ko
@@ -84,7 +85,7 @@ export function MeetingCardContent({slot, offer}) {
               Un créneau de rencontre a été réservé pour la personne ci-dessous. Vous avez du recevoir un mail avec toutes ses coordonnées pour la contacter pour toute précision. Belle rencontre !
             </Typography>
             <Typography level="h3">
-              {slot.user.label}
+              {slotUser.user.label}
             </Typography>
             <Button
               component="a"
@@ -102,11 +103,11 @@ export function MeetingCardContent({slot, offer}) {
         <Typography level="body" sx={{color: "text.tertiary"}}>
           horaire :
         </Typography>
-        <Typography level="h3">{tDateTime(slot.start)}</Typography>
+        <Typography level="h3">{tDateTime(slotUser.start)}</Typography>
         <Typography level="body" sx={{color: "text.tertiary"}}>
           commentaire :
         </Typography>
-        <Typography level="h5">{slot.comments}</Typography>
+        <Typography level="h5">{slotUser.comments}</Typography>
         <Stack gap={2} onClick={(event) => event.stopPropagation()}>
           <Button
             component={Link}
@@ -123,7 +124,7 @@ export function MeetingCardContent({slot, offer}) {
             cancelText={'ne pas annuler'}
             onClick={async (event) => {
               // event.stopPropagation();
-              let slotToUpdate= {...slot};
+              let slotToUpdate= {...slotUser};
               slotToUpdate.user=null;
               // navigate('/offers');
               const newSlot = await updateSlot(slotToUpdate).unwrap();
@@ -161,6 +162,7 @@ export default function PageMyMeetings() {
   const currentUser = useSelector(selectCurrentUser);
   // console.log('currentUser',currentUser)
   const meetings =currentUser?.slots;
+  console.log(meetings)
   const nextSlot=meetings.filter(s=>new Date(s.start)>= new Date()) 
   const pastSlot=meetings.filter(s=>new Date(s.start)< new Date()) 
   // const meetingsReady = true;
@@ -176,7 +178,7 @@ export default function PageMyMeetings() {
         <OfferListItem
         value={offer.id}
         slot={slot}
-        sideElement={() => <MeetingCardContent offer={offer} slot={slot}/>}
+        sideElement={() => <MeetingCardContent offer={offer} slot={[slot]}/>}
       />
       }
       </>

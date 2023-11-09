@@ -50,16 +50,15 @@ export default function PageOffer() {
   // const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
   // const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
   // console.log('offer?.slots',offer?.slots)
-  const slotFulfilled = offer?.slots?.find(s=> s.user!=undefined && !(Array.isArray(s.user) && s.user.length<1));
+  const slotFulfilled = offer?.slots?.filter(s => s.user!=undefined && !(Array.isArray(s.user) && s.user.length === 0));
   const renderReady =skillsReady && currentUserstatus!='pending'
-
 
   function MeetingCard() {
     const status = useSelector(selectAllStatus);
     const isDraft = offer.status === status.find(s=>s.id.includes('brouillon'))?.id;
     const isPublished = offer.status === status.find(s=>s.id.includes('publiee'))?.id;
     const isFulfilled = offer.status === status.find(s=>s.id.includes('pourvue'))?.id;
-    return slotFulfilled ? (
+    return isFulfilled ? (
       <MeetingCardContent offer={offer} slot={slotFulfilled} />
     ) : (
       <Stack gap={3}>
