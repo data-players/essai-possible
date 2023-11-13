@@ -72,6 +72,7 @@ module.exports = {
     webacl: {
       superAdmins: [
         'https://data.essaipossible.fr/users/simon.louvet.zen',
+        'https://data.essaipossible.fr/users/bastien.siguier',
         'https://data.essaipossible.fr/users/tech',
         'https://data.essaipossible.fr/users/simon.louvet.zen',
         'https://data.essaipossible.fr/users/tech',
